@@ -2,7 +2,7 @@
 //  AppDelegate.m
 //  OPiOSCordovaSample
 //
-//  Created by Aras Balali Moghaddam on 1/29/2014.
+//  Created by Aras Balali Moghaddam on 1/30/2014.
 //  Copyright (c) 2014 Hookflash. All rights reserved.
 //
 
@@ -12,15 +12,10 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     // Override point for customization after application launch.
-    // self.window.backgroundColor = [UIColor whiteColor];
-    self.viewController = [[ViewController alloc] init];
-    [self.window addSubview:self.viewController.view];
-    [self.window makeKeyAndVisible];
     return YES;
 }
-
+							
 - (void)applicationWillResignActive:(UIApplication *)application
 {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.

@@ -2,7 +2,7 @@
 //  main.m
 //  OPiOSCordovaSample
 //
-//  Created by Aras Balali Moghaddam on 1/29/2014.
+//  Created by Aras Balali Moghaddam on 1/30/2014.
 //  Copyright (c) 2014 Hookflash. All rights reserved.
 //
 
