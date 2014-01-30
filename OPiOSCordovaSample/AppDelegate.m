@@ -16,6 +16,9 @@
     // Override point for customization after application launch.
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
+    self.viewController = [CDVViewController new];
+    self.viewController.wwwFolderName = @"www";
+
     return YES;
 }
 

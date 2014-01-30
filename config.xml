@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="org.hookflash.opioscordovasample" version="0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>OpenPeer and Cordova iOS Sample App</name>
+    <description>
+        A sample video chat application built using OpenPeer SDK, Apache Cordova, and simple HTML5 technologies.
+    </description>
+    <author email="dev@cordova.apache.org" href="http://cordova.io">
+        Hookflash Team
+    </author>
+    <content src="index.html" />
+    <access origin="*" />
+</widget>
