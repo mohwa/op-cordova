@@ -7,11 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <Cordova/CDVViewController.h>
+#import "ViewController.h"
+
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
-@property (strong, nonatomic) CDVViewController *viewController;
+@property (nonatomic, retain) ViewController *viewController;
 
 @end
