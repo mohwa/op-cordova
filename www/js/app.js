@@ -1,12 +1,6 @@
 define(['login', 'setting'], function(login, setting) {
 
-  if (document.readyState == 'complete') {
-    init();
-  } else {
-    document.addEventListener('DOMContentLoaded', init);
-  }
-
-  var app = {
+  window.app = {
     // Application Constructor
     initialize: function() {
         this.bindEvents();
