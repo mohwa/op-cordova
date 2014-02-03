@@ -25,4 +25,7 @@
     </author>
     <content src="index.html" />
     <access origin="*" />
+    <feature name="OP">
+        <param name="ios-package" value="CDVOP" />
+    </feature>
 </widget>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+      id="org.openpeer.cordova" version="0.0">
+  <name>Open Peer Cordova Plugin</name>
+  <description>Cordova Plugin that enables using native open peer SDK from Javascript</description>
+  <license>Apache 2.0</license>
+  <keywords>OP, openpeer, webrtc</keywords>
+  <js-module src="www/op.js" name="openpeer">
+      <clobbers target="openpeer" />
+  </js-module>
+  <platform name="ios">
+
+      <!-- TODO: link to OpenpeerSDK framework from here -->
+      <!-- framework src="src/ios/Frameworks/OpenpeerSDK.framework" custom="true" / -->
+
+      <config-file target="config.xml" parent="/*">
+          <feature name="OP">
+              <param name="ios-package" value="CDVOP"/>
+          </feature>
+      </config-file>
+
+      <header-file src="src/ios/CDVOP.h" />
+      <source-file src="src/ios/CDVOP.m" />
+
+  </platform>
+</plugin>
+
