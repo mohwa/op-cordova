@@ -21,6 +21,8 @@ DerivedData
 *.a
 *.swp
 *.swo
+platforms/ios/OpenpeerSDK.framework/OpenpeerSDK
+platforms/ios/OpenpeerSDK.framework/Versions/C/OpenpeerSDK
 
 # CocoaPods
 Pods
