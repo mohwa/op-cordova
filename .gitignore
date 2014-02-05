@@ -23,6 +23,7 @@ DerivedData
 *.swo
 platforms/ios/OpenpeerSDK.framework/OpenpeerSDK
 platforms/ios/OpenpeerSDK.framework/Versions/C/OpenpeerSDK
+platforms/ios/.staging
 
 # CocoaPods
 Pods

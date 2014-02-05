@@ -8,13 +8,17 @@
 </head>
 <body>
   <!-- TODO: move login to its own template -->
-  <div id="login-container">
+  <div class="section login">
     <input id="username" placeholder="username" />
     
     <input id="password" type="password" placeholder="password" />
     <button id="login-btn">Login</button>
     <br />
     <button id="account-status-btn">Get account status</button>
+  </div>
+  <div class="section authorize-app">
+    <button id="authorize-app-btn">Authorize App</button>
+    <p id="authorized-app-id"></p>
   </div>
   <script type="text/javascript" src="cordova.js"></script>
   <script data-main="js/main" src="js/alameda.js"></script>

@@ -1,4 +1,4 @@
-define(['op', 'login', 'setting'], function(op, login, setting) {
+define(['op', 'setup', 'login', 'setting'], function(op, setup, login, setting) {
 
   window.app = {
     // Application Constructor

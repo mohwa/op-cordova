@@ -6,10 +6,16 @@
 #import <Cordova/CDVPlugin.h>
 #import <Cordova/CDV.h>
 
+//OP SDK
+#import "OpenpeerSDK/HOPStack.h"
+#import "OpenpeerSDK/HOPLogger.h"
+#import "OpenpeerSDK/HOPMediaEngine.h"
+#import "OpenpeerSDK/HOPCache.h"
 
 @interface CDVOP : CDVPlugin
-    /* Account */
-    - (void) getAccountState:(CDVInvokedUrlCommand*)command;
+
+- (void) authorizeApp:(CDVInvokedUrlCommand*)command;
+- (void) getAccountState:(CDVInvokedUrlCommand*)command;
 
 @end
 
