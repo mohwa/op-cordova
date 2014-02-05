@@ -1,15 +1,17 @@
-== Status: in development (not ready to test) ==
+Status: in development (not ready to test)
+==========================================
 
 This is the current  dependencies and workflow that we are experimenting with. This may change in future
-=== dependencies ===
+Dependencies
+------------
   * xcode
-  * cordova command line tools
-  * op framework 
+  * Cordova command line tools
+  * Open Peer iOS Framework 
 
-=== current workflow for iOS ===
+Current (experimental) workflow for iOS
+---------------------------------------
   * clone this project
   * double click on `opios-cordova/platforms/ios/OPCordovaSample.xcodeproj to open iOS project in xcode
   * drag and drop OP iOS framework into the project navigator
-  * `cordova build ios`
-  * optional: emulate to test the UI (without video)
-  * deploy to device
+  * configure linker 
+  * select a device (iPad, iPhone or iPod) and press build and run in xcode 
