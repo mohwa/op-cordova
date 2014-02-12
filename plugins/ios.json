@@ -1,1 +1,0 @@
-{"prepare_queue":{"installed":[],"uninstalled":[]},"config_munge":{"config.xml":{"/*":{"<feature name=\"OP\"><param name=\"ios-package\" value=\"CDVOP\" /></feature>":1}}},"installed_plugins":{"org.openpeer.cordova":{"PACKAGE_NAME":"org.hookflash.opcordovasample"}},"dependent_plugins":{}}

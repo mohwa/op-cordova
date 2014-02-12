@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+      id="org.openpeer.cordova" version="0.0.0">
+  <name>Open Peer Cordova Plugin</name>
+  <description>Cordova Plugin that enables using native open peer SDK from Javascript</description>
+  <license>Apache 2.0</license>
+  <keywords>OP, openpeer, webrtc</keywords>
+  <js-module src="www/op.js" name="openpeer">
+      <clobbers target="openpeer" />
+  </js-module>
+  <js-module src="www/qPromise.js" name="Q">
+      <clobbers target="Q" />
+  </js-module>
+
+  <platform name="ios">
+      <framework src="CoreAudio.framework" />
+      <framework src="CoreVideo.framework" />
+      <framework src="CoreMedia.framework" />
+      <framework src="CoreData.framework" />
+      <framework src="CoreGraphics.framework" />
+      <framework src="CoreImage.framework" />
+      <framework src="Foundation.framework" />
+      <framework src="MobileCoreServices.framework" />
+      <framework src="QuartzCore.framework" />
+      <framework src="AssetLibrary.framework" />
+      <framework src="AudioToolbox.framework" />
+      <framework src="AVFoundation.framework" />
+      <framework src="Security.framework" />
+      <framework src="Boost.framework" />
+      <framework src="UIKIT.framework" />
+      <framework src="libresolve.dylib" />
+      <framework src="libz.dylib" />
+      <framework src="libxml2.dylib" />
+      <framework src="src/ios/OpenpeerSDK.framework" custom="true" />
+
+      <config-file target="config.xml" parent="/*">
+          <feature name="OP">
+              <param name="ios-package" value="CDVOP"/>
+          </feature>
+      </config-file>
+
+      <header-file src="src/ios/CDVOP.h" />
+      <source-file src="src/ios/CDVOP.m" />
+
+  </platform>
+</plugin>
+
