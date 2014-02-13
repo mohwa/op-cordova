@@ -1,23 +1,28 @@
 define(function() {
-  //var exec = require('cordova/exec');
+  var exec = require('cordova/exec');
   return {
     version: 0.0,
-    appId: null,
-    appSharedSecret: null,
-    authorizedAppId: null,
     getAccountStatus: function(success, error, options) {
-      Cordova.exec(success, error, "OP", "getAccountState", []);
+      Cordova.exec(success, error, 'OP', 'getAccountState', []);
     },
 
-    authorizeApp: function(success, error) {
-      if (this.authorizedAppId) {
-        error("App has already been authorized")
-      } else if (!this.appId || !this.appSharedSecret) {
-        error("Please first set op.appId and op.appSharedSecret");
-      } else {
-        Cordova.exec(success, error, "OP", "authorizeApp", [this.appId, this.appSharedSecret]);
-      }
+    authorizeApp: function(app) {
+      var deferred = Q.deffered();
+
+      exec(function(authorizedKey) {
+        deferred.resolve(authorizedKey);
+      }, function(error) {
+        deferred.reject(new Error('could not authorize app: ' + error));
+      }, 'OP', 'authorizeApp', [app.id, app.sharedSecret]);
+
+      return deferred.promise;
     },
+
+    configureApp: function(config) {
+      var deferred = Q.deffered();
+
+      return deferred.promise;
+    }
 
   }
 });
