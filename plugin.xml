@@ -25,7 +25,6 @@
       <framework src="AudioToolbox.framework" />
       <framework src="AVFoundation.framework" />
       <framework src="Security.framework" />
-      <framework src="Boost.framework" />
       <framework src="UIKIT.framework" />
       <framework src="libz.dylib" />
       <framework src="libxml2.dylib" />
