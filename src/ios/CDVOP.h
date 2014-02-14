@@ -16,6 +16,9 @@
 
 @interface CDVOP : CDVPlugin
 
+@property (weak, nonatomic) UIImageView *peerImageView;
+@property (weak, nonatomic) UIImageView *selfImageView;
+
 - (void) authorizeApp:(CDVInvokedUrlCommand*)command;
 - (void) configureApp:(CDVInvokedUrlCommand*)command;
 - (void) getAccountState:(CDVInvokedUrlCommand*)command;
