@@ -5,6 +5,10 @@
   <description>Cordova Plugin that enables using native open peer SDK from Javascript</description>
   <license>Apache 2.0</license>
   <keywords>OP, openpeer, webrtc</keywords>
+  <author>Hookflash Inc</author>
+  <engines>
+    <engine name="cordova" version=">=3.0.0" />
+  </engines>
   <js-module src="www/op.js" name="openpeer">
       <clobbers target="openpeer" />
   </js-module>

@@ -1,7 +1,9 @@
 #import "CDVOP.h"
-#import <Cordova/CDV.h>
+//#import <Cordova/CDV.h>
 
 @implementation CDVOP
+
+@synthesize webView, selfImageView, peerImageView;
 
 /**
  Retrieves singleton object of the Open Peer.
@@ -20,8 +22,14 @@
 -(CDVPlugin*) initWithWebView:(UIWebView*)theWebView
 {
     self = (CDVOP*)[super initWithWebView:theWebView];
+    NSLog(@"initializing with cordova webView");
     [self configureVideos];
     return self;
+}
+
+- (void)webViewDidStartLoad:(UIWebView *)webView
+{
+    NSLog(@"web view did start to load...");
 }
 
 - (void)authorizeApp:(CDVInvokedUrlCommand*)command
