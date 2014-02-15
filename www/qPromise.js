@@ -1,4 +1,6 @@
-// vim:ts=4:sts=4:sw=4:
+
+
+
 /*!
  *
  * Copyright 2009-2012 Kris Kowal under the terms of the MIT
@@ -1933,3 +1935,4 @@ var qEndingLine = captureLine();
 return Q;
 
 });
+

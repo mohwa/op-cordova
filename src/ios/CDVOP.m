@@ -3,28 +3,41 @@
 
 @implementation CDVOP
 
-@synthesize webView, selfImageView, peerImageView;
-
-/**
- Retrieves singleton object of the Open Peer.
- @return Singleton object of the Open Peer.
- */
-+ (id) sharedOpenPeer
-{
-    static dispatch_once_t pred = 0;
-    __strong static id _sharedObject = nil;
-    dispatch_once(&pred, ^{
-        _sharedObject = [[self alloc] init];
-    });
-    return _sharedObject;
-}
+@synthesize webView, selfImageView, peerImageView, callbackId;
 
 -(CDVPlugin*) initWithWebView:(UIWebView*)theWebView
 {
     self = (CDVOP*)[super initWithWebView:theWebView];
-    NSLog(@"initializing with cordova webView");
+    NSLog(@">>> initializing with cordova webView <<<");
+    
+    // configure the cordova webview
+    theWebView.opaque = NO;
+    theWebView.backgroundColor = [UIColor clearColor];
+    
     [self configureVideos];
     return self;
+}
+
+// stress test UIImageViews using a series of cat pictures
+- (void)showCatPictures:(CDVInvokedUrlCommand*)command
+{
+    //CDVPluginResult* res = nil;
+    //NSArray* arguments = command.arguments;
+    
+    //initialize and configure the image view
+    CGRect selfRect = CGRectMake(0, 0, 100.0, 200.0);
+    self.selfImageView = [[UIImageView alloc] initWithFrame:selfRect];
+    [self.webView.superview addSubview:self.selfImageView];
+
+    // load pictures and start animating
+    NSLog(@"displaying cat pictures");
+    selfImageView.animationImages = [NSArray arrayWithObjects:
+      [UIImage imageNamed:@"1.JPG"], [UIImage imageNamed:@"2.JPG"], [UIImage imageNamed:@"3.JPG"],
+      [UIImage imageNamed:@"4.JPG"], [UIImage imageNamed:@"5.JPG"], [UIImage imageNamed:@"6.JPG"],
+      [UIImage imageNamed:@"7.JPG"], [UIImage imageNamed:@"8.JPG"], nil];
+
+    selfImageView.animationDuration = 0.3;
+    [selfImageView startAnimating];
 }
 
 - (void)webViewDidStartLoad:(UIWebView *)webView
@@ -46,8 +59,8 @@
 
 - (void)configureApp:(CDVInvokedUrlCommand*)command
 {
-    CDVPluginResult* res = nil;
-    NSArray* arguments = command.arguments;
+    //CDVPluginResult* res = nil;
+    //NSArray* arguments = command.arguments;
     //TODO
 }
 
@@ -93,14 +106,28 @@
 
 - (void)startLoginProcess:(CDVInvokedUrlCommand *)command
 {
-    CDVPluginResult* res = nil;
-    NSArray* arguments = command.arguments;
+    //CDVPluginResult* res = nil;
+    //NSArray* arguments = command.arguments;
     
     if (![[HOPAccount sharedAccount] isCoreAccountCreated] || [[HOPAccount sharedAccount] getState].state == HOPAccountStateShutdown)
         [self startAccount];
     
     //For identity login it is required to pass identity delegate, URL that will be requested upon successful login, identity URI and identity provider domain. This is
     //HOPIdentity* hopIdentity = [HOPIdentity loginWithDelegate:(id<HOPIdentityDelegate>)[[CDVOP sharedOpenPeer] identityDelegate] identityProviderDomain:arguments[0] identityURIOridentityBaseURI: arguments[1] outerFrameURLUponReload:arguments[2]];
+}
+
+/**
+ @return Singleton object of the Open Peer.
+ */
++ (id) sharedOpenPeer
+{
+    NSLog(@"creating shared static OpenPeer object");
+    static dispatch_once_t pred = 0;
+    __strong static id _sharedObject = nil;
+    dispatch_once(&pred, ^{
+        _sharedObject = [[self alloc] init];
+    });
+    return _sharedObject;
 }
 
 @end

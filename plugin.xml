@@ -9,8 +9,8 @@
   <engines>
     <engine name="cordova" version=">=3.0.0" />
   </engines>
-  <js-module src="www/op.js" name="openpeer">
-      <clobbers target="openpeer" />
+  <js-module src="www/op.js" name="OP">
+      <clobbers target="OP" />
   </js-module>
   <js-module src="www/qPromise.js" name="Q">
       <clobbers target="Q" />
@@ -35,7 +35,7 @@
       <framework src="src/ios/OpenpeerSDK.framework" custom="true" />
 
       <config-file target="config.xml" parent="/*">
-          <feature name="OP">
+          <feature name="CDVOP">
               <param name="ios-package" value="CDVOP"/>
           </feature>
       </config-file>

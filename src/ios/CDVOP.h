@@ -30,6 +30,7 @@
 - (void) configureApp:(CDVInvokedUrlCommand*)command;
 - (void) getAccountState:(CDVInvokedUrlCommand*)command;
 - (void) startLoginProcess:(CDVInvokedUrlCommand*)command;
+- (void) showCatPictures:(CDVInvokedUrlCommand*)command
 
 @end
 
