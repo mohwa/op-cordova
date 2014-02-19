@@ -43,6 +43,23 @@
       <header-file src="src/ios/CDVOP.h" />
       <source-file src="src/ios/CDVOP.m" />
 
+      <header-file src="src/ios/AccountDelegate.h" />
+      <source-file src="src/ios/AccountDelegate.m" />
+      <header-file src="src/ios/AppDelegate.h" />
+      <source-file src="src/ios/AppDelegate.m" />
+      <header-file src="src/ios/CallDelegate.h" />
+      <source-file src="src/ios/CallDelegate.m" />
+      <header-file src="src/ios/ConversationThreadDelegate.h" />
+      <source-file src="src/ios/ConversationThreadDelegate.m" />
+      <header-file src="src/ios/IdentityDelegate.h" />
+      <source-file src="src/ios/IdentityDelegate.m" />
+      <header-file src="src/ios/IdentityLookupDelegate.h" />
+      <source-file src="src/ios/IdentityLookupDelegate.m" />
+      <header-file src="src/ios/MediaEngineDelegate.h" />
+      <source-file src="src/ios/MediaEngineDelegate.m" />
+      <header-file src="src/ios/OpenPeer.h" />
+      <source-file src="src/ios/OpenPeer.m" />
+
   </platform>
 </plugin>
 

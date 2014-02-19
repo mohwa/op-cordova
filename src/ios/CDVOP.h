@@ -16,6 +16,10 @@
 #import "OpenpeerSDK/HOPAccount.h"
 #import "OpenpeerSDK/HOPIdentity.h"
 
+//OP delegates
+#import "OpenPeer.h"
+
+
 @interface CDVOP : CDVPlugin <UIWebViewDelegate> {
     NSString* callbackId;
     UIImageView* peerImageView;
@@ -23,14 +27,16 @@
 }
 
 @property (nonatomic, copy) NSString* callbackId;
-@property (retain, nonatomic) UIImageView *peerImageView;
-@property (retain, nonatomic) UIImageView *selfImageView;
+@property (nonatomic, retain) UIImageView *peerImageView;
+@property (nonatomic, retain) UIImageView *selfImageView;
+@property (nonatomic, weak) UIWebView *loginWebView;
 
 - (void) authorizeApp:(CDVInvokedUrlCommand*)command;
 - (void) configureApp:(CDVInvokedUrlCommand*)command;
 - (void) getAccountState:(CDVInvokedUrlCommand*)command;
-- (void) startLoginProcess:(CDVInvokedUrlCommand*)command;
-- (void) showCatPictures:(CDVInvokedUrlCommand*)command
+- (void) logout:(CDVInvokedUrlCommand*)command;
+- (void) startLoginUsingIdentityURI:(CDVInvokedUrlCommand*)command;
+- (void) showCatPictures:(CDVInvokedUrlCommand*)command;
 
 @end
 

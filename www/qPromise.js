@@ -1,6 +1,4 @@
 
-
-
 /*!
  *
  * Copyright 2009-2012 Kris Kowal under the terms of the MIT

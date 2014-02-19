@@ -13,6 +13,8 @@
     // configure the cordova webview
     theWebView.opaque = NO;
     theWebView.backgroundColor = [UIColor clearColor];
+    theWebView.scrollView.bounces = NO;
+    theWebView.layer.zPosition = 100;
     
     [self configureVideos];
     return self;
@@ -21,22 +23,31 @@
 // stress test UIImageViews using a series of cat pictures
 - (void)showCatPictures:(CDVInvokedUrlCommand*)command
 {
-    //CDVPluginResult* res = nil;
-    //NSArray* arguments = command.arguments;
     
-    //initialize and configure the image view
-    CGRect selfRect = CGRectMake(0, 0, 100.0, 200.0);
-    self.selfImageView = [[UIImageView alloc] initWithFrame:selfRect];
-    [self.webView.superview addSubview:self.selfImageView];
-
+    NSTimeInterval interval = [command.arguments[0] doubleValue];
+    CGRect screenRect = [[UIScreen mainScreen] bounds];
+    peerImageView = [[UIImageView alloc] initWithFrame:screenRect];
+    peerImageView.layer.zPosition = 10;
+    [webView.superview addSubview:peerImageView];
+    peerImageView.animationImages = [NSArray arrayWithObjects:
+     [UIImage imageNamed:@"11.JPG"], [UIImage imageNamed:@"22.JPG"], [UIImage imageNamed:@"33.JPG"],
+     [UIImage imageNamed:@"44.JPG"], [UIImage imageNamed:@"55.JPG"], [UIImage imageNamed:@"66.JPG"],
+     [UIImage imageNamed:@"77.JPG"], [UIImage imageNamed:@"88.JPG"], [UIImage imageNamed:@"99.JPG"],
+     [UIImage imageNamed:@"1010.JPG"], [UIImage imageNamed:@"1111.JPG"], nil];
+    peerImageView.animationDuration = interval;
+    [peerImageView startAnimating];
+    
+    //initialize and configure self image view which normally would come from front facing cam1
+    CGRect selfRect = CGRectMake(120, screenRect.size.height - 200, 180, 160);
+    selfImageView = [[UIImageView alloc] initWithFrame:selfRect];
+    selfImageView.layer.zPosition = 20;
+    [webView.superview addSubview:selfImageView];
     // load pictures and start animating
     NSLog(@"displaying cat pictures");
     selfImageView.animationImages = [NSArray arrayWithObjects:
       [UIImage imageNamed:@"1.JPG"], [UIImage imageNamed:@"2.JPG"], [UIImage imageNamed:@"3.JPG"],
-      [UIImage imageNamed:@"4.JPG"], [UIImage imageNamed:@"5.JPG"], [UIImage imageNamed:@"6.JPG"],
-      [UIImage imageNamed:@"7.JPG"], [UIImage imageNamed:@"8.JPG"], nil];
-
-    selfImageView.animationDuration = 0.3;
+      [UIImage imageNamed:@"4.JPG"], [UIImage imageNamed:@"5.JPG"], [UIImage imageNamed:@"6.JPG"], nil];
+    selfImageView.animationDuration = interval;
     [selfImageView startAnimating];
 }
 
@@ -81,15 +92,16 @@
     [[HOPMediaEngine sharedInstance] setCaptureRenderView:self.selfImageView];
     [[HOPMediaEngine sharedInstance] setChannelRenderView:self.peerImageView];
     
-    self.selfImageView.backgroundColor = [UIColor greenColor];
     self.selfImageView.hidden = NO;
-    
     NSLog(@"video config done.");
 }
 
-- (void) startAccount
+/**
+ * Logout from the current account and associated identities
+ */
+- (void)logout:(CDVInvokedUrlCommand*)command
 {
-    //[[HOPAccount sharedAccount] loginWithAccountDelegate:(id<HOPAccountDelegate>)[[CDVOP sharedOpenPeer] accountDelegate] conversationThreadDelegate:(id<HOPConversationThreadDelegate>) [[CDVOP sharedOpenPeer] conversationThreadDelegate]  callDelegate:(id<HOPCallDelegate>) [[CDVOP sharedOpenPeer] callDelegate]  namespaceGrantOuterFrameURLUponReload:[[Settings sharedSettings] getOuterFrameURL] grantID:[[OpenPeer sharedOpenPeer] deviceId] lockboxServiceDomain:[[Settings sharedSettings] getIdentityProviderDomain] forceCreateNewLockboxAccount:NO];
+  //TODO
 }
 
 // TODO: remove if not needed
@@ -104,30 +116,35 @@
     [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
 }
 
-- (void)startLoginProcess:(CDVInvokedUrlCommand *)command
-{
-    //CDVPluginResult* res = nil;
-    //NSArray* arguments = command.arguments;
-    
-    if (![[HOPAccount sharedAccount] isCoreAccountCreated] || [[HOPAccount sharedAccount] getState].state == HOPAccountStateShutdown)
-        [self startAccount];
-    
-    //For identity login it is required to pass identity delegate, URL that will be requested upon successful login, identity URI and identity provider domain. This is
-    //HOPIdentity* hopIdentity = [HOPIdentity loginWithDelegate:(id<HOPIdentityDelegate>)[[CDVOP sharedOpenPeer] identityDelegate] identityProviderDomain:arguments[0] identityURIOridentityBaseURI: arguments[1] outerFrameURLUponReload:arguments[2]];
-}
-
 /**
- @return Singleton object of the Open Peer.
+ Starts user login for specific identity URI.
+ @param command.arguments[0] identity uri (e.g. identity://facebook.com/)
+ @param command.arguments[1] outer frame url
+ @param command.arguments[2] url to redirect after login is complete
+ @param command.arguments[3] identity provider domain
  */
-+ (id) sharedOpenPeer
+- (void) startLoginUsingIdentityURI:(CDVInvokedUrlCommand*)command
 {
-    NSLog(@"creating shared static OpenPeer object");
-    static dispatch_once_t pred = 0;
-    __strong static id _sharedObject = nil;
-    dispatch_once(&pred, ^{
-        _sharedObject = [[self alloc] init];
-    });
-    return _sharedObject;
+    CDVPluginResult* res = nil;
+    NSString* identityURI = command.arguments[0];
+    NSString* outerFrameURL = command.arguments[1];
+    NSString* redirectAfterLoginCompleteURL = command.arguments[2];
+    NSString* identityProviderDomain = command.arguments[3];
+    
+    if (![[HOPAccount sharedAccount] isCoreAccountCreated] || [[HOPAccount sharedAccount] getState].state == HOPAccountStateShutdown) {
+        [[HOPAccount sharedAccount] loginWithAccountDelegate:(id<HOPAccountDelegate>)[[OpenPeer sharedOpenPeer] accountDelegate] conversationThreadDelegate:(id<HOPConversationThreadDelegate>) [[OpenPeer sharedOpenPeer] conversationThreadDelegate] callDelegate:(id<HOPCallDelegate>) [[OpenPeer sharedOpenPeer] callDelegate]  namespaceGrantOuterFrameURLUponReload:outerFrameURL grantID:[[OpenPeer sharedOpenPeer] deviceId] lockboxServiceDomain:identityProviderDomain forceCreateNewLockboxAccount:NO];
+        }
+        
+        //For identity login it is required to pass identity delegate, URL that will be requested upon successful login, identity URI and identity provider domain
+        HOPIdentity* hopIdentity = [[HOPIdentity loginWithDelegate:(id<HOPIdentityDelegate>)[[OpenPeer sharedOpenPeer] identityDelegate] identityProviderDomain:identityProviderDomain] identityURIOridentityBaseURI:identityURI outerFrameURLUponReload:redirectAfterLoginCompleteURL];
+        
+    if (!hopIdentity) {
+        NSString* error = [NSString stringWithFormat:@"Identity login has failed for uri: %@", identityURI];
+        res = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error];
+    } else {
+        res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:hopIdentity.identityId];
+    }
+    [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
 }
 
 @end
