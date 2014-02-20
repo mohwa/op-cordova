@@ -43,6 +43,8 @@
       <header-file src="src/ios/CDVOP.h" />
       <source-file src="src/ios/CDVOP.m" />
 
+      <header-file src="src/ios/WebLoginViewController.h" />
+      <source-file src="src/ios/WebLoginViewController.m" />
       <header-file src="src/ios/AccountDelegate.h" />
       <source-file src="src/ios/AccountDelegate.m" />
       <header-file src="src/ios/AppDelegate.h" />

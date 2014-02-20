@@ -1,9 +1,8 @@
 #import "CDVOP.h"
-//#import <Cordova/CDV.h>
 
 @implementation CDVOP
 
-@synthesize webView, selfImageView, peerImageView, callbackId;
+@synthesize webView, selfImageView, peerImageView, loginWebView, callbackId;
 
 -(CDVPlugin*) initWithWebView:(UIWebView*)theWebView
 {
@@ -17,6 +16,7 @@
     theWebView.layer.zPosition = 100;
     
     [self configureVideos];
+    [self configureLoginView];
     return self;
 }
 
@@ -78,9 +78,9 @@
 // Connect video streams to their native UI elements
 - (void)configureVideos
 {
-    CGRect selfRect = CGRectMake(0, 0, 100.0, 200.0);
+    CGRect rect = CGRectMake(0, 0, 100.0, 200.0);
 
-    self.selfImageView = [[UIImageView alloc] initWithFrame:selfRect];
+    self.selfImageView = [[UIImageView alloc] initWithFrame:rect];
     //self.selfImageView.layer.cornerRadius = 5;
     //self.selfImageView.layer.masksToBounds = YES;
     [self.webView.superview addSubview:self.selfImageView];
@@ -96,12 +96,25 @@
     NSLog(@"video config done.");
 }
 
+- (void)configureLoginView
+{
+    CGRect screenRect = [[UIScreen mainScreen] bounds];
+    CGRect rect = CGRectMake(0, 0, screenRect.size.width, screenRect.size.height);
+    self.loginWebView = [[UIWebView alloc] initWithFrame:rect];
+    [self.webView.superview addSubview:self.loginWebView];
+    loginWebView.opaque = NO;
+    loginWebView.backgroundColor = [UIColor clearColor];
+    loginWebView.layer.zPosition = 1000;
+    NSLog(@"login view config done.");
+}
+
 /**
  * Logout from the current account and associated identities
  */
 - (void)logout:(CDVInvokedUrlCommand*)command
 {
-  //TODO
+    //TODO
+    NSLog(@"logging out [TODO]");
 }
 
 // TODO: remove if not needed
@@ -123,7 +136,7 @@
  @param command.arguments[2] url to redirect after login is complete
  @param command.arguments[3] identity provider domain
  */
-- (void) startLoginUsingIdentityURI:(CDVInvokedUrlCommand*)command
+- (void) startLoginProcess:(CDVInvokedUrlCommand*)command
 {
     CDVPluginResult* res = nil;
     NSString* identityURI = command.arguments[0];
