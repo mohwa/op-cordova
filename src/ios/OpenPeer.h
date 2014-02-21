@@ -31,7 +31,6 @@
 
 #import <Foundation/Foundation.h>
 #import <OpenPeerSDK/HOPTypes.h>
-#import "Settings.h"
 
 @class CallDelegate;
 @class StackDelegate;

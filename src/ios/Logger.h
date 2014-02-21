@@ -1,6 +1,6 @@
 /*
  
- Copyright (c) 2012, SMB Phone Inc.
+ Copyright (c) 2013, SMB Phone Inc.
  All rights reserved.
  
  Redistribution and use in source and binary forms, with or without
@@ -29,22 +29,23 @@
  
  */
 
-#import "MediaEngineDelegate.h"
+#import <Foundation/Foundation.h>
 
-@implementation MediaEngineDelegate
-
-- (void) onMediaEngineAudioRouteChanged:(HOPMediaEngineOutputAudioRoutes) audioRoute
+typedef enum
 {
-    NSLog(@"Fired audio route changed");
-}
+    LOGGER_STD_OUT,
+    LOGGER_TELNET,
+    LOGGER_OUTGOING_TELNET
+}LoggerTypes;
 
-- (void) onMediaEngineFaceDetected
-{
-    NSLog(@"Face detected fired");
-}
+@interface Logger : NSObject
 
-- (void) onMediaEngineVideoCaptureRecordStopped
-{
-    NSLog(@"video capture record stopped");
-}
++ (void) setLogLevels;
++ (void) startStdLogger:(BOOL) start;
++ (void) startTelnetLogger:(BOOL) start;
++ (void) startOutgoingTelnetLogger:(BOOL) start;
++ (void) startAllSelectedLoggers;
++ (void) start:(BOOL) start logger:(LoggerTypes) type;
++ (void) startTelnetLoggerOnStartUp;
+
 @end

@@ -37,6 +37,7 @@
       <config-file target="config.xml" parent="/*">
           <feature name="CDVOP">
               <param name="ios-package" value="CDVOP"/>
+              <param name="onload" value="true" />
           </feature>
       </config-file>
 
@@ -45,10 +46,9 @@
 
       <header-file src="src/ios/WebLoginViewController.h" />
       <source-file src="src/ios/WebLoginViewController.m" />
+      <header-file src="src/ios/Delegate.h" />
       <header-file src="src/ios/AccountDelegate.h" />
       <source-file src="src/ios/AccountDelegate.m" />
-      <header-file src="src/ios/AppDelegate.h" />
-      <source-file src="src/ios/AppDelegate.m" />
       <header-file src="src/ios/CallDelegate.h" />
       <source-file src="src/ios/CallDelegate.m" />
       <header-file src="src/ios/ConversationThreadDelegate.h" />
@@ -61,6 +61,9 @@
       <source-file src="src/ios/MediaEngineDelegate.m" />
       <header-file src="src/ios/OpenPeer.h" />
       <source-file src="src/ios/OpenPeer.m" />
+      <header-file src="src/ios/Logger.h" />
+      <source-file src="src/ios/Logger.m" />
+
 
   </platform>
 </plugin>

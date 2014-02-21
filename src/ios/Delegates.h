@@ -1,6 +1,6 @@
 /*
  
- Copyright (c) 2012, SMB Phone Inc.
+ Copyright (c) 2013, SMB Phone Inc.
  All rights reserved.
  
  Redistribution and use in source and binary forms, with or without
@@ -29,22 +29,36 @@
  
  */
 
-#import "MediaEngineDelegate.h"
+@class WebLoginViewController;
 
-@implementation MediaEngineDelegate
+@protocol ChatViewControllerDelegate <NSObject>
 
-- (void) onMediaEngineAudioRouteChanged:(HOPMediaEngineOutputAudioRoutes) audioRoute
-{
-    NSLog(@"Fired audio route changed");
-}
+- (void) prepareForKeyboard:(NSDictionary*) userInfo showKeyboard:(BOOL) showKeyboard;
 
-- (void) onMediaEngineFaceDetected
-{
-    NSLog(@"Face detected fired");
-}
+@end
 
-- (void) onMediaEngineVideoCaptureRecordStopped
-{
-    NSLog(@"video capture record stopped");
-}
+@protocol VideoCallViewControllerDelegate <NSObject>
+
+- (void) hideVideo:(BOOL) hide;
+
+@end
+
+@protocol LoginEventsDelegate <NSObject>
+
+
+
+- (void) onStartLoginWithidentityURI;
+- (void) onOpeningLoginPage;
+- (void) onLoginWebViewVisible:(WebLoginViewController*) webLoginViewController;
+
+- (void) onRelogin;
+- (void) onLoginFinished;
+
+- (void) onIdentityLoginWebViewClose:(WebLoginViewController*) webLoginViewController forIdentityURI:(NSString*) identityURI;
+- (void) onIdentityLoginFinished;
+- (void) onIdentityLoginError:(NSString*) error;
+- (void) onIdentityLoginShutdown;
+
+- (void) onAccountLoginError:(NSString*) error;
+- (void) onAccountLoginWebViewClose:(WebLoginViewController*) webLoginViewController;
 @end

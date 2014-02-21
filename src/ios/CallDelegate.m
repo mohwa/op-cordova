@@ -34,36 +34,28 @@
 #import <OpenpeerSDK/HOPCall.h>
 #import <OpenpeerSDK/HOPTypes.h>
 #import <OpenpeerSDK/HOPConversationThread.h>
-#import "SessionManager.h"
-#import "MessageManager.h"
-#import "SoundsManager.h"
-
-#import "Session.h"
-#import "MainViewController.h"
-#import "SessionViewController_iPhone.h"
-#import "Utility.h"
 
 @implementation CallDelegate
 
 - (void) onCallStateChanged:(HOPCall*) call callState:(HOPCallStates) callState
 {
-    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelDebug, @"Call state: %@", [Utility getCallStateAsString:[call getState]]);
+    //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelDebug, @"Call state: %@", [Utility getCallStateAsString:[call getState]]);
     
     NSString* sessionId = [[call getConversationThread] getThreadId];
     dispatch_async(dispatch_get_main_queue(), ^{
-
-        SessionViewController_iPhone* sessionViewController = [[[[OpenPeer sharedOpenPeer] mainViewController] sessionViewControllersDictionary] objectForKey:sessionId];
         
-        [sessionViewController updateCallState];
+        // TODO: inform client about call state
+        //[sessionViewController updateCallState];
         
         switch (callState)
         {
             case HOPCallStatePreparing:             //Receives both parties, caller and callee.
-                [[SessionManager sharedSessionManager] onCallPreparing:call];
+                //TODO
+                //[[SessionManager sharedSessionManager] onCallPreparing:call];
                 break;
                 
             case HOPCallStateIncoming:              //Receives just callee
-                [[SessionManager sharedSessionManager] onCallIncoming:call];
+                //TODO: tell client about incomming call
                 break;
                 
             case HOPCallStatePlaced:                //Receives just calller
@@ -73,18 +65,22 @@
                 break;
                 
             case HOPCallStateRinging:               //Receives just callee side. Now should play ringing sound
-                [[SoundManager sharedSoundsManager] playRingingSound];
+                // TODO
+                //[[SoundManager sharedSoundsManager] playRingingSound];
                 break;
                 
             case HOPCallStateRingback:              //Receives just caller side
-                [[SoundManager sharedSoundsManager] playCallingSound];
+                // TODO
+                //[[SoundManager sharedSoundsManager] playCallingSound];
                 break;
                 
             case HOPCallStateOpen:                  //Receives both parties. Call is established
+                /* TODO
                 [[SessionManager sharedSessionManager] onCallOpened:call];
                 [[SoundManager sharedSoundsManager] stopCallingSound];
                 [[SoundManager sharedSoundsManager] stopRingingSound];
                 [sessionViewController startTimer];
+                 */
                 break;
                 
             case HOPCallStateActive:                //Currently not in use
@@ -97,14 +93,16 @@
                 break;
                 
             case HOPCallStateClosing:               //Receives both parties
+                /*
                 [[SessionManager sharedSessionManager] onCallClosing:call];
                 [[SoundManager sharedSoundsManager] stopCallingSound];
                 [[SoundManager sharedSoundsManager] stopRingingSound];
                 [sessionViewController stopTimer];
+                 */
                 break;
                 
             case HOPCallStateClosed:                //Receives both parties
-                [[SessionManager sharedSessionManager] onCallEnded:call];
+                // TODO: tell client that call ended
                 break;
                 
             case HOPCallStateNone:

@@ -30,11 +30,6 @@
  */
 
 #import "ConversationThreadDelegate.h"
-#import "SessionManager.h"
-#import "ContactsManager.h"
-#import "MessageManager.h"
-#import "AppConsts.h"
-#import "Utility.h"
 
 #import <OpenpeerSDK/HOPConversationThread.h>
 #import <OpenpeerSDK/HOPContact.h>
@@ -62,10 +57,13 @@
             {
                 HOPContact* participant = [participants objectAtIndex:0];
                 
+                // TODO: inform client about conversation thread
+                /*
                 if (![[SessionManager sharedSessionManager] proceedWithExistingSessionForContact:participant newConversationThread:conversationThread])
                 {
                     [[SessionManager sharedSessionManager] createSessionForConversationThread: conversationThread];
                 }
+                 */
             }
         }
     });
@@ -94,7 +92,8 @@
         HOPMessage* message = [conversationThread getMessageForID:messageID];
         if (message)
         {
-            [[MessageManager sharedMessageManager] onMessageReceived:message forSessionId:[conversationThread getThreadId]];
+            // TODO: send message received to client
+            //[[MessageManager sharedMessageManager] onMessageReceived:message forSessionId:[conversationThread getThreadId]];
         }
     });
 }
@@ -118,8 +117,11 @@
             HOPRolodexContact* contact  = [[[HOPModelManager sharedModelManager] getRolodexContactsByPeerURI:[coreContact getPeerURI]] objectAtIndex:0];
             if (contact)
             {
+                /*
+                 TODO: figure out if we will need to use APNS in this way
+                 
                 NSString* messageText = nil;
-                //if ([message.type isEqualToString:messageTypeSystem])
+            
                 if ([[MessageManager sharedMessageManager] getTypeForSystemMessage:message] == SystemMessage_CheckAvailability)
                 {
                     messageText  = [NSString stringWithFormat:@"%@ \n %@",[contact name],@"Missed call"];
@@ -130,6 +132,7 @@
                     messageText  = [NSString stringWithFormat:@"%@ \n %@",[contact name],message.text];
                 }
                 [[APNSManager sharedAPNSManager] sendPushNotificationForContact:coreContact message:messageText missedCall:missedCall];
+                 */
             }
         }
     }

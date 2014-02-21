@@ -33,6 +33,7 @@
 #import "OpenPeer.h"
 #import <OpenpeerSDK/HOPIdentity.h>
 #import <OpenpeerSDK/HOPAccount.h>
+#import "CDVOP.h"
 
 
 @interface WebLoginViewController()
@@ -50,6 +51,7 @@
 - (id) initWithCoreObject:(id) inCoreObject
 {
     //TODO: initialize self and webview
+    
 
     if (self)
     {
@@ -91,10 +93,10 @@
     //Check if request contains JSON message for core
     if ([requestString hasPrefix:@"https://datapass.hookflash.me/?method="] || [requestString hasPrefix:@"http://datapass.hookflash.me/?method="])
     {
-        /* 
-         TODO: substitute these functions
-        NSString *function = [Utility getFunctionNameForRequest:requestString];
-        NSString *params = [Utility getParametersNameForRequest:requestString];
+        
+        // TODO: substitute these functions
+        NSString *function = [WebLoginViewController getFunctionNameForRequest:requestString];
+        NSString *params = [WebLoginViewController getParametersNameForRequest:requestString];
         
         params = [params stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
         
@@ -106,7 +108,7 @@
                 [self performSelector:NSSelectorFromString(functionNameSelector) withObject:params];
         }
         return NO;
-         */
+         
     }
 
     return YES;
@@ -124,16 +126,17 @@
 {
     //TODO: Access settings from here
     NSString *requestString = [[[webView request] URL] absoluteString];
-    /*
-    if (!self.outerFrameInitialised && [requestString isEqualToString:[[Settings sharedSettings] getOuterFrameURL]])
+    NSString *namespaceGrantServiceURL = [[CDVOP sharedObject] getSetting:@"namespaceGrantServiceURL"];
+
+    if (!self.outerFrameInitialised && [requestString isEqualToString:[[CDVOP sharedObject] getSetting:@"outerFrameURL"]])
     {
-        OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> WebLoginViewController\nFINISH LOADING - outerFrameURL: %@", self,[[Settings sharedSettings] getOuterFrameURL]);
+        OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> WebLoginViewController\nFINISH LOADING - outerFrameURL: %@", self,[[CDVOP sharedObject] getSetting:@"outerFrameURL"]);
         self.outerFrameInitialised = YES;
         [self onOuterFrameLoaded];
     }
-    else if (!self.outerFrameInitialised && [requestString isEqualToString:[[Settings sharedSettings] getNamespaceGrantServiceURL]])
+    else if (!self.outerFrameInitialised && [requestString isEqualToString:namespaceGrantServiceURL])
     {
-        OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> WebLoginViewController\nFINISH LOADING - namespaceGrantServiceURL: %@", self,[[Settings sharedSettings] getNamespaceGrantServiceURL]);
+        OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> WebLoginViewController\nFINISH LOADING - namespaceGrantServiceURL: %@", self, namespaceGrantServiceURL);
         self.outerFrameInitialised = YES;
         [self onOuterFrameLoaded];
     }
@@ -141,14 +144,12 @@
     {
         OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> WebLoginViewController\nFINISH LOADING - NOTHING",self);
     }
-     */
 }
 
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error
 {
     OPLog(HOPLoggerSeverityWarning, HOPLoggerLevelTrace, @"<%p> WebLoginViewController\nUIWebView _ERROR_ : %@",self,[error localizedDescription]);
 }
-
 
 - (void)notifyClient:(NSString *)message
 {
@@ -180,4 +181,40 @@
     if (jsMethod)
         [self passMessageToJS:jsMethod];
 }
+
++ (NSString*) getFunctionNameForRequest:(NSString*) requestString
+{
+    NSString* ret = @"";
+    
+    if ([requestString hasPrefix:@"https://datapass.hookflash.me/?method="])
+        ret = [requestString substringFromIndex:[@"https://datapass.hookflash.me/?method=" length]];
+    else if ([requestString hasPrefix:@"http://datapass.hookflash.me/?method="])
+        ret = [requestString substringFromIndex:[@"http://datapass.hookflash.me/?method=" length]];
+    
+    NSArray *components = [ret componentsSeparatedByString:@";"];
+    
+    if ([components count] > 0)
+        ret = [components objectAtIndex:0];
+    return ret;
+}
+
++ (NSString*) getParametersNameForRequest:(NSString*) requestString
+{
+    NSString* ret = @"";
+    
+    NSArray *components = [requestString componentsSeparatedByString:@";"];
+    
+    if ([components count] == 2)
+    {
+        
+        NSString *params = (NSString*)[components objectAtIndex:1];
+        if ([params hasPrefix:@"data="])
+        {
+            ret = [params substringFromIndex:[@"data=" length]];
+        }
+    }
+    
+    return ret;
+}
+
 @end

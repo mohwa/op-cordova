@@ -32,12 +32,10 @@
 #import "UIKit/UIKit.h"
 #import "AccountDelegate.h"
 #import "OpenpeerSDK/HOPAccount.h"
-#import "LoginManager.h"
 #import "OpenPeer.h"
-#import "AppConsts.h"
-#import "MainViewController.h"
 #import "WebLoginViewController.h"
 #import "OpenpeerSDK/HOPLogger.h"
+#import "CDVOP.h"
 
 @interface AccountDelegate()
 @property (nonatomic, strong) WebLoginViewController* webLoginViewController;
@@ -48,7 +46,7 @@
 /**
  Custom getter for webLoginViewController
  */
-- (WebLoginViewController *)webLoginViewController
+- (WebLoginViewController*)webLoginViewController
 {
     if (!_webLoginViewController)
     {
@@ -79,7 +77,7 @@
                 break;
                 
             case HOPAccountWaitingForBrowserWindowToBeLoaded:
-                [self.webLoginViewController openLoginUrl:[[Settings sharedSettings] getNamespaceGrantServiceURL]];
+                [self.webLoginViewController openLoginUrl:[[CDVOP sharedObject] getSetting:@"namespaceGrantServiceURL"]];
                 break;
                 
             case HOPAccountWaitingForBrowserWindowToBeMadeVisible:
@@ -87,7 +85,8 @@
                 //Add login web view like main view subview
                 if (!self.webLoginViewController.view.superview)
                 {
-                    [self.webLoginViewController.view setFrame:[[OpenPeer sharedOpenPeer] mainViewController].view.bounds];
+                    [self.webLoginViewController.view setFrame:[[CDVOP sharedObject] webView].bounds];
+                    
                     [[[OpenPeer sharedOpenPeer] mainViewController] showWebLoginView:self.webLoginViewController];
                 }
                 

@@ -1,6 +1,15 @@
 var exec = require('cordova/exec');
-module.exports = {
+var OpenPeer = {
   version: 0.0,
+
+  settings: {
+    namespaceGrantServiceURL: 'namespaceGrantServiceURL', //TODO
+    identityBaseURI: 'identity://idprovider-javascript.hookflash.me/',
+    outerFrameURL:
+      'https://app-javascript.hookflash.me/outer.html?view=choose',
+    redirectURL: 'https://app-javascript.hookflash.me/outer.html?reload=true',
+    identityProviderDomain: 'idprovider-javascript.hookflash.me'
+  },
 
   getAccountStatus: function(success, error, options) {
     exec(success, error, 'CDVOP', 'getAccountState', []);
@@ -33,13 +42,7 @@ module.exports = {
 
   // user constructor
   user: function() {
-    this.defaultOptions: {
-      identityBaseURI: 'identity://idprovider-javascript.hookflash.me/',
-      outerFrameURL:
-        'https://app-javascript.hookflash.me/outer.html?view=choose',
-      redirectURL: 'https://app-javascript.hookflash.me/outer.html?reload=true',
-      identityProviderDomain: 'idprovider-javascript.hookflash.me'
-    };
+
 
     this.login = function(options) {
       var deferred = Q.defer();
@@ -48,10 +51,11 @@ module.exports = {
       }, function(error) {
         deferred.reject(new Error('login failed: ' + error));
       }, 'CDVOP', 'startLoginProcess', [
-        options.identityBaseURI || defaultOptions.identityBaseURI,
-        options.outerFrameURL || defaultOptions.outerFrameURL,
-        options.redirectURL || defaultOptions.redirectURL,
-        options.identityProviderDomain || defaultOptions.identityProviderDomain
+        options.identityBaseURI || OpenPeer.settings.identityBaseURI,
+        options.outerFrameURL || OpenPeer.settings.outerFrameURL,
+        options.redirectURL || OpenPeer.settings.redirectURL,
+        options.identityProviderDomain ||
+          OpenPeer.settings.identityProviderDomain
       ]);
       return deferred.promise;
     };
@@ -84,3 +88,6 @@ module.exports = {
   }
 };
 
+module.exports = OpenPeer;
+
+});

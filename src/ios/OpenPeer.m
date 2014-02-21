@@ -30,10 +30,10 @@
  */
 
 #import "OpenPeer.h"
-#import "Utility.h"
 #import "AppConsts.h"
 #import "Logger.h"
-#import "Settings.h"
+#import "CDVOP.h"
+
 //SDK
 #import "OpenpeerSDK/HOPStack.h"
 #import "OpenpeerSDK/HOPLogger.h"
@@ -41,26 +41,18 @@
 #import "OpenpeerSDK/HOPCache.h"
 #import "OpenpeerSDK/HOPModelManager.h"
 #import "OpenpeerSDK/HOPSettings.h"
-//Managers
-#import "LoginManager.h"
+
 //Delegates
-#import "StackDelegate.h"
 #import "MediaEngineDelegate.h"
 #import "ConversationThreadDelegate.h"
 #import "CallDelegate.h"
 #import "AccountDelegate.h"
 #import "IdentityDelegate.h"
 #import "IdentityLookupDelegate.h"
-#import "CacheDelegate.h"
-//View controllers
-#import "MainViewController.h"
-
 
 //Private methods
 @interface OpenPeer ()
-
 - (void) createDelegates;
-//- (void) setLogLevels;
 @end
 
 
@@ -80,17 +72,6 @@
     return _sharedObject;
 }
 
-- (NSString*) authorizedApplicationId
-{
-    if (!_authorizedApplicationId)
-    {
-        NSDate* expiry = [[NSDate date] dateByAddingTimeInterval:(30 * 24 * 60 * 60)];
-        
-        _authorizedApplicationId = [HOPStack createAuthorizedApplicationID:[[Settings sharedSettings] getString: @"applicationId"] applicationIDSharedSecret:[[Settings sharedSettings] getString: @"applicationIdSharedSecret"] expires:expiry];
-    }
-    return _authorizedApplicationId;
-}
-
 - (NSString*) deviceId
 {
     if (!_deviceId)
@@ -98,7 +79,7 @@
         _deviceId = [[NSUserDefaults standardUserDefaults] objectForKey:keyOpenPeerUser];
         if ([_deviceId length] == 0)
         {
-            _deviceId = [Utility getGUIDstring];
+            _deviceId = [OpenPeer getGUIDstring];
             [[NSUserDefaults standardUserDefaults] setObject:_deviceId forKey:keyOpenPeerUser];
         }
     }
@@ -109,16 +90,20 @@
 {
     [self createDelegates];
     
+    /*
+     //TODO
     [[HOPSettings sharedSettings] setupWithDelegate:[Settings sharedSettings]];
-    
     [[HOPCache sharedCache] removeExpiredCookies];
     //Init cache singleton
     [[HOPCache sharedCache] setDelegate:self.cacheDelegate];
+    */
     
     if (![[HOPModelManager sharedModelManager] getLastLoggedInHomeUser])
     {
         //If not already set, set default login settings
-        BOOL isSetLoginSettings = [[Settings sharedSettings] isLoginSettingsSet];
+        //BOOL isSetLoginSettings = [[Settings sharedSettings] isLoginSettingsSet];
+        // TODO: get this from client
+        BOOL isSetLoginSettings = YES;
         if (!isSetLoginSettings)
         {
             [[HOPSettings sharedSettings] applyDefaults];
@@ -126,22 +111,24 @@
             NSString *filePath = [[NSBundle mainBundle] pathForResource:@"DefaultSettings" ofType:@"plist"];
             if ([filePath length] > 0)
             {
-                [[Settings sharedSettings] storeSettingsFromPath:filePath];
+                //[[Settings sharedSettings] storeSettingsFromPath:filePath];
             }
             
-            isSetLoginSettings = [[Settings sharedSettings] isLoginSettingsSet];
+            //isSetLoginSettings = [[Settings sharedSettings] isLoginSettingsSet];
         }
         
+        // TODO: get this from client
         //If not already set, set default app data
-        BOOL isSetAppData = [[Settings sharedSettings] isAppDataSet];
+        //BOOL isSetAppData = [[Settings sharedSettings] isAppDataSet];
+        BOOL isSetAppData = YES;
         if (!isSetAppData)
         {
             NSString* filePath = [[NSBundle mainBundle] pathForResource:@"CustomerSpecific" ofType:@"plist"];
             if ([filePath length] > 0)
             {
-                [[Settings sharedSettings] storeSettingsFromPath:filePath];
+                //[[Settings sharedSettings] storeSettingsFromPath:filePath];
             }
-            isSetAppData = [[Settings sharedSettings] isAppDataSet];
+            //isSetAppData = [[Settings sharedSettings] isAppDataSet];
         }
         
         //If some of must to have data is not set, notify the user
@@ -154,10 +141,6 @@
                                                       otherButtonTitles:@"Ok",nil];
             [alertView show];
         }
-        
-        
-        //Show QR scanner if user wants to change settings by reading QR code
-        [[self mainViewController] showQRScanner];
     }
     else
     {
@@ -174,7 +157,9 @@
     //Set log levels and start logging
     [Logger startAllSelectedLoggers];
 
-    //Init openpeer stack and set created delegates
+    
+    //TODO: Init openpeer stack using client side settings and set created delegates
+    /*
     [[HOPStack sharedStack] setupWithStackDelegate:self.stackDelegate mediaEngineDelegate:self.mediaEngineDelegate appID: self.authorizedApplicationId appName:[[Settings sharedSettings] getString: @"applicationName"] appImageURL:[[Settings sharedSettings] getString: @"applicationImageURL"]  appURL:[[Settings sharedSettings] getString: @"applicationURL"] userAgent:[Utility getUserAgentName] deviceID:self.deviceId deviceOs:[Utility getDeviceOs] system:[Utility getPlatform]];
 
     //Start with login procedure and display login view
@@ -183,13 +168,13 @@
     [[HOPMediaEngine sharedInstance] setEcEnabled:[[Settings sharedSettings] isMediaAECOn]];
     [[HOPMediaEngine sharedInstance] setAgcEnabled:[[Settings sharedSettings] isMediaAGCOn]];
     [[HOPMediaEngine sharedInstance] setNsEnabled:[[Settings sharedSettings] isMediaNSOn]];
+     */
 }
 
 - (void) shutdown
 {
     [[HOPStack sharedStack] shutdown];
-    
-    self.stackDelegate = nil;
+
     self.mediaEngineDelegate = nil;
     self.conversationThreadDelegate = nil;
     self.callDelegate = nil;
@@ -203,14 +188,24 @@
  */
 - (void) createDelegates
 {
-    self.stackDelegate = [[StackDelegate alloc] init];
     self.mediaEngineDelegate = [[MediaEngineDelegate alloc] init];
     self.conversationThreadDelegate = [[ConversationThreadDelegate alloc] init];
     self.callDelegate = [[CallDelegate alloc] init];
     self.accountDelegate = [[AccountDelegate alloc] init];
     self.identityDelegate = [[IdentityDelegate alloc] init];
-    self.identityDelegate.loginDelegate = self.mainViewController;
+    self.identityDelegate.loginDelegate = [CDVOP sharedObject];
     self.identityLookupDelegate = [[IdentityLookupDelegate alloc] init];
-    self.cacheDelegate = [[CacheDelegate alloc] init];
 }
+
+// Utility functions
+
+
++ (NSString *)getGUIDstring
+{
+    CFUUIDRef guid = CFUUIDCreate(nil);
+    NSString *strGuid = (NSString *)CFBridgingRelease(CFUUIDCreateString(nil, guid));
+    CFRelease(guid);
+    return strGuid;
+}
+
 @end

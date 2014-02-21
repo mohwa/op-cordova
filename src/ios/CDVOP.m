@@ -2,7 +2,13 @@
 
 @implementation CDVOP
 
-@synthesize webView, selfImageView, peerImageView, loginWebView, callbackId;
+@synthesize webView, selfImageView, peerImageView, webLoginViewController, callbackId;
+
++ (void)setSharedObject:(id)obj
+{
+    sharedObject = obj;
+}
+
 
 -(CDVPlugin*) initWithWebView:(UIWebView*)theWebView
 {
@@ -17,6 +23,9 @@
     
     [self configureVideos];
     [self configureLoginView];
+    
+    [CDVOP setSharedObject:self];
+
     return self;
 }
 
@@ -96,6 +105,7 @@
     NSLog(@"video config done.");
 }
 
+/*
 - (void)configureLoginView
 {
     CGRect screenRect = [[UIScreen mainScreen] bounds];
@@ -106,7 +116,7 @@
     loginWebView.backgroundColor = [UIColor clearColor];
     loginWebView.layer.zPosition = 1000;
     NSLog(@"login view config done.");
-}
+}*/
 
 /**
  * Logout from the current account and associated identities
@@ -158,6 +168,50 @@
         res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:hopIdentity.identityId];
     }
     [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
+}
+
+/**
+ * read setting from JavaScript settings object and return it as NSString*
+ */
+- (NSString*) getSetting:(NSString*)setting
+{
+    NSString *jsCall = [NSString stringWithFormat:@"OP.settings['%@'];", setting];
+    return [self.webView stringByEvaluatingJavaScriptFromString:jsCall];
+}
+
+- (void) showWebLoginView:(WebLoginViewController*) webLoginViewController
+{
+    if (webLoginViewController)
+    {
+        OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Show WebLoginViewController <%p>", webLoginViewController);
+        webLoginViewController.view.frame = self.view.bounds;
+        webLoginViewController.view.hidden = NO;
+        [webLoginViewController.view setAlpha:0];
+        
+        [UIView animateWithDuration:1 animations:^
+         {
+             [webLoginViewController.view setAlpha:1];
+             [self.view addSubview:webLoginViewController.view];
+         }
+                         completion:nil];
+    }
+}
+
+- (void) closeWebLoginView:(WebLoginViewController*) webLoginViewController
+{
+    if (webLoginViewController)
+    {
+        OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Close WebLoginViewController <%p>", webLoginViewController);
+        
+        [UIView animateWithDuration:1 animations:^
+         {
+             [webLoginViewController.view setAlpha:0];
+         }
+                         completion:^(BOOL finished)
+         {
+             [webLoginViewController.view removeFromSuperview];
+         }];
+    }
 }
 
 @end

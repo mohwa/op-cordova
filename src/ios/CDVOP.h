@@ -18,7 +18,7 @@
 
 //OP delegates
 #import "OpenPeer.h"
-
+#import "WebLoginViewController.h"
 
 @interface CDVOP : CDVPlugin <UIWebViewDelegate> {
     NSString* callbackId;
@@ -29,8 +29,9 @@
 @property (nonatomic, copy) NSString* callbackId;
 @property (nonatomic, retain) UIImageView *peerImageView;
 @property (nonatomic, retain) UIImageView *selfImageView;
-@property (nonatomic, weak) UIWebView *loginWebView;
-@property (nonatomic, weak) id coreObject;
+@property (nonatomic, weak) WebLoginViewController *webLoginViewController;
+
++ (id) sharedObject;
 
 // cordova plugin functions
 - (void) authorizeApp:(CDVInvokedUrlCommand*)command;
@@ -41,8 +42,10 @@
 - (void) showCatPictures:(CDVInvokedUrlCommand*)command;
 
 // helpers and other internal functions
-- (void) openLoginUrl:(NSString*)url;
-- (void) passMessageToJS:(NSString*)message;
+- (NSString*) getSetting:(NSString*)setting;
+- (void) showWebLoginView:(WebLoginViewController*) webLoginViewController;
+- (void) closeWebLoginView:(WebLoginViewController*) webLoginViewController;
+
 @end
 
 
