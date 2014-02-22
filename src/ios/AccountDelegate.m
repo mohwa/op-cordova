@@ -61,7 +61,7 @@
 //This method handles account state changes from SDK.
 - (void) account:(HOPAccount*) account stateChanged:(HOPAccountStates) accountState
 {
-    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelDebug, @"Account login state: %@", [HOPAccount stringForAccountState:accountState]);
+    //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelDebug, @"Account login state: %@", [HOPAccount stringForAccountState:accountState]);
     
     dispatch_async(dispatch_get_main_queue(), ^
     {
@@ -83,11 +83,11 @@
             case HOPAccountWaitingForBrowserWindowToBeMadeVisible:
             {
                 //Add login web view like main view subview
-                if (!self.webLoginViewController.view.superview)
+                if (!self.webLoginViewController.loginWebView.superview)
                 {
-                    [self.webLoginViewController.view setFrame:[[CDVOP sharedObject] webView].bounds];
+                    [self.webLoginViewController.loginWebView setFrame:[[CDVOP sharedObject] webView].bounds];
                     
-                    [[CDVOP sharedObject] showWebLoginView:self.webLoginViewController.view];
+                    [[CDVOP sharedObject] showWebLoginView:self.webLoginViewController.loginWebView];
                 }
                 
                 self.webLoginViewController.view.alpha = 0;
@@ -104,7 +104,7 @@
                 
             case HOPAccountWaitingForBrowserWindowToClose:
             {
-                [[CDVOP sharedObject] closeWebLoginView:self.webLoginViewController];
+                [[CDVOP sharedObject] closeWebLoginView:self.webLoginViewController.loginWebView];
                 
                 //Notify core that login web view is closed
                 [account notifyBrowserWindowClosed];
@@ -142,7 +142,7 @@
 
 - (void)onAccountAssociatedIdentitiesChanged:(HOPAccount *)account
 {
-    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Account associated identities has changed.");
+    //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Account associated identities has changed.");
     dispatch_async(dispatch_get_main_queue(), ^
     {
         NSArray* associatedIdentities = [account getAssociatedIdentities];
@@ -157,7 +157,7 @@
 
 - (void)onAccountPendingMessageForInnerBrowserWindowFrame:(HOPAccount*) account
 {
-    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Account: pending message for inner browser window frame.");
+    //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Account: pending message for inner browser window frame.");
   
     dispatch_async(dispatch_get_main_queue(), ^
     {

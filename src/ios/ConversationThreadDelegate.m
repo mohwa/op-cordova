@@ -46,7 +46,7 @@
 
 - (void) onConversationThreadNew:(HOPConversationThread*) conversationThread
 {
-    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Handling a new conversation thread creation.");
+    //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Handling a new conversation thread creation.");
     dispatch_async(dispatch_get_main_queue(), ^
     {
         if (conversationThread)
@@ -71,7 +71,7 @@
 
 - (void) onConversationThreadContactsChanged:(HOPConversationThread*) conversationThread
 {
-    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Conversation thread <%@> contact changed.",conversationThread);
+    //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Conversation thread <%@> contact changed.",conversationThread);
     dispatch_async(dispatch_get_main_queue(), ^
     {
     });
@@ -79,7 +79,7 @@
 
 - (void) onConversationThreadContactStateChanged:(HOPConversationThread*) conversationThread contact:(HOPContact*) contact contactState:(HOPConversationThreadContactStates) contactState
 {
-    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Conversation thread <%@> contact <%@> state: %@",conversationThread, contact,[HOPConversationThread stringForContactState:contactState]);
+    //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Conversation thread <%@> contact <%@> state: %@",conversationThread, contact,[HOPConversationThread stringForContactState:contactState]);
     dispatch_async(dispatch_get_main_queue(), ^
     {
     });
@@ -87,7 +87,7 @@
 
 - (void) onConversationThreadMessage:(HOPConversationThread*) conversationThread messageID:(NSString*) messageID
 {
-    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Handling a new message with id %@ for conversation thread.",messageID);
+    //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Handling a new message with id %@ for conversation thread.",messageID);
     dispatch_async(dispatch_get_main_queue(), ^{
         HOPMessage* message = [conversationThread getMessageForID:messageID];
         if (message)
@@ -100,7 +100,7 @@
 
 - (void) onConversationThreadMessageDeliveryStateChanged:(HOPConversationThread*) conversationThread messageID:(NSString*) messageID messageDeliveryStates:(HOPConversationThreadMessageDeliveryStates) messageDeliveryStates
 {
-    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Conversation thread message with id %@ delivery state has changed to: %@",messageID, [HOPConversationThread stringForMessageDeliveryState:messageDeliveryStates]);
+    //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Conversation thread message with id %@ delivery state has changed to: %@",messageID, [HOPConversationThread stringForMessageDeliveryState:messageDeliveryStates]);
 }
 
 - (void) onConversationThreadPushMessage:(HOPConversationThread*) conversationThread messageID:(NSString*) messageID contact:(HOPContact*) contact

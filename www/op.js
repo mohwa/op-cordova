@@ -1,3 +1,4 @@
+cordova.define("org.openpeer.cordova.OP", function(require, exports, module) {
 var exec = require('cordova/exec');
 var OpenPeer = {
   version: 0.0,
@@ -15,9 +16,7 @@ var OpenPeer = {
     telnetPortForLogger: '23', //TODO: check default is right
     isLoggerColorized: 'YES',
     outgoingTelnetServerPort: '23',  //TODO
-    isOutgoingTelnetColorized: 'YES',
-
-
+    isOutgoingTelnetColorized: 'YES'
   },
 
   getAccountStatus: function(success, error, options) {
@@ -55,6 +54,7 @@ var OpenPeer = {
 
     this.login = function(options) {
       var deferred = Q.defer();
+      if (!options) var options = {};
       exec(function(identityId) {
         deferred.resolve(identityId);
       }, function(error) {
@@ -99,3 +99,4 @@ var OpenPeer = {
 
 module.exports = OpenPeer;
 
+});

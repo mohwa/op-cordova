@@ -85,10 +85,12 @@
 {
     NSString *requestString = [[request URL] absoluteString];
     
+    /*
     if ([self.coreObject isKindOfClass:[HOPIdentity class]])
-        OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> WebLoginViewController\n Identity web request for URI: %@", self,[((HOPIdentity*) self.coreObject) getIdentityURI]);
+        //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> WebLoginViewController\n Identity web request for URI: %@", self,[((HOPIdentity*) self.coreObject) getIdentityURI]);
     else
-        OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> WebLoginViewController\n Account web request: %@", self,requestString);
+        //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> WebLoginViewController\n Account web request: %@", self,requestString);
+     */
     
     //Check if request contains JSON message for core
     if ([requestString hasPrefix:@"https://datapass.hookflash.me/?method="] || [requestString hasPrefix:@"http://datapass.hookflash.me/?method="])
@@ -118,7 +120,7 @@
 {
     NSString *requestString = [[[webView request] URL] absoluteString];
     
-    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelInsane, @"<%p> WebLoginViewController\nSTART LOADING - web request: %@", self, requestString);
+    //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelInsane, @"<%p> WebLoginViewController\nSTART LOADING - web request: %@", self, requestString);
 }
 
 
@@ -130,30 +132,30 @@
 
     if (!self.outerFrameInitialised && [requestString isEqualToString:[[CDVOP sharedObject] getSetting:@"outerFrameURL"]])
     {
-        OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> WebLoginViewController\nFINISH LOADING - outerFrameURL: %@", self,[[CDVOP sharedObject] getSetting:@"outerFrameURL"]);
+        //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> WebLoginViewController\nFINISH LOADING - outerFrameURL: %@", self,[[CDVOP sharedObject] getSetting:@"outerFrameURL"]);
         self.outerFrameInitialised = YES;
         [self onOuterFrameLoaded];
     }
     else if (!self.outerFrameInitialised && [requestString isEqualToString:namespaceGrantServiceURL])
     {
-        OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> WebLoginViewController\nFINISH LOADING - namespaceGrantServiceURL: %@", self, namespaceGrantServiceURL);
+        //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> WebLoginViewController\nFINISH LOADING - namespaceGrantServiceURL: %@", self, namespaceGrantServiceURL);
         self.outerFrameInitialised = YES;
         [self onOuterFrameLoaded];
     }
     else
     {
-        OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> WebLoginViewController\nFINISH LOADING - NOTHING",self);
+        //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> WebLoginViewController\nFINISH LOADING - NOTHING",self);
     }
 }
 
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error
 {
-    OPLog(HOPLoggerSeverityWarning, HOPLoggerLevelTrace, @"<%p> WebLoginViewController\nUIWebView _ERROR_ : %@",self,[error localizedDescription]);
+    //OPLog(HOPLoggerSeverityWarning, HOPLoggerLevelTrace, @"<%p> WebLoginViewController\nUIWebView _ERROR_ : %@",self,[error localizedDescription]);
 }
 
 - (void)notifyClient:(NSString *)message
 {
-    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> WebLoginViewController\n\n\n Message from JS: \n %@ \n\n",self,message);
+    //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> WebLoginViewController\n\n\n Message from JS: \n %@ \n\n",self,message);
     
     if ([self.coreObject isKindOfClass:[HOPIdentity class]])
     {

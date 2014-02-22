@@ -11,7 +11,6 @@ static CDVOP *shared;
     return shared;
 }
 
-
 -(CDVPlugin*) initWithWebView:(UIWebView*)theWebView
 {
     self = (CDVOP*)[super initWithWebView:theWebView];
@@ -34,7 +33,6 @@ static CDVOP *shared;
 // stress test UIImageViews using a series of cat pictures
 - (void)showCatPictures:(CDVInvokedUrlCommand*)command
 {
-    
     NSTimeInterval interval = [command.arguments[0] doubleValue];
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     peerImageView = [[UIImageView alloc] initWithFrame:screenRect];
@@ -150,6 +148,7 @@ static CDVOP *shared;
  */
 - (void) startLoginProcess:(CDVInvokedUrlCommand*)command
 {
+    NSLog(@"Starting the login process");
     CDVPluginResult* res = nil;
     NSString* identityURI = command.arguments[0];
     NSString* outerFrameURL = command.arguments[1];
@@ -162,8 +161,6 @@ static CDVOP *shared;
     
         //For identity login it is required to pass identity delegate, URL that will be requested upon successful login, identity URI and identity provider domain
         HOPIdentity* hopIdentity = [HOPIdentity loginWithDelegate:(id<HOPIdentityDelegate>)[[OpenPeer sharedOpenPeer] identityDelegate] identityProviderDomain:identityProviderDomain identityURIOridentityBaseURI:identityURI outerFrameURLUponReload:redirectAfterLoginCompleteURL];
-    
-    
         
     if (!hopIdentity) {
         NSString* error = [NSString stringWithFormat:@"Identity login has failed for uri: %@", identityURI];
@@ -183,11 +180,12 @@ static CDVOP *shared;
     return [self.webView stringByEvaluatingJavaScriptFromString:jsCall];
 }
 
-- (void) showWebLoginView:(UIWebView*) webLoginView
+- (void) showWebLoginView:(UIWebView*)webLoginView
 {
     if (webLoginView)
     {
-        OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Show WebLoginView <%p>", webLoginView);
+        NSLog(@"Displaying webLoginView");
+        //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Show WebLoginView <%p>", webLoginView);
         webLoginView.frame = self.webView.bounds;
         webLoginView.hidden = NO;
         webLoginView.layer.zPosition = 1000;
@@ -204,19 +202,19 @@ static CDVOP *shared;
     }
 }
 
-- (void) closeWebLoginView:(WebLoginViewController*) webLoginViewController
+- (void) closeWebLoginView:(UIWebView*)webLoginView
 {
-    if (webLoginViewController)
+    if (webLoginView)
     {
-        OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Close WebLoginViewController <%p>", webLoginViewController);
+        //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Close WebLoginView <%p>", webLoginView);
         
         [UIView animateWithDuration:1 animations:^
          {
-             [webLoginViewController.view setAlpha:0];
+             [webLoginView setAlpha:0];
          }
                          completion:^(BOOL finished)
          {
-             [webLoginViewController.view removeFromSuperview];
+             [webLoginView removeFromSuperview];
          }];
     }
 }

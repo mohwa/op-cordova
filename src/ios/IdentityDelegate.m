@@ -78,7 +78,7 @@
 {
     WebLoginViewController* ret = nil;
     
-    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> Identity - Get login web view for identity objectId:%d", identity, [[identity getObjectId] intValue]);
+    //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> Identity - Get login web view for identity objectId:%d", identity, [[identity getObjectId] intValue]);
     
     ret = [self.loginWebViewsDictionary objectForKey:[identity getObjectId]];
  
@@ -88,7 +88,7 @@
         //if (!ret)
         {
             ret= [[WebLoginViewController alloc] initWithCoreObject:identity];
-            OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> Identity - Created web view: %p \nidentity uri: %@ \nidentity object id:%d",identity, ret,[identity getIdentityURI],[[identity getObjectId] intValue]);
+            //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> Identity - Created web view: %p \nidentity uri: %@ \nidentity object id:%d",identity, ret,[identity getIdentityURI],[[identity getObjectId] intValue]);
         }
         ret.view.hidden = YES;
         ret.coreObject = identity;
@@ -97,12 +97,14 @@
     }
     else
     {
+        /*
         if (ret)
         {
-            OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> Identity - Retrieved exisitng web view:%p for identity objectId:%d", identity, ret, [[identity getObjectId] intValue]);
+            //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> Identity - Retrieved exisitng web view:%p for identity objectId:%d", identity, ret, [[identity getObjectId] intValue]);
         }
         else
-            OPLog(HOPLoggerSeverityWarning, HOPLoggerLevelTrace, @"<%p> Identity - getLoginWebViewForIdentity - NO VALID WEB VIEW:%p - %d", identity, ret, [[identity getObjectId] intValue]);
+            //OPLog(HOPLoggerSeverityWarning, HOPLoggerLevelTrace, @"<%p> Identity - getLoginWebViewForIdentity - NO VALID WEB VIEW:%p - %d", identity, ret, [[identity getObjectId] intValue]);
+         */
     }
     return ret;
 }
@@ -114,15 +116,15 @@
 
 - (void)identity:(HOPIdentity *)identity stateChanged:(HOPIdentityStates)state
 {
-    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> Identity login state has changed to: %@ - identityURI: %@",identity, [HOPIdentity stringForIdentityState:state], [identity getIdentityURI]);
+    //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> Identity login state has changed to: %@ - identityURI: %@",identity, [HOPIdentity stringForIdentityState:state], [identity getIdentityURI]);
     
     //Prevent to have two web views visible at the time
     if (state == HOPIdentityStateWaitingForBrowserWindowToBeMadeVisible)
     {
-        OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> Identity tries to obtain web view visibility mutex. identityURI: %@ identityObjectId: %d",identity,[identity getIdentityURI], [[identity getObjectId] integerValue]);
+        //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> Identity tries to obtain web view visibility mutex. identityURI: %@ identityObjectId: %d",identity,[identity getIdentityURI], [[identity getObjectId] integerValue]);
         pthread_mutex_lock(&mutexVisibleWebView);
         self.identityMutexOwner = identity;
-        OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> Identity owns web view visibility mutex. identityURI: %@ identityObjectId: %d",identity,[identity getIdentityURI],[[identity getObjectId] integerValue]);
+        //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> Identity owns web view visibility mutex. identityURI: %@ identityObjectId: %d",identity,[identity getIdentityURI],[[identity getObjectId] integerValue]);
     }
     
     dispatch_async(dispatch_get_main_queue(), ^
@@ -183,7 +185,7 @@
                 if ([[self.identityMutexOwner getObjectId] intValue] == [[identity getObjectId] intValue])
                 {
                     self.identityMutexOwner = nil;
-                    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> Identity releases web view visibility mutex. identityURI: %@",identity,[identity getIdentityURI]);
+                    //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> Identity releases web view visibility mutex. identityURI: %@",identity,[identity getIdentityURI]);
                     pthread_mutex_unlock(&mutexVisibleWebView);
                 }
             }
@@ -213,7 +215,7 @@
 
 - (void)onIdentityPendingMessageForInnerBrowserWindowFrame:(HOPIdentity *)identity
 {
-    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> Identity: pending message for inner browser window frame.",identity);
+    //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> Identity: pending message for inner browser window frame.",identity);
     
     dispatch_async(dispatch_get_main_queue(), ^
     {
@@ -231,7 +233,7 @@
 
 - (void)onIdentityRolodexContactsDownloaded:(HOPIdentity *)identity
 {
-    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> Identity rolodex contacts are downloaded.",identity);
+    //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> Identity rolodex contacts are downloaded.",identity);
 
     if (identity)
     {
@@ -245,7 +247,7 @@
         //Get downloaded rolodex contacts
         BOOL rolodexContactsObtained = [identity getDownloadedRolodexContacts:&flushAllRolodexContacts outVersionDownloaded:&downloadedVersion outRolodexContacts:&rolodexContacts];
         
-        OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Identity URI: %@ - Total number of roldex contacts: %d",[identity getIdentityURI], [rolodexContacts count]);
+        //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Identity URI: %@ - Total number of roldex contacts: %d",[identity getIdentityURI], [rolodexContacts count]);
         
         if ([downloadedVersion length] > 0)
             associatedIdentity.downloadedVersion = downloadedVersion;
@@ -285,7 +287,7 @@
 
 - (void) onNewIdentity:(HOPIdentity*) identity
 {
-    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> Identity: Handling a new identity with the uri:%@", identity,[identity getIdentityURI]);
+    //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> Identity: Handling a new identity with the uri:%@", identity,[identity getIdentityURI]);
     //[[LoginManager sharedLoginManager] attachDelegateForIdentity:identity forceAttach:YES];
     // TODO: inform client about the new identity
 }
