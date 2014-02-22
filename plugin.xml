@@ -46,7 +46,7 @@
 
       <header-file src="src/ios/WebLoginViewController.h" />
       <source-file src="src/ios/WebLoginViewController.m" />
-      <header-file src="src/ios/Delegate.h" />
+      <header-file src="src/ios/Delegates.h" />
       <header-file src="src/ios/AccountDelegate.h" />
       <source-file src="src/ios/AccountDelegate.m" />
       <header-file src="src/ios/CallDelegate.h" />

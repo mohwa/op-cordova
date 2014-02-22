@@ -41,14 +41,9 @@
 
 #import <pthread.h>
 
-#import "LoginManager.h"
-#import "ContactsManager.h"
+#import "CDVOP.h"
 #import "AppConsts.h"
 #import "OpenPeer.h"
-#import "MainViewController.h"
-#import "ContactsViewController.h"
-#import "ActivityIndicatorViewController.h"
-#import "Settings.h"
 
 @interface IdentityDelegate()
 {
@@ -146,23 +141,24 @@
                 
             case HOPIdentityStateWaitingAttachmentOfDelegate:
             {
-                [[LoginManager sharedLoginManager] attachDelegateForIdentity:identity forceAttach:NO];
+                //[[LoginManager sharedLoginManager] attachDelegateForIdentity:identity forceAttach:NO];
             }
                 break;
                 
             case HOPIdentityStateWaitingForBrowserWindowToBeLoaded:
             {
+                //TODO
                 webLoginViewController = [self getLoginWebViewForIdentity:identity create:YES];
-                if ([[LoginManager sharedLoginManager] isLogin] || [[LoginManager sharedLoginManager] isAssociation])
-                {
-                    [self.loginDelegate onOpeningLoginPage];
-                }
+                //if ([[LoginManager sharedLoginManager] isLogin] || [[LoginManager sharedLoginManager] isAssociation])
+                //{
+                //    [self.loginDelegate onOpeningLoginPage];
+                //}
 
-                if ([[LoginManager sharedLoginManager] preloadedWebLoginViewController] != webLoginViewController)
-                {
+                //if ([[LoginManager sharedLoginManager] preloadedWebLoginViewController] != webLoginViewController)
+                //{
                     //Open identity login web page
-                    [webLoginViewController openLoginUrl:[[Settings sharedSettings] getOuterFrameURL]];
-                }
+                    [webLoginViewController openLoginUrl:[[CDVOP sharedObject] getSetting:@"outerFrameURL"]];
+                //}
             }
                 break;
                 
@@ -195,8 +191,9 @@
                 
             case HOPIdentityStateReady:
                 [self.loginDelegate onIdentityLoginFinished];
-                if ([[LoginManager sharedLoginManager] isLogin] || [[LoginManager sharedLoginManager] isAssociation])
-                    [[LoginManager sharedLoginManager] onIdentityAssociationFinished:identity];
+                // TODO: inform client
+                //if ([[LoginManager sharedLoginManager] isLogin] || [[LoginManager sharedLoginManager] isAssociation])
+                //    [[LoginManager sharedLoginManager] onIdentityAssociationFinished:identity];
                 break;
                 
             case HOPIdentityStateShutdown:
@@ -235,8 +232,7 @@
 - (void)onIdentityRolodexContactsDownloaded:(HOPIdentity *)identity
 {
     OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> Identity rolodex contacts are downloaded.",identity);
-    //Remove activity indicator
-    [[ActivityIndicatorViewController sharedActivityIndicator] showActivityIndicator:NO withText:nil inView:nil];
+
     if (identity)
     {
         HOPHomeUser* homeUser = [[HOPModelManager sharedModelManager] getLastLoggedInHomeUser];
@@ -260,9 +256,8 @@
         if (rolodexContactsObtained)
         {
             //Unmark all received contacts, that were earlier set for deletion 
-            [rolodexContacts setValue:[NSNumber numberWithBool:NO] forKey:@"readyForDeletion"];
-            
-            [[ContactsManager sharedContactsManager] identityLookupForContacts:rolodexContacts identityServiceDomain:[identity getIdentityProviderDomain]];
+            //[rolodexContacts setValue:[NSNumber numberWithBool:NO] forKey:@"readyForDeletion"];
+            //[[ContactsManager sharedContactsManager] identityLookupForContacts:rolodexContacts identityServiceDomain:[identity getIdentityProviderDomain]];
             
             //Check if there are more contacts marked for deletion
             NSArray* contactsToDelete = [[HOPModelManager sharedModelManager] getAllRolodexContactsMarkedForDeletionForHomeUserIdentityURI:[identity getIdentityURI]];
@@ -271,7 +266,8 @@
             if ([contactsToDelete count] > 0)
                 [identity startTimerForContactsDeletion];
             
-            [[[[OpenPeer sharedOpenPeer] mainViewController] contactsTableViewController] onContactsLoaded];
+            // TODO: inform client that contacts are loaded
+            //[[[[OpenPeer sharedOpenPeer] mainViewController] contactsTableViewController] onContactsLoaded];
         }
         else if (flushAllRolodexContacts)
         {
@@ -283,14 +279,15 @@
             //[[HOPModelManager sharedModelManager] saveContext];
         }
         [[HOPModelManager sharedModelManager] saveContext];
-        [[[ContactsManager sharedContactsManager] setOfIdentitiesWhoseContactsDownloadInProgress] removeObject:[identity getIdentityURI]];
+        //[[[ContactsManager sharedContactsManager] setOfIdentitiesWhoseContactsDownloadInProgress] removeObject:[identity getIdentityURI]];
     }
 }
 
 - (void) onNewIdentity:(HOPIdentity*) identity
 {
     OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> Identity: Handling a new identity with the uri:%@", identity,[identity getIdentityURI]);
-    [[LoginManager sharedLoginManager] attachDelegateForIdentity:identity forceAttach:YES];
+    //[[LoginManager sharedLoginManager] attachDelegateForIdentity:identity forceAttach:YES];
+    // TODO: inform client about the new identity
 }
 @end
 

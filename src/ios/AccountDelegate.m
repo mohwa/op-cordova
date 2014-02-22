@@ -87,7 +87,7 @@
                 {
                     [self.webLoginViewController.view setFrame:[[CDVOP sharedObject] webView].bounds];
                     
-                    [[[OpenPeer sharedOpenPeer] mainViewController] showWebLoginView:self.webLoginViewController];
+                    [[CDVOP sharedObject] showWebLoginView:self.webLoginViewController.view];
                 }
                 
                 self.webLoginViewController.view.alpha = 0;
@@ -104,7 +104,7 @@
                 
             case HOPAccountWaitingForBrowserWindowToClose:
             {
-                [[[OpenPeer sharedOpenPeer] mainViewController] closeWebLoginView:self.webLoginViewController];
+                [[CDVOP sharedObject] closeWebLoginView:self.webLoginViewController];
                 
                 //Notify core that login web view is closed
                 [account notifyBrowserWindowClosed];
@@ -112,7 +112,7 @@
                 break;
                 
             case HOPAccountStateReady:
-                [[LoginManager sharedLoginManager] onUserLoggedIn];
+                // TODO inform client that login has finished and account is ready
                 break;
                 
             case HOPAccountStateShuttingDown:
@@ -123,11 +123,13 @@
                 HOPAccountState* accountState = [account getState];
                 if (accountState.errorCode && ![[OpenPeer sharedOpenPeer] appEnteredForeground])
                 {
-                    [[[OpenPeer sharedOpenPeer] mainViewController]  onAccountLoginError:accountState.errorReason];
+                    // TODO: handle the login error case
+                    //[[[OpenPeer sharedOpenPeer] mainViewController]  onAccountLoginError:accountState.errorReason];
                 }
                 else
                 {
-                    [[LoginManager sharedLoginManager] login];
+                    // TODO: login
+                    //[[LoginManager sharedLoginManager] login];
                 }
             }
                 break;
@@ -146,7 +148,9 @@
         NSArray* associatedIdentities = [account getAssociatedIdentities];
         for (HOPIdentity* identity in associatedIdentities)
         {
-            [[LoginManager sharedLoginManager] attachDelegateForIdentity:identity forceAttach:NO];
+            // TODO
+            NSLog(@"account associated identities changes");
+            //[[LoginManager sharedLoginManager] attachDelegateForIdentity:identity forceAttach:NO];
         }
     });
 }

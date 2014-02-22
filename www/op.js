@@ -3,12 +3,21 @@ var OpenPeer = {
   version: 0.0,
 
   settings: {
-    namespaceGrantServiceURL: 'namespaceGrantServiceURL', //TODO
+    namespaceGrantServiceURL: 'namespaceGrantServiceURL', //TODO what should this be?
     identityBaseURI: 'identity://idprovider-javascript.hookflash.me/',
     outerFrameURL:
       'https://app-javascript.hookflash.me/outer.html?view=choose',
     redirectURL: 'https://app-javascript.hookflash.me/outer.html?reload=true',
-    identityProviderDomain: 'idprovider-javascript.hookflash.me'
+    identityProviderDomain: 'idprovider-javascript.hookflash.me',
+
+    // Logger settings
+    isLoggerEnabled: 'NO',
+    telnetPortForLogger: '23', //TODO: check default is right
+    isLoggerColorized: 'YES',
+    outgoingTelnetServerPort: '23',  //TODO
+    isOutgoingTelnetColorized: 'YES',
+
+
   },
 
   getAccountStatus: function(success, error, options) {
@@ -90,4 +99,3 @@ var OpenPeer = {
 
 module.exports = OpenPeer;
 
-});

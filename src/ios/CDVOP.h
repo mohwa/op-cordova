@@ -9,12 +9,19 @@
 #import <Cordova/CDVViewController.h>
 
 //OP SDK
-#import "OpenpeerSDK/HOPStack.h"
-#import "OpenpeerSDK/HOPLogger.h"
-#import "OpenpeerSDK/HOPMediaEngine.h"
-#import "OpenpeerSDK/HOPCache.h"
-#import "OpenpeerSDK/HOPAccount.h"
-#import "OpenpeerSDK/HOPIdentity.h"
+#import <OpenpeerSDK/HOPStack.h>
+#import <OpenpeerSDK/HOPLogger.h>
+#import <OpenpeerSDK/HOPMediaEngine.h>
+#import <OpenpeerSDK/HOPCache.h>
+#import <OpenpeerSDK/HOPAccount.h>
+#import <OpenpeerSDK/HOPIdentity.h>
+#import <OpenPeerSDK/HOPTypes.h>
+#import <OpenpeerSDK/HOPHomeUser.h>
+#import <OpenpeerSDK/HOPModelManager.h>
+#import <OpenpeerSDK/HOPAssociatedIdentity.h>
+#import <OpenpeerSDK/HOPIdentityContact.h>
+#import <OpenpeerSDK/HOPRolodexContact.h>
+
 
 //OP delegates
 #import "OpenPeer.h"
@@ -43,8 +50,8 @@
 
 // helpers and other internal functions
 - (NSString*) getSetting:(NSString*)setting;
-- (void) showWebLoginView:(WebLoginViewController*) webLoginViewController;
-- (void) closeWebLoginView:(WebLoginViewController*) webLoginViewController;
+- (void) showWebLoginView:(UIWebView*) webLoginView;
+- (void) closeWebLoginView:(UIWebView*) webLoginView;
 
 @end
 

@@ -31,6 +31,12 @@
 
 #import <Foundation/Foundation.h>
 
+#import "OpenpeerSDK/HOPLogger.h"
+
+#import "AppConsts.h"
+#import "OpenPeer.h"
+#import "CDVOP.h"
+
 typedef enum
 {
     LOGGER_STD_OUT,

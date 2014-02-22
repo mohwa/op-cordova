@@ -30,16 +30,14 @@
  */
 
 #import "Logger.h"
-#import "AppConsts.h"
-#import "OpenPeer.h"
-
-#import "OpenpeerSDK/HOPLogger.h"
 
 @implementation Logger
 
 + (void) setLogLevels
 {
     //For each system you can choose log level from HOPClientLogLevelNone (turned off) to HOPClientLogLevelInsane (most detail).
+    /*
+     TODO: get log level settings from client side (from CDVOP instance
     [HOPLogger setLogLevelbyName:moduleApplication level:[[Settings sharedSettings] getLoggerLevelForAppModuleKey:moduleApplication]];
     [HOPLogger setLogLevelbyName:moduleServices level:[[Settings sharedSettings] getLoggerLevelForAppModuleKey:moduleServices]];
     [HOPLogger setLogLevelbyName:moduleServicesWire level:[[Settings sharedSettings] getLoggerLevelForAppModuleKey:moduleServicesWire]];
@@ -58,6 +56,7 @@
     [HOPLogger setLogLevelbyName:moduleSDK level:[[Settings sharedSettings] getLoggerLevelForAppModuleKey:moduleSDK]];
     [HOPLogger setLogLevelbyName:moduleMedia level:[[Settings sharedSettings] getLoggerLevelForAppModuleKey:moduleMedia]];
     [HOPLogger setLogLevelbyName:moduleJavaScript level:[[Settings sharedSettings] getLoggerLevelForAppModuleKey:moduleJavaScript]];
+     */
 }
 
 
@@ -78,8 +77,8 @@
 {
     if (start)
     {
-        NSString* port =[[Settings sharedSettings] getServerPortForLogger:LOGGER_TELNET];
-        BOOL colorized = [[Settings sharedSettings] isColorizedOutputForLogger:LOGGER_TELNET];
+        NSString* port = [[CDVOP sharedObject] getSetting:@"telnetPortForLogger"];
+        BOOL colorized = [[[CDVOP sharedObject] getSetting:@"isLoggerColorized"] boolValue];
         if ([port length] > 0)
             [HOPLogger installTelnetLogger:[port intValue] maxSecondsWaitForSocketToBeAvailable:60 colorizeOutput:colorized];
     }
@@ -93,8 +92,8 @@
 {
     if (start)
     {
-        NSString* server =[[Settings sharedSettings] getServerPortForLogger:LOGGER_OUTGOING_TELNET];
-        BOOL colorized = [[Settings sharedSettings] isColorizedOutputForLogger:LOGGER_OUTGOING_TELNET];
+        NSString* server = [[CDVOP sharedObject] getSetting:@"outgoingTelnetServerPort"];
+        BOOL colorized = [[[CDVOP sharedObject] getSetting:@"isOutgoingTelnetColorized"] boolValue];
         if ([server length] > 0)
             [HOPLogger installOutgoingTelnetLogger:server colorizeOutput:colorized stringToSendUponConnection:[[OpenPeer sharedOpenPeer] authorizedApplicationId]];
     }
@@ -107,11 +106,10 @@
 + (void) startAllSelectedLoggers
 {
     [self setLogLevels];
-    [self startStdLogger:[[Settings sharedSettings] isLoggerEnabled:LOGGER_STD_OUT]];
-    [self startTelnetLogger:[[Settings sharedSettings] isLoggerEnabled:LOGGER_TELNET]];
-    [self startOutgoingTelnetLogger:[[Settings sharedSettings] isLoggerEnabled:LOGGER_OUTGOING_TELNET]];
+    [self startStdLogger:[[[CDVOP sharedObject] getSetting:@"isStandardLoggerEnabled"] boolValue]];
+    [self startTelnetLogger:[[[CDVOP sharedObject] getSetting:@"isTelnetLoggerEnabled"] boolValue]];
+    [self startOutgoingTelnetLogger:[[[CDVOP sharedObject] getSetting:@"isOutgoingTelnetLoggerEnabled"] boolValue]];
 }
-
 
 + (void) start:(BOOL) start logger:(LoggerTypes) type
 {
@@ -137,9 +135,8 @@
 
 + (void) startTelnetLoggerOnStartUp
 {
-    [[Settings sharedSettings] saveDefaultsLoggerSettings];
     [Logger startAllSelectedLoggers];
-    
+
     UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"OpenPeer" message:@"Logger is started! Almost all log levels are set to trace. If you want to change that, you can do that from the settings." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
     [alert show];
 }
