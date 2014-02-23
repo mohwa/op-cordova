@@ -4,18 +4,19 @@ var OpenPeer = {
   version: 0.0,
 
   settings: {
-    namespaceGrantServiceURL: 'namespaceGrantServiceURL', //TODO what should this be?
-    identityBaseURI: 'identity://idprovider-javascript.hookflash.me/',
+    namespaceGrantServiceURL: 'http://jsouter-v1-beta-1-i.hcs.io/grant.html',
+    identityFederateBaseURI: 'identity://identity-v1-beta-1-i.hcs.io/',
     outerFrameURL:
-      'https://app-javascript.hookflash.me/outer.html?view=choose',
-    redirectURL: 'https://app-javascript.hookflash.me/outer.html?reload=true',
-    identityProviderDomain: 'idprovider-javascript.hookflash.me',
+      'http://jsouter-v1-beta-1-i.hcs.io/identity.html?view=choose&federated=false',
+    redirectURL: '',
+    lockBoxServiceDomain: 'lockbox-v1-beta-1-i.hcs.io',
+    identityProviderDomain: 'identity-v1-beta-1-i.hcs.io',
 
     // Logger settings
     isLoggerEnabled: 'NO',
-    telnetPortForLogger: '23', //TODO: check default is right
+    telnetPortForLogger: '59999',
     isLoggerColorized: 'YES',
-    outgoingTelnetServerPort: '23',  //TODO
+    outgoingTelnetServerPort: 'tcp-logger-v1-beta-1-i.hcs.io:8055',
     isOutgoingTelnetColorized: 'YES'
   },
 
@@ -60,7 +61,8 @@ var OpenPeer = {
       }, function(error) {
         deferred.reject(new Error('login failed: ' + error));
       }, 'CDVOP', 'startLoginProcess', [
-        options.identityBaseURI || OpenPeer.settings.identityBaseURI,
+        options.identityFederateBaseURI ||
+          OpenPeer.settings.identityFederateBaseURI,
         options.outerFrameURL || OpenPeer.settings.outerFrameURL,
         options.redirectURL || OpenPeer.settings.redirectURL,
         options.identityProviderDomain ||

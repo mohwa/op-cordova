@@ -165,6 +165,7 @@ static CDVOP *shared;
     if (!hopIdentity) {
         NSString* error = [NSString stringWithFormat:@"Identity login has failed for uri: %@", identityURI];
         res = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error];
+        NSLog(@"%@", error);
     } else {
         res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:hopIdentity.identityId];
     }
