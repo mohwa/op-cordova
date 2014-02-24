@@ -43,6 +43,7 @@
 #import "OpenpeerSDK/HOPSettings.h"
 
 //Delegates
+#import "StackDelegate.h"
 #import "MediaEngineDelegate.h"
 #import "ConversationThreadDelegate.h"
 #import "CallDelegate.h"
@@ -86,18 +87,16 @@
     return _deviceId;
 }
 
+/*
 - (void) preSetup
 {
     [self createDelegates];
-    
-    /*
      //TODO
     [[HOPSettings sharedSettings] setupWithDelegate:[Settings sharedSettings]];
     [[HOPCache sharedCache] removeExpiredCookies];
     //Init cache singleton
     [[HOPCache sharedCache] setDelegate:self.cacheDelegate];
-    */
-    
+ 
     if (![[HOPModelManager sharedModelManager] getLastLoggedInHomeUser])
     {
         //If not already set, set default login settings
@@ -147,54 +146,63 @@
         [self setup];
     }
 }
+*/
 
 /**
  Initializes the open peer stack. After initialization succeeds, login screen is displayed, or user relogin started.
- @param inMainViewController MainViewController Input main view controller.
+ @param authorizedApplicationId that is generated based on app id and shared secret
  */
-- (void) setup
+- (void) setup:(NSString*)authorizedApplicationId
 {
+    [self createDelegates];
+
     //Set log levels and start logging
     [Logger startAllSelectedLoggers];
 
+    NSString* applicationName = [[CDVOP sharedObject] getSetting:@"applicationName"];
+    NSString* applicationURL = [[CDVOP sharedObject] getSetting:@"applicationURL"];
+    NSString* applicationImageURL = [[CDVOP sharedObject] getSetting:@"applicationImageURL"];
     
     //TODO: Init openpeer stack using client side settings and set created delegates
-    /*
-    [[HOPStack sharedStack] setupWithStackDelegate:self.stackDelegate mediaEngineDelegate:self.mediaEngineDelegate appID: self.authorizedApplicationId appName:[[Settings sharedSettings] getString: @"applicationName"] appImageURL:[[Settings sharedSettings] getString: @"applicationImageURL"]  appURL:[[Settings sharedSettings] getString: @"applicationURL"] userAgent:[Utility getUserAgentName] deviceID:self.deviceId deviceOs:[Utility getDeviceOs] system:[Utility getPlatform]];
+    [[HOPStack sharedStack] setupWithStackDelegate:self.stackDelegate mediaEngineDelegate:self.mediaEngineDelegate appID:authorizedApplicationId appName:applicationName appImageURL:applicationImageURL appURL:applicationURL userAgent:[OpenPeer getUserAgentName] deviceID:self.deviceId deviceOs:[OpenPeer getDeviceOs] system:[OpenPeer getPlatform]];
 
     //Start with login procedure and display login view
-    [[LoginManager sharedLoginManager] login];
-    
+    //[[LoginManager sharedLoginManager] login];
+    /*
     [[HOPMediaEngine sharedInstance] setEcEnabled:[[Settings sharedSettings] isMediaAECOn]];
     [[HOPMediaEngine sharedInstance] setAgcEnabled:[[Settings sharedSettings] isMediaAGCOn]];
     [[HOPMediaEngine sharedInstance] setNsEnabled:[[Settings sharedSettings] isMediaNSOn]];
      */
+    NSLog(@"Finished setting up HOP stack");
 }
 
 - (void) shutdown
 {
     [[HOPStack sharedStack] shutdown];
-
+    
+    self.stackDelegate = nil;
     self.mediaEngineDelegate = nil;
     self.conversationThreadDelegate = nil;
     self.callDelegate = nil;
     self.accountDelegate = nil;
     self.identityDelegate = nil;
     self.identityLookupDelegate = nil;
-    self.cacheDelegate = nil;
+    //self.cacheDelegate = nil;
 }
 /**
  Method used for all delegates creation. Delegates will catch events from the Open Peer SDK and handle them properly.
  */
 - (void) createDelegates
 {
+    self.stackDelegate = [[StackDelegate alloc] init];
     self.mediaEngineDelegate = [[MediaEngineDelegate alloc] init];
     self.conversationThreadDelegate = [[ConversationThreadDelegate alloc] init];
     self.callDelegate = [[CallDelegate alloc] init];
     self.accountDelegate = [[AccountDelegate alloc] init];
     self.identityDelegate = [[IdentityDelegate alloc] init];
-    self.identityDelegate.loginDelegate = [CDVOP sharedObject];
+    //self.identityDelegate.loginDelegate = self.mainViewController;
     self.identityLookupDelegate = [[IdentityLookupDelegate alloc] init];
+    //self.cacheDelegate = [[CacheDelegate alloc] init];
 }
 
 // Utility functions
@@ -206,6 +214,65 @@
     NSString *strGuid = (NSString *)CFBridgingRelease(CFUUIDCreateString(nil, guid));
     CFRelease(guid);
     return strGuid;
+}
+
++ (NSString*) getDeviceOs
+{
+    NSString* deviceOs = [NSString stringWithFormat:@"%@ %@,",[[UIDevice currentDevice] systemName],[[UIDevice currentDevice]  systemVersion]];
+    return deviceOs;
+}
+
++ (NSString*) getPlatform
+{
+    size_t size;
+	sysctlbyname("hw.machine", NULL, &size, NULL, 0);
+    //sysctlbyname("hw.model", NULL, &size, NULL, 0);
+	char *machine = (char*)malloc(size);
+	sysctlbyname("hw.machine", machine, &size, NULL, 0);
+    //sysctlbyname("hw.model", machine, &size, NULL, 0);
+	NSString *platform = [NSString stringWithCString:machine encoding:NSUTF8StringEncoding];
+	free(machine);
+    
+    if ([platform isEqualToString:@"iPhone1,1"]) return @"iPhone 1G";
+	if ([platform isEqualToString:@"iPhone1,2"]) return @"iPhone 3G";
+	if ([platform isEqualToString:@"iPhone2,1"]) return @"iPhone 3GS";
+    if ([platform hasPrefix:@"iPhone3"]) return @"iPhone 4";
+    if ([platform hasPrefix:@"iPhone4"]) return @"iPhone 4S";
+    
+	if ([platform isEqualToString:@"iPod1,1"])   return @"iPod Touch 1G";
+	if ([platform isEqualToString:@"iPod2,1"])   return @"iPod Touch 2G";
+    if ([platform hasPrefix:@"iPod3"])   return @"iPod Touch 3G";
+    if ([platform hasPrefix:@"iPod4"])   return @"iPod Touch 4G";
+    
+    
+    if ([platform isEqualToString:@"iPad1,1"])   return @"iPad 1";
+	if ([platform isEqualToString:@"iPad2,1"])   return @"iPad 2";
+    if ([platform hasPrefix:@"iPad3"])    return @"iPad 3";
+    
+	if ([platform isEqualToString:@"i386"])   return @"iPhone Simulator";
+	return platform;
+}
+
++ (NSString*) getUserAgentName
+{
+    NSString* developerId = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"Hookflash Developer ID"];
+    
+    NSString* appName = [[[NSBundle mainBundle] infoDictionary]   objectForKey:@"CFBundleName"];
+    NSString* appVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"];
+    NSString* appOs = [[UIDevice currentDevice] systemName];
+    NSString* appVersionOs = [[UIDevice currentDevice] systemVersion];
+    NSString* deviceModel = [[UIDevice currentDevice] model];
+    
+    NSString* model = nil;
+    
+    if ([deviceModel hasPrefix:@"iPhone"] || [deviceModel hasPrefix:@"iPod"])
+        model = @"iPhone";
+    else if ([deviceModel hasPrefix:@"iPad"])
+        model = @"iPad";
+    
+    NSString* userAgent = [NSString stringWithFormat:@"%@/%@ (%@ %@;%@) HOPID/1.0 (%@)",appName,appVersion,appOs,appVersionOs,model,developerId];
+    
+    return userAgent;
 }
 
 @end

@@ -26,7 +26,6 @@ static CDVOP *shared;
     //[self configureLoginView];
     
     shared = self;
-
     return self;
 }
 
@@ -71,6 +70,9 @@ static CDVOP *shared;
     NSArray* arguments = command.arguments;
     NSDate* expiry = [[NSDate date] dateByAddingTimeInterval:(30 * 24 * 60 * 60)];
     NSString* authorizedApplicationId = [HOPStack createAuthorizedApplicationID:arguments[0] applicationIDSharedSecret:arguments[1] expires:expiry];
+    
+    // initialize and setup HOP Stack
+    [[OpenPeer sharedOpenPeer] setup:authorizedApplicationId];
 
     // TODO: check that authorization was successful and send error otherwise
     res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:authorizedApplicationId];
@@ -155,13 +157,25 @@ static CDVOP *shared;
     NSString* redirectAfterLoginCompleteURL = command.arguments[2];
     NSString* identityProviderDomain = command.arguments[3];
     
-    if (![[HOPAccount sharedAccount] isCoreAccountCreated] || [[HOPAccount sharedAccount] getState].state == HOPAccountStateShutdown) {
-        [[HOPAccount sharedAccount] loginWithAccountDelegate:(id<HOPAccountDelegate>)[[OpenPeer sharedOpenPeer] accountDelegate] conversationThreadDelegate:(id<HOPConversationThreadDelegate>) [[OpenPeer sharedOpenPeer] conversationThreadDelegate] callDelegate:(id<HOPCallDelegate>) [[OpenPeer sharedOpenPeer] callDelegate]  namespaceGrantOuterFrameURLUponReload:outerFrameURL grantID:[[OpenPeer sharedOpenPeer] deviceId] lockboxServiceDomain:identityProviderDomain forceCreateNewLockboxAccount:NO];
-        }
+    NSString* deviceId = [[OpenPeer sharedOpenPeer] deviceId];
     
-        //For identity login it is required to pass identity delegate, URL that will be requested upon successful login, identity URI and identity provider domain
-        HOPIdentity* hopIdentity = [HOPIdentity loginWithDelegate:(id<HOPIdentityDelegate>)[[OpenPeer sharedOpenPeer] identityDelegate] identityProviderDomain:identityProviderDomain identityURIOridentityBaseURI:identityURI outerFrameURLUponReload:redirectAfterLoginCompleteURL];
-        
+    if (![[HOPAccount sharedAccount] isCoreAccountCreated] || [[HOPAccount sharedAccount] getState].state == HOPAccountStateShutdown)
+    {
+        [[HOPAccount sharedAccount] loginWithAccountDelegate:(id<HOPAccountDelegate>)[[OpenPeer sharedOpenPeer] accountDelegate] conversationThreadDelegate:(id<HOPConversationThreadDelegate>) [[OpenPeer sharedOpenPeer] conversationThreadDelegate] callDelegate:(id<HOPCallDelegate>) [[OpenPeer sharedOpenPeer] callDelegate]  namespaceGrantOuterFrameURLUponReload:outerFrameURL grantID:deviceId lockboxServiceDomain:identityProviderDomain forceCreateNewLockboxAccount:NO];
+    }
+    
+    NSLog(@"Device id is: %@", deviceId);
+    
+    @try {
+        NSLog(@"HOP account status is: %@", [[HOPAccount sharedAccount] getState]);
+    }
+    @catch (NSException *exception) {
+        NSLog(@"HOP account is NOT properly initialized");
+    }
+
+    //For identity login it is required to pass identity delegate, URL that will be requested upon successful login, identity URI and identity provider domain
+    HOPIdentity* hopIdentity = [HOPIdentity loginWithDelegate:(id<HOPIdentityDelegate>)[[OpenPeer sharedOpenPeer] identityDelegate] identityProviderDomain:identityProviderDomain identityURIOridentityBaseURI:identityURI outerFrameURLUponReload:redirectAfterLoginCompleteURL];
+    
     if (!hopIdentity) {
         NSString* error = [NSString stringWithFormat:@"Identity login has failed for uri: %@", identityURI];
         res = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error];

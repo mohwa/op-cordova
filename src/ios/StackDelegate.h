@@ -30,48 +30,9 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <OpenPeerSDK/HOPTypes.h>
+#import <OpenpeerSDK/HOPProtocols.h>
 
-@class CallDelegate;
-@class StackDelegate;
-@class MediaEngineDelegate;
-@class ConversationThreadDelegate;
-@class AccountDelegate;
-@class MainViewController;
-@class IdentityDelegate;
-@class IdentityLookupDelegate;
-@class CacheDelegate;
+@interface StackDelegate : NSObject<HOPStackDelegate>
 
 
-@interface OpenPeer : NSObject
-
-@property (nonatomic,strong) CallDelegate *callDelegate;
-@property (nonatomic,strong) StackDelegate *stackDelegate;
-@property (nonatomic,strong) MediaEngineDelegate *mediaEngineDelegate;
-@property (nonatomic,strong) ConversationThreadDelegate *conversationThreadDelegate;
-@property (nonatomic,strong) AccountDelegate *accountDelegate;
-@property (nonatomic,strong) MainViewController *mainViewController;
-@property (nonatomic,strong) IdentityDelegate *identityDelegate;
-@property (nonatomic,strong) IdentityLookupDelegate *identityLookupDelegate;
-@property (nonatomic,strong) CacheDelegate *cacheDelegate;
-
-@property (nonatomic,strong) NSString *authorizedApplicationId;
-
-@property (nonatomic) BOOL isRemoteSessionActivationModeOn;
-@property (nonatomic) BOOL isFaceDetectionModeOn;
-@property (nonatomic) BOOL isRedialModeOn;
-
-@property (nonatomic) BOOL isLocalTelnetOn;
-@property (nonatomic) BOOL isRemoteTelnetOn;
-
-@property (nonatomic) BOOL appEnteredBackground;
-@property (nonatomic) BOOL appEnteredForeground;
-
-@property (nonatomic, strong) NSString* deviceId;
-@property (nonatomic, strong) NSString* deviceToken;
-+ (id) sharedOpenPeer;
-
-- (void) preSetup;
-- (void) setup:(NSString*)authorizedApplicationId;
-- (void) shutdown;
 @end
