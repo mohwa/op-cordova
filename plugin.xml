@@ -49,6 +49,8 @@
       <header-file src="src/ios/Delegates.h" />
       <header-file src="src/ios/AppConsts.h" />
       <source-file src="src/ios/AppConsts.m" />
+      <header-file src="src/ios/StackDelegate.h" />
+      <source-file src="src/ios/StackDelegate.m" />
       <header-file src="src/ios/AccountDelegate.h" />
       <source-file src="src/ios/AccountDelegate.m" />
       <header-file src="src/ios/CallDelegate.h" />

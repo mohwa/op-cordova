@@ -11,6 +11,11 @@ var OpenPeer = {
     lockBoxServiceDomain: 'lockbox-v1-beta-1-i.hcs.io',
     identityProviderDomain: 'identity-v1-beta-1-i.hcs.io',
 
+    // Application brand settings
+    applicationName: '',
+    applicationURL: '',
+    applicationImageURL: '',
+
     // Logger settings
     isLoggerEnabled: 'NO',
     telnetPortForLogger: '59999',
@@ -44,13 +49,12 @@ var OpenPeer = {
 
   configureApp: function(config) {
     var deferred = Q.defer();
-
+    // TODO: copy values over onto settings
     return deferred.promise;
   },
 
   // user constructor
   user: function() {
-
 
     this.login = function(options) {
       var deferred = Q.defer();
@@ -78,7 +82,7 @@ var OpenPeer = {
         deferred.resolve();
       }, function(error) {
         deferred.reject(new Error('logout failed: ' + error));
-      }, 'CDVOP', 'startLoginProcess', [network]);
+      }, 'CDVOP', 'logout', [network]);
       return deferred.promise;
     };
 

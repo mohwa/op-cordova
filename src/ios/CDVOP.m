@@ -70,13 +70,13 @@ static CDVOP *shared;
     NSArray* arguments = command.arguments;
     NSDate* expiry = [[NSDate date] dateByAddingTimeInterval:(30 * 24 * 60 * 60)];
     NSString* authorizedApplicationId = [HOPStack createAuthorizedApplicationID:arguments[0] applicationIDSharedSecret:arguments[1] expires:expiry];
-    
-    // initialize and setup HOP Stack
-    [[OpenPeer sharedOpenPeer] setup:authorizedApplicationId];
 
     // TODO: check that authorization was successful and send error otherwise
     res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:authorizedApplicationId];
     [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
+    
+    // initialize and setup HOP Stack
+    [[OpenPeer sharedOpenPeer] setup:authorizedApplicationId];
 }
 
 - (void)configureApp:(CDVInvokedUrlCommand*)command
