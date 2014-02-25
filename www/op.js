@@ -1,3 +1,4 @@
+cordova.define("org.openpeer.cordova.OP", function(require, exports, module) {
 var exec = require('cordova/exec');
 var OpenPeer = {
   version: 0.0,
@@ -12,9 +13,9 @@ var OpenPeer = {
     identityProviderDomain: 'identity-v1-beta-1-i.hcs.io',
 
     // Application brand settings
-    applicationName: '',
-    applicationURL: '',
-    applicationImageURL: '',
+    applicationName: 'AppName',
+    applicationURL: 'AppURL',
+    applicationImageURL: 'AppImageURL',
 
     // Logger settings
     isLoggerEnabled: 'NO',
@@ -104,3 +105,4 @@ var OpenPeer = {
 
 module.exports = OpenPeer;
 
+});

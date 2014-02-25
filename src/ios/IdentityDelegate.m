@@ -117,7 +117,8 @@
 - (void)identity:(HOPIdentity *)identity stateChanged:(HOPIdentityStates)state
 {
     //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> Identity login state has changed to: %@ - identityURI: %@",identity, [HOPIdentity stringForIdentityState:state], [identity getIdentityURI]);
-    
+    NSLog(@"<%p> Identity login state has changed to: %@ - identityURI: %@",identity, [HOPIdentity stringForIdentityState:state], [identity getIdentityURI]);
+
     //Prevent to have two web views visible at the time
     if (state == HOPIdentityStateWaitingForBrowserWindowToBeMadeVisible)
     {
@@ -143,7 +144,7 @@
                 
             case HOPIdentityStateWaitingAttachmentOfDelegate:
             {
-                //[[LoginManager sharedLoginManager] attachDelegateForIdentity:identity forceAttach:NO];
+                [[CDVOP sharedObject] attachDelegateForIdentity:identity forceAttach:NO];
             }
                 break;
                 

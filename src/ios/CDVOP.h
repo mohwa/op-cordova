@@ -43,15 +43,19 @@
 // cordova plugin functions
 - (void) authorizeApp:(CDVInvokedUrlCommand*)command;
 - (void) configureApp:(CDVInvokedUrlCommand*)command;
-- (void) getAccountState:(CDVInvokedUrlCommand*)command;
-- (void) logout:(CDVInvokedUrlCommand*)command;
-- (void) startLoginProcess:(CDVInvokedUrlCommand*)command;
 - (void) showCatPictures:(CDVInvokedUrlCommand*)command;
 
 // helpers and other internal functions
 - (NSString*) getSetting:(NSString*)setting;
 - (void) showWebLoginView:(UIWebView*) webLoginView;
 - (void) closeWebLoginView:(UIWebView*) webLoginView;
+
+//login relate methods
+- (void) onIdentityAssociationFinished:(HOPIdentity*) identity;
+- (void) attachDelegateForIdentity:(HOPIdentity*) identity forceAttach:(BOOL) forceAttach;
+- (void) getAccountState:(CDVInvokedUrlCommand*)command;
+- (void) logout:(CDVInvokedUrlCommand*)command;
+- (void) startLoginProcess:(CDVInvokedUrlCommand*)command;
 
 @end
 

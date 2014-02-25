@@ -207,7 +207,6 @@
 
 // Utility functions
 
-
 + (NSString *)getGUIDstring
 {
     CFUUIDRef guid = CFUUIDCreate(nil);

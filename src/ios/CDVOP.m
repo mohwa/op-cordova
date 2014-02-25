@@ -164,10 +164,8 @@ static CDVOP *shared;
         [[HOPAccount sharedAccount] loginWithAccountDelegate:(id<HOPAccountDelegate>)[[OpenPeer sharedOpenPeer] accountDelegate] conversationThreadDelegate:(id<HOPConversationThreadDelegate>) [[OpenPeer sharedOpenPeer] conversationThreadDelegate] callDelegate:(id<HOPCallDelegate>) [[OpenPeer sharedOpenPeer] callDelegate]  namespaceGrantOuterFrameURLUponReload:outerFrameURL grantID:deviceId lockboxServiceDomain:identityProviderDomain forceCreateNewLockboxAccount:NO];
     }
     
-    NSLog(@"Device id is: %@", deviceId);
-    
     @try {
-        NSLog(@"HOP account status is: %@", [[HOPAccount sharedAccount] getState]);
+        NSLog(@"HOP account status is: %@", [HOPAccount stringForAccountState:[[HOPAccount sharedAccount] getState].state]);
     }
     @catch (NSException *exception) {
         NSLog(@"HOP account is NOT properly initialized");
@@ -181,6 +179,7 @@ static CDVOP *shared;
         res = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error];
         NSLog(@"%@", error);
     } else {
+        [self attachDelegateForIdentity:hopIdentity forceAttach:YES];
         res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:hopIdentity.identityId];
     }
     [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
@@ -231,6 +230,63 @@ static CDVOP *shared;
          {
              [webLoginView removeFromSuperview];
          }];
+    }
+}
+
+
+
+/**
+ Handles successful identity association. It updates list of associated identities on server side.
+ @param identity HOPIdentity identity used for login
+ */
+- (void) onIdentityAssociationFinished:(HOPIdentity*) identity
+{
+    NSString* relogininfo = [[HOPAccount sharedAccount] getReloginInformation];
+    
+    if ([relogininfo length] > 0)
+    {
+        //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelDebug, @"Identity association finished - identityURI: %@  - accountStableId: %@", [identity getIdentityURI], [[HOPAccount sharedAccount] getStableID]);
+        HOPHomeUser* homeUser = [[HOPModelManager sharedModelManager] getHomeUserByStableID:[[HOPAccount sharedAccount] getStableID]];
+        
+        if (!homeUser)
+        {
+            homeUser = (HOPHomeUser*)[[HOPModelManager sharedModelManager] createObjectForEntity:@"HOPHomeUser"];
+            homeUser.stableId = [[HOPAccount sharedAccount] getStableID];
+            homeUser.reloginInfo = [[HOPAccount sharedAccount] getReloginInformation];
+            homeUser.loggedIn = [NSNumber numberWithBool: YES];
+        }
+        
+        HOPAssociatedIdentity*  associatedIdentity = [[HOPModelManager sharedModelManager] getAssociatedIdentityBaseIdentityURI:[identity getBaseIdentityURI] homeUserStableId:homeUser.stableId];
+        
+        if (!associatedIdentity)
+            associatedIdentity = (HOPAssociatedIdentity*)[[HOPModelManager sharedModelManager] createObjectForEntity:@"HOPAssociatedIdentity"];
+        
+        HOPIdentityContact* homeIdentityContact = [identity getSelfIdentityContact];
+        associatedIdentity.domain = [identity getIdentityProviderDomain];
+        //associatedIdentity.downloadedVersion = @"";
+        associatedIdentity.name = [identity getBaseIdentityURI];
+        associatedIdentity.baseIdentityURI = [identity getBaseIdentityURI];
+        associatedIdentity.homeUserProfile = homeIdentityContact.rolodexContact;
+        associatedIdentity.homeUser = homeUser;
+        homeIdentityContact.rolodexContact.associatedIdentityForHomeUser = associatedIdentity;
+        
+        [[HOPModelManager sharedModelManager] saveContext];
+        
+        //[self.associatingIdentitiesDictionary removeObjectForKey:[identity getBaseIdentityURI]];
+        //[self.associatingIdentitiesDictionary removeAllObjects];
+    }
+    
+    // TODO: update client that use is logged in
+    //[self onUserLoggedIn];
+}
+
+- (void) attachDelegateForIdentity:(HOPIdentity*) identity forceAttach:(BOOL) forceAttach
+{
+    if (![identity isDelegateAttached] || forceAttach)
+    {
+        //Create core data record if it is not already in the db
+        [[self onIdentityAssociationFinished:identity];
+        [identity attachDelegate:(id<HOPIdentityDelegate>)[[OpenPeer sharedOpenPeer] identityDelegate]  redirectionURL:[self getSetting:@"redirectURL"]];
     }
 }
 
