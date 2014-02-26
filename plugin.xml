@@ -65,6 +65,8 @@
       <source-file src="src/ios/MediaEngineDelegate.m" />
       <header-file src="src/ios/OpenPeer.h" />
       <source-file src="src/ios/OpenPeer.m" />
+      <header-file src="src/ios/LoginManager.h" />
+      <source-file src="src/ios/LoginManager.m" />
       <header-file src="src/ios/Logger.h" />
       <source-file src="src/ios/Logger.m" />
 

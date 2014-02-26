@@ -25,6 +25,7 @@
 
 //OP delegates
 #import "OpenPeer.h"
+#import "LoginManager.h"
 #import "WebLoginViewController.h"
 
 @interface CDVOP : CDVPlugin <UIWebViewDelegate> {
@@ -36,7 +37,11 @@
 @property (nonatomic, copy) NSString* callbackId;
 @property (nonatomic, retain) UIImageView *peerImageView;
 @property (nonatomic, retain) UIImageView *selfImageView;
+
+// login properties
 @property (nonatomic, weak) WebLoginViewController *webLoginViewController;
+@property (nonatomic) BOOL isLogin;
+@property (nonatomic) BOOL isAssociation;
 
 + (id) sharedObject;
 
@@ -51,8 +56,9 @@
 - (void) closeWebLoginView:(UIWebView*) webLoginView;
 
 //login relate methods
-- (void) onIdentityAssociationFinished:(HOPIdentity*) identity;
-- (void) attachDelegateForIdentity:(HOPIdentity*) identity forceAttach:(BOOL) forceAttach;
+- (void) onStartLoginWithidentityURI;
+- (void) onRelogin;
+- (void) onLoginFinished;
 - (void) getAccountState:(CDVInvokedUrlCommand*)command;
 - (void) logout:(CDVInvokedUrlCommand*)command;
 - (void) startLoginProcess:(CDVInvokedUrlCommand*)command;

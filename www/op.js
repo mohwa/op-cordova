@@ -1,4 +1,3 @@
-cordova.define("org.openpeer.cordova.OP", function(require, exports, module) {
 var exec = require('cordova/exec');
 var OpenPeer = {
   version: 0.0,
@@ -8,7 +7,8 @@ var OpenPeer = {
     identityFederateBaseURI: 'identity://identity-v1-beta-1-i.hcs.io/',
     outerFrameURL:
       'http://jsouter-v1-beta-1-i.hcs.io/identity.html?view=choose&federated=false',
-    redirectURL: 'http://jsouter-v1-beta-1-i.hcs.io/identity.html?reload=true',
+    redirectAfterLoginCompleteURL:
+      'http://jsouter-v1-beta-1-i.hcs.io/identity.html?reload=true',
     lockBoxServiceDomain: 'lockbox-v1-beta-1-i.hcs.io',
     identityProviderDomain: 'identity-v1-beta-1-i.hcs.io',
 
@@ -105,4 +105,3 @@ var OpenPeer = {
 
 module.exports = OpenPeer;
 
-});

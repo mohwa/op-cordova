@@ -120,71 +120,45 @@ static CDVOP *shared;
     NSLog(@"login view config done.");
 }*/
 
-/**
- * Logout from the current account and associated identities
- */
-- (void)logout:(CDVInvokedUrlCommand*)command
-{
-    //TODO
-    NSLog(@"logging out [TODO]");
-}
-
 // TODO: remove if not needed
 - (void)getAccountState:(CDVInvokedUrlCommand*)command
 {
     CDVPluginResult* res = nil;
+    NSString* state;
 
-    //NSArray* arguments = command.arguments;
-
-    res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"So far so good"];
+    if([[HOPAccount sharedAccount] isCoreAccountCreated]) {
+        state = [HOPAccount stringForAccountState:[[HOPAccount sharedAccount] getState].state];
+    } else {
+        state = @"NotCreated";
+    }
+    res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:state];
     
     [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
 }
 
 /**
- Starts user login for specific identity URI.
- @param command.arguments[0] identity uri (e.g. identity://facebook.com/)
- @param command.arguments[1] outer frame url
- @param command.arguments[2] url to redirect after login is complete
- @param command.arguments[3] identity provider domain
+ * Starts user login for specific identity URI.
  */
 - (void) startLoginProcess:(CDVInvokedUrlCommand*)command
 {
     NSLog(@"Starting the login process");
-    CDVPluginResult* res = nil;
-    NSString* identityURI = command.arguments[0];
-    NSString* outerFrameURL = command.arguments[1];
-    NSString* redirectAfterLoginCompleteURL = command.arguments[2];
-    NSString* identityProviderDomain = command.arguments[3];
+    //CDVPluginResult* res = nil;
+    [[LoginManager sharedLoginManager] login];
     
-    NSString* deviceId = [[OpenPeer sharedOpenPeer] deviceId];
-    
-    if (![[HOPAccount sharedAccount] isCoreAccountCreated] || [[HOPAccount sharedAccount] getState].state == HOPAccountStateShutdown)
-    {
-        [[HOPAccount sharedAccount] loginWithAccountDelegate:(id<HOPAccountDelegate>)[[OpenPeer sharedOpenPeer] accountDelegate] conversationThreadDelegate:(id<HOPConversationThreadDelegate>) [[OpenPeer sharedOpenPeer] conversationThreadDelegate] callDelegate:(id<HOPCallDelegate>) [[OpenPeer sharedOpenPeer] callDelegate]  namespaceGrantOuterFrameURLUponReload:outerFrameURL grantID:deviceId lockboxServiceDomain:identityProviderDomain forceCreateNewLockboxAccount:NO];
-    }
-    
-    @try {
-        NSLog(@"HOP account status is: %@", [HOPAccount stringForAccountState:[[HOPAccount sharedAccount] getState].state]);
-    }
-    @catch (NSException *exception) {
-        NSLog(@"HOP account is NOT properly initialized");
-    }
+    // TODO: figure out a way to asynchronously update client when login finished
 
-    //For identity login it is required to pass identity delegate, URL that will be requested upon successful login, identity URI and identity provider domain
-    HOPIdentity* hopIdentity = [HOPIdentity loginWithDelegate:(id<HOPIdentityDelegate>)[[OpenPeer sharedOpenPeer] identityDelegate] identityProviderDomain:identityProviderDomain identityURIOridentityBaseURI:identityURI outerFrameURLUponReload:redirectAfterLoginCompleteURL];
-    
-    if (!hopIdentity) {
-        NSString* error = [NSString stringWithFormat:@"Identity login has failed for uri: %@", identityURI];
-        res = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error];
-        NSLog(@"%@", error);
-    } else {
-        [self attachDelegateForIdentity:hopIdentity forceAttach:YES];
-        res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:hopIdentity.identityId];
-    }
-    [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
+    //[self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
 }
 
+- (void)logout:(CDVInvokedUrlCommand*)command
+{
+    NSLog(@"logging out");
+    CDVPluginResult* res = nil;
+    
+    //TODO
+    
+    [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
+}
 /**
  * read setting from JavaScript settings object and return it as NSString*
  */
@@ -233,61 +207,19 @@ static CDVOP *shared;
     }
 }
 
-
-
-/**
- Handles successful identity association. It updates list of associated identities on server side.
- @param identity HOPIdentity identity used for login
- */
-- (void) onIdentityAssociationFinished:(HOPIdentity*) identity
+- (void) onStartLoginWithidentityURI
 {
-    NSString* relogininfo = [[HOPAccount sharedAccount] getReloginInformation];
-    
-    if ([relogininfo length] > 0)
-    {
-        //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelDebug, @"Identity association finished - identityURI: %@  - accountStableId: %@", [identity getIdentityURI], [[HOPAccount sharedAccount] getStableID]);
-        HOPHomeUser* homeUser = [[HOPModelManager sharedModelManager] getHomeUserByStableID:[[HOPAccount sharedAccount] getStableID]];
-        
-        if (!homeUser)
-        {
-            homeUser = (HOPHomeUser*)[[HOPModelManager sharedModelManager] createObjectForEntity:@"HOPHomeUser"];
-            homeUser.stableId = [[HOPAccount sharedAccount] getStableID];
-            homeUser.reloginInfo = [[HOPAccount sharedAccount] getReloginInformation];
-            homeUser.loggedIn = [NSNumber numberWithBool: YES];
-        }
-        
-        HOPAssociatedIdentity*  associatedIdentity = [[HOPModelManager sharedModelManager] getAssociatedIdentityBaseIdentityURI:[identity getBaseIdentityURI] homeUserStableId:homeUser.stableId];
-        
-        if (!associatedIdentity)
-            associatedIdentity = (HOPAssociatedIdentity*)[[HOPModelManager sharedModelManager] createObjectForEntity:@"HOPAssociatedIdentity"];
-        
-        HOPIdentityContact* homeIdentityContact = [identity getSelfIdentityContact];
-        associatedIdentity.domain = [identity getIdentityProviderDomain];
-        //associatedIdentity.downloadedVersion = @"";
-        associatedIdentity.name = [identity getBaseIdentityURI];
-        associatedIdentity.baseIdentityURI = [identity getBaseIdentityURI];
-        associatedIdentity.homeUserProfile = homeIdentityContact.rolodexContact;
-        associatedIdentity.homeUser = homeUser;
-        homeIdentityContact.rolodexContact.associatedIdentityForHomeUser = associatedIdentity;
-        
-        [[HOPModelManager sharedModelManager] saveContext];
-        
-        //[self.associatingIdentitiesDictionary removeObjectForKey:[identity getBaseIdentityURI]];
-        //[self.associatingIdentitiesDictionary removeAllObjects];
-    }
-    
-    // TODO: update client that use is logged in
-    //[self onUserLoggedIn];
+    //TODO update client
 }
 
-- (void) attachDelegateForIdentity:(HOPIdentity*) identity forceAttach:(BOOL) forceAttach
+- (void) onRelogin
 {
-    if (![identity isDelegateAttached] || forceAttach)
-    {
-        //Create core data record if it is not already in the db
-        [[self onIdentityAssociationFinished:identity];
-        [identity attachDelegate:(id<HOPIdentityDelegate>)[[OpenPeer sharedOpenPeer] identityDelegate]  redirectionURL:[self getSetting:@"redirectURL"]];
-    }
+    //TODO update client
+}
+
+- (void) onLoginFinished
+{
+    //TODO
 }
 
 @end

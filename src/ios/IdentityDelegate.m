@@ -74,14 +74,17 @@
  @param identity HOPIdentity Login user identity.
  @returns WebLoginViewController web login view
  */
+
 - (WebLoginViewController*) getLoginWebViewForIdentity:(HOPIdentity*) identity create:(BOOL)create
 {
     WebLoginViewController* ret = nil;
     
     //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> Identity - Get login web view for identity objectId:%d", identity, [[identity getObjectId] intValue]);
+    NSLog(@"<%p> Identity - Get login web view for identity objectId:%d", identity, [[identity getObjectId] intValue]);
+    
     
     ret = [self.loginWebViewsDictionary objectForKey:[identity getObjectId]];
- 
+    
     if (create && !ret)
     {
         //ret = [[LoginManager sharedLoginManager] preloadedWebLoginViewController];
@@ -89,22 +92,20 @@
         {
             ret= [[WebLoginViewController alloc] initWithCoreObject:identity];
             //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> Identity - Created web view: %p \nidentity uri: %@ \nidentity object id:%d",identity, ret,[identity getIdentityURI],[[identity getObjectId] intValue]);
+            NSLog(@"<%p> Identity - Created web view: %p \nidentity uri: %@ \nidentity object id:%d",identity, ret,[identity getIdentityURI],[[identity getObjectId] intValue]);
         }
         ret.view.hidden = YES;
         ret.coreObject = identity;
         [self.loginWebViewsDictionary setObject:ret forKey:[identity getObjectId]];
         //[[LoginManager sharedLoginManager] setPreloadedWebLoginViewController:nil];
-    }
-    else
-    {
-        /*
-        if (ret)
-        {
+    } else {
+        if (ret) {
             //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> Identity - Retrieved exisitng web view:%p for identity objectId:%d", identity, ret, [[identity getObjectId] intValue]);
-        }
-        else
+            NSLog(@"<%p> Identity - Retrieved exisitng web view:%p for identity objectId:%d", identity, ret, [[identity getObjectId] intValue]);
+        } else {
             //OPLog(HOPLoggerSeverityWarning, HOPLoggerLevelTrace, @"<%p> Identity - getLoginWebViewForIdentity - NO VALID WEB VIEW:%p - %d", identity, ret, [[identity getObjectId] intValue]);
-         */
+            NSLog(@"<%p> Identity - getLoginWebViewForIdentity - NO VALID WEB VIEW:%p - %d", identity, ret, [[identity getObjectId] intValue]);
+        }
     }
     return ret;
 }
@@ -135,22 +136,18 @@
         switch (state)
         {
             case HOPIdentityStatePending:
-                
+                NSLog(@"Hop identity state pending");
                 break;
             
             case HOPIdentityStatePendingAssociation:
-                
+                NSLog(@"Hop idenrity state pending association");
                 break;
                 
             case HOPIdentityStateWaitingAttachmentOfDelegate:
-            {
-                [[CDVOP sharedObject] attachDelegateForIdentity:identity forceAttach:NO];
-            }
+                [[LoginManager sharedLoginManager] attachDelegateForIdentity:identity forceAttach:NO];
                 break;
                 
             case HOPIdentityStateWaitingForBrowserWindowToBeLoaded:
-            {
-                //TODO
                 webLoginViewController = [self getLoginWebViewForIdentity:identity create:YES];
                 //if ([[LoginManager sharedLoginManager] isLogin] || [[LoginManager sharedLoginManager] isAssociation])
                 //{
@@ -159,10 +156,9 @@
 
                 //if ([[LoginManager sharedLoginManager] preloadedWebLoginViewController] != webLoginViewController)
                 //{
-                    //Open identity login web page
-                    [webLoginViewController openLoginUrl:[[CDVOP sharedObject] getSetting:@"outerFrameURL"]];
+                //Open identity login web page
+                [webLoginViewController openLoginUrl:[[CDVOP sharedObject] getSetting:@"outerFrameURL"]];
                 //}
-            }
                 break;
                 
             case HOPIdentityStateWaitingForBrowserWindowToBeMadeVisible:
@@ -193,6 +189,7 @@
                 break;
                 
             case HOPIdentityStateReady:
+                NSLog(@"HOPIdentity is in ready state");
                 [self.loginDelegate onIdentityLoginFinished];
                 // TODO: inform client
                 //if ([[LoginManager sharedLoginManager] isLogin] || [[LoginManager sharedLoginManager] isAssociation])
