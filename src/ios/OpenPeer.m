@@ -116,33 +116,8 @@
             //isSetLoginSettings = [[Settings sharedSettings] isLoginSettingsSet];
         }
         
-        // TODO: get this from client
-        //If not already set, set default app data
-        //BOOL isSetAppData = [[Settings sharedSettings] isAppDataSet];
-        BOOL isSetAppData = YES;
-        if (!isSetAppData)
-        {
-            NSString* filePath = [[NSBundle mainBundle] pathForResource:@"CustomerSpecific" ofType:@"plist"];
-            if ([filePath length] > 0)
-            {
-                //[[Settings sharedSettings] storeSettingsFromPath:filePath];
-            }
-            //isSetAppData = [[Settings sharedSettings] isAppDataSet];
-        }
-        
-        //If some of must to have data is not set, notify the user
-        if (!(isSetAppData && isSetLoginSettings))
-        {
-            UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:@"Local file with local settings is corrupted!"
-                                                                message:@"Please try to scan QR code or reinstall the app."
-                                                               delegate:nil
-                                                      cancelButtonTitle:nil
-                                                      otherButtonTitles:@"Ok",nil];
-            [alertView show];
-        }
-    }
-    else
-    {
+        // TODO: get check from client that app and login data are all set
+    else {
         [self setup];
     }
 }

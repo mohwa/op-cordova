@@ -25,10 +25,16 @@
 
 //OP delegates
 #import "OpenPeer.h"
+#import "Delegates.h"
 #import "LoginManager.h"
 #import "WebLoginViewController.h"
 
-@interface CDVOP : CDVPlugin <UIWebViewDelegate> {
+//@class Session;
+@class LoginViewController;
+@class WebLoginViewController;
+//@class ContactsViewController;
+
+@interface CDVOP : CDVPlugin <UIWebViewDelegate,LoginEventsDelegate> {
     NSString* callbackId;
     UIImageView* peerImageView;
     UIImageView* selfImageView;
@@ -39,9 +45,13 @@
 @property (nonatomic, retain) UIImageView *selfImageView;
 
 // login properties
+/*
 @property (nonatomic, weak) WebLoginViewController *webLoginViewController;
 @property (nonatomic) BOOL isLogin;
 @property (nonatomic) BOOL isAssociation;
+ */
+@property (nonatomic, strong) LoginViewController *loginViewController;
+//@property (nonatomic, strong) ContactsViewController *contactsTableViewController;
 
 + (id) sharedObject;
 
@@ -52,8 +62,6 @@
 
 // helpers and other internal functions
 - (NSString*) getSetting:(NSString*)setting;
-- (void) showWebLoginView:(UIWebView*) webLoginView;
-- (void) closeWebLoginView:(UIWebView*) webLoginView;
 
 //login relate methods
 - (void) onStartLoginWithidentityURI;
@@ -62,7 +70,10 @@
 - (void) getAccountState:(CDVInvokedUrlCommand*)command;
 - (void) logout:(CDVInvokedUrlCommand*)command;
 - (void) startLoginProcess:(CDVInvokedUrlCommand*)command;
-
+- (void) onAccountLoginError:(NSString*) error;
+- (void) showWebLoginView:(UIWebView*) webLoginView;
+- (void) closeWebLoginView:(UIWebView*) webLoginView;
+//- (void) onAccountLoginWebViewClose:(UIWebView*) webLoginView;
 @end
 
 

@@ -75,14 +75,12 @@
 - (void) login
 {
     //If peer file doesn't exists, show login view, otherwise start relogin
-    if (![[HOPModelManager sharedModelManager] getLastLoggedInHomeUser])
-    {
+    //if (![[HOPModelManager sharedModelManager] getLastLoggedInHomeUser]) {
         [self startLogin];
-    }
-    else
-    {
-        [self startRelogin];
-    }
+    //}
+    //else {
+    //    [self startRelogin];
+    //}
 }
 
 /**

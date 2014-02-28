@@ -144,10 +144,13 @@
                 break;
                 
             case HOPIdentityStateWaitingAttachmentOfDelegate:
+            {
                 [[LoginManager sharedLoginManager] attachDelegateForIdentity:identity forceAttach:NO];
+            }
                 break;
                 
             case HOPIdentityStateWaitingForBrowserWindowToBeLoaded:
+            {
                 webLoginViewController = [self getLoginWebViewForIdentity:identity create:YES];
                 //if ([[LoginManager sharedLoginManager] isLogin] || [[LoginManager sharedLoginManager] isAssociation])
                 //{
@@ -159,6 +162,7 @@
                 //Open identity login web page
                 [webLoginViewController openLoginUrl:[[CDVOP sharedObject] getSetting:@"outerFrameURL"]];
                 //}
+            }
                 break;
                 
             case HOPIdentityStateWaitingForBrowserWindowToBeMadeVisible:
@@ -189,11 +193,13 @@
                 break;
                 
             case HOPIdentityStateReady:
+            {
                 NSLog(@"HOPIdentity is in ready state");
                 [self.loginDelegate onIdentityLoginFinished];
                 // TODO: inform client
                 //if ([[LoginManager sharedLoginManager] isLogin] || [[LoginManager sharedLoginManager] isAssociation])
                 //    [[LoginManager sharedLoginManager] onIdentityAssociationFinished:identity];
+            }
                 break;
                 
             case HOPIdentityStateShutdown:

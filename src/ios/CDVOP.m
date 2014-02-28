@@ -2,7 +2,7 @@
 
 @implementation CDVOP
 
-@synthesize webView, selfImageView, peerImageView, webLoginViewController, callbackId;
+@synthesize webView, selfImageView, peerImageView, callbackId;
 
 static CDVOP *shared;
 
@@ -144,7 +144,7 @@ static CDVOP *shared;
     NSLog(@"Starting the login process");
     //CDVPluginResult* res = nil;
     [[LoginManager sharedLoginManager] login];
-    
+     
     // TODO: figure out a way to asynchronously update client when login finished
 
     //[self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
@@ -207,19 +207,22 @@ static CDVOP *shared;
     }
 }
 
-- (void) onStartLoginWithidentityURI
-{
+- (void) onStartLoginWithidentityURI {
     //TODO update client
 }
 
-- (void) onRelogin
-{
+- (void) onRelogin {
     //TODO update client
 }
 
-- (void) onLoginFinished
-{
+- (void) onLoginFinished {
     //TODO
+}
+
+- (void) onAccountLoginError:(NSString*) error {
+    //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Account login error: %@",error);
+    NSLog(@"Account login error: %@",error);
+    //TODO: send error to client
 }
 
 @end

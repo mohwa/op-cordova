@@ -62,7 +62,8 @@
 - (void) account:(HOPAccount*) account stateChanged:(HOPAccountStates) accountState
 {
     //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelDebug, @"Account login state: %@", [HOPAccount stringForAccountState:accountState]);
-    
+    NSLog(@"Account login state: %@", [HOPAccount stringForAccountState:accountState]);
+
     dispatch_async(dispatch_get_main_queue(), ^
     {
         switch (accountState)
@@ -123,14 +124,13 @@
                 HOPAccountState* accountState = [account getState];
                 if (accountState.errorCode && ![[OpenPeer sharedOpenPeer] appEnteredForeground])
                 {
-                    // TODO: handle the login error case
-                    //[[[OpenPeer sharedOpenPeer] mainViewController]  onAccountLoginError:accountState.errorReason];
+                    [[CDVOP sharedObject] onAccountLoginError:accountState.errorReason];
                 }
                 else
                 {
-                    // TODO: login
-                    //[[LoginManager sharedLoginManager] login];
+                    [[LoginManager sharedLoginManager] onUserLogOut];
                 }
+
             }
                 break;
                 
@@ -148,9 +148,8 @@
         NSArray* associatedIdentities = [account getAssociatedIdentities];
         for (HOPIdentity* identity in associatedIdentities)
         {
-            // TODO
             NSLog(@"account associated identities changes");
-            //[[LoginManager sharedLoginManager] attachDelegateForIdentity:identity forceAttach:NO];
+            [[LoginManager sharedLoginManager] attachDelegateForIdentity:identity forceAttach:NO];
         }
     });
 }
@@ -158,7 +157,7 @@
 - (void)onAccountPendingMessageForInnerBrowserWindowFrame:(HOPAccount*) account
 {
     //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Account: pending message for inner browser window frame.");
-  
+    NSLog(@"Account: pending message for inner browser window frame.");
     dispatch_async(dispatch_get_main_queue(), ^
     {
         WebLoginViewController* webLoginViewController = [self webLoginViewController];
