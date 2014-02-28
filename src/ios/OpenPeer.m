@@ -129,10 +129,28 @@
  */
 - (void) setup:(NSString*)authorizedApplicationId
 {
+    //Create all delegates required for communication with core
     [self createDelegates];
+    
+    // TODO: get this from client side
+    NSString* tmpSettings =
+    @"{'root':\
+        {\
+            'outerFrameURL': 'http://jsouter-v1-beta-1-i.hcs.io/identity.html?view=choose&federated=false',\
+            'identityProviderDomain': 'identity-v1-beta-1-i.hcs.io',\
+            'identityFederateBaseURI': 'identity://identity-v1-beta-1-i.hcs.io/',\
+            'namespaceGrantServiceURL': 'http://jsouter-v1-beta-1-i.hcs.io/grant.html',\
+            'lockBoxServiceDomain': 'lockbox-v1-beta-1-i.hcs.io',\
+            'archiveOutgoingTelnetLoggerServer': 'tcp-logger-v1-beta-1-i.hcs.io:8055',\
+            'archiveTelnetLoggerServer': '59999'\
+        }\
+    }";
+    
+    [[HOPSettings sharedSettings] applySettings:tmpSettings];
 
     //Set log levels and start logging
-    [Logger startAllSelectedLoggers];
+    //[Logger startAllSelectedLoggers];
+    [Logger startStdLogger:YES];
 
     NSString* applicationName = [[CDVOP sharedObject] getSetting:@"applicationName"];
     NSString* applicationURL = [[CDVOP sharedObject] getSetting:@"applicationURL"];
@@ -176,6 +194,7 @@
     self.accountDelegate = [[AccountDelegate alloc] init];
     self.identityDelegate = [[IdentityDelegate alloc] init];
     //self.identityDelegate.loginDelegate = self.mainViewController;
+    self.identityDelegate.loginDelegate = [CDVOP sharedObject];
     self.identityLookupDelegate = [[IdentityLookupDelegate alloc] init];
     //self.cacheDelegate = [[CacheDelegate alloc] init];
 }

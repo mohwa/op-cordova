@@ -206,7 +206,8 @@
             {
                 HOPIdentityState* identityState = [identity getState];
                 if (identityState.lastErrorCode)
-                    [self.loginDelegate onIdentityLoginError:identityState.lastErrorReason];
+                    //[self.loginDelegate onIdentityLoginError:[NSString stringWithFormat:@"Error: %@",identityState.lastErrorReason]];
+                    NSLog(@"Identity shutting down because of %@", identityState.lastErrorReason);
                 [self.loginDelegate onIdentityLoginShutdown];
             }
                 break;

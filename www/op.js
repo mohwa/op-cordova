@@ -18,7 +18,7 @@ var OpenPeer = {
     applicationImageURL: 'AppImageURL',
 
     // Logger settings
-    isLoggerEnabled: 'NO',
+    isLoggerEnabled: 'YES',
     telnetPortForLogger: '59999',
     isLoggerColorized: 'YES',
     outgoingTelnetServerPort: 'tcp-logger-v1-beta-1-i.hcs.io:8055',
