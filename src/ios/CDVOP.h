@@ -62,6 +62,7 @@
 
 // helpers and other internal functions
 - (NSString*) getSetting:(NSString*)setting;
+- (BOOL) getSettingAsBool:(NSString*)setting;
 
 //login relate methods
 - (void) onStartLoginWithidentityURI;

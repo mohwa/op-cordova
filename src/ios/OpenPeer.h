@@ -71,7 +71,7 @@
 @property (nonatomic, strong) NSString* deviceToken;
 + (id) sharedOpenPeer;
 
-- (void) preSetup;
+- (void) storeDefaultSettings:(BOOL)reset;
 - (void) setup:(NSString*)authorizedApplicationId;
 - (void) shutdown;
 @end

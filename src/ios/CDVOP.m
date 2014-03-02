@@ -168,6 +168,16 @@ static CDVOP *shared;
     return [self.webView stringByEvaluatingJavaScriptFromString:jsCall];
 }
 
+/**
+ * read setting from JavaScript settings object and return it as BOOL
+ */
+- (BOOL) getSettingAsBool:(NSString*)setting
+{
+    NSString *str = [self getSetting:setting];
+    return [str boolValue];
+}
+
+
 - (void) showWebLoginView:(UIWebView*)webLoginView
 {
     if (webLoginView)

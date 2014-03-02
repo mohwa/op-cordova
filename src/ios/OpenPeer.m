@@ -87,22 +87,60 @@
     return _deviceId;
 }
 
+
 /*
-- (void) preSetup
+ * If default settings have never been persisted (first run of the app) or if reset flag
+ * is set to true, this method will store app settings
+ */
+- (void) storeDefaultSettings:(BOOL)reset
 {
-    [self createDelegates];
-     //TODO
-    [[HOPSettings sharedSettings] setupWithDelegate:[Settings sharedSettings]];
+    //TODO: reset
+    //Set persistent stores
+    NSString *libraryPath = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) lastObject];
+    NSString *dataPathDirectory = [libraryPath stringByAppendingPathComponent:@"db"];
+    [[HOPModelManager sharedModelManager] setDataPath:dataPathDirectory backupData:NO];
+    NSString *cachePathDirectory = [libraryPath stringByAppendingPathComponent:@"cache"];
+    [[HOPModelManager sharedModelManager] setCachePath:cachePathDirectory];
+    
+    //Set settigns delegate
+    [[HOPSettings sharedSettings] setup];//WithDelegate:[Settings sharedSettings]];
+    
+    //Cleare expired cookies and set delegate
     [[HOPCache sharedCache] removeExpiredCookies];
-    //Init cache singleton
-    [[HOPCache sharedCache] setDelegate:self.cacheDelegate];
- 
+    //[[HOPCache sharedCache] setDelegate:self.cacheDelegate];
+    
+    // TODO: get this from client side
+    NSString* tmpSettings =
+    @"{'root':\
+    {\
+    'outerFrameURL': 'http://jsouter-v1-beta-1-i.hcs.io/identity.html?view=choose&federated=false',\
+    'identityProviderDomain': 'identity-v1-beta-1-i.hcs.io',\
+    'identityFederateBaseURI': 'identity://identity-v1-beta-1-i.hcs.io/',\
+    'namespaceGrantServiceURL': 'http://jsouter-v1-beta-1-i.hcs.io/grant.html',\
+    'lockBoxServiceDomain': 'lockbox-v1-beta-1-i.hcs.io',\
+    'archiveOutgoingTelnetLoggerServer': 'tcp-logger-v1-beta-1-i.hcs.io:8055',\
+    'archiveTelnetLoggerServer': '59999'\
+    }\
+    }";
+    
+    [[HOPSettings sharedSettings] applySettings:tmpSettings];
+    
+    // for now manually apply the rest of the default settings. TODO: get all from client
+    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:archiveMediaAEC];
+    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:archiveMediaAGC];
+    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:archiveMediaNS];
+    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:archiveRemoteSessionActivationMode];
+    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:NO] forKey:archiveFaceDetectionMode];
+    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:archiveRedialMode];
+
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
+    
     if (![[HOPModelManager sharedModelManager] getLastLoggedInHomeUser])
     {
         //If not already set, set default login settings
-        //BOOL isSetLoginSettings = [[Settings sharedSettings] isLoginSettingsSet];
-        // TODO: get this from client
-        BOOL isSetLoginSettings = YES;
+        /*
+        BOOL isSetLoginSettings = [[Settings sharedSettings] isLoginSettingsSet];
         if (!isSetLoginSettings)
         {
             [[HOPSettings sharedSettings] applyDefaults];
@@ -110,18 +148,35 @@
             NSString *filePath = [[NSBundle mainBundle] pathForResource:@"DefaultSettings" ofType:@"plist"];
             if ([filePath length] > 0)
             {
-                //[[Settings sharedSettings] storeSettingsFromPath:filePath];
+                NSDictionary* filteredDictionary = [[Settings sharedSettings] dictionaryWithRemovedAllInvalidEntriesForPath:filePath];
+                if ([filteredDictionary count] > 0)
+                    [[HOPSettings sharedSettings] storeSettingsFromDictionary:filteredDictionary];
+                //[[HOPSettings sharedSettings] storeSettingsFromPath:filePath];
             }
             
-            //isSetLoginSettings = [[Settings sharedSettings] isLoginSettingsSet];
+            isSetLoginSettings = [[Settings sharedSettings] isLoginSettingsSet];
         }
+        */
         
-        // TODO: get check from client that app and login data are all set
-    else {
-        [self setup];
+        //If not already set, set default app data
+        /*
+        BOOL isSetAppData = [[Settings sharedSettings] isAppDataSet];
+        if (!isSetAppData)
+        {
+            NSString* filePath = [[NSBundle mainBundle] pathForResource:@"CustomerSpecific" ofType:@"plist"];
+            if ([filePath length] > 0)
+            {
+                NSDictionary* filteredDictionary = [[Settings sharedSettings] dictionaryWithRemovedAllInvalidEntriesForPath:filePath];
+                if ([filteredDictionary count] > 0)
+                    [[HOPSettings sharedSettings] storeSettingsFromDictionary:filteredDictionary];
+                //[[HOPSettings sharedSettings] storeSettingsFromPath:filePath];
+            }
+            isSetAppData = [[Settings sharedSettings] isAppDataSet];
+        }
+         */
+        
     }
 }
-*/
 
 /**
  Initializes the open peer stack. After initialization succeeds, login screen is displayed, or user relogin started.
@@ -131,26 +186,10 @@
 {
     //Create all delegates required for communication with core
     [self createDelegates];
-    
-    // TODO: get this from client side
-    NSString* tmpSettings =
-    @"{'root':\
-        {\
-            'outerFrameURL': 'http://jsouter-v1-beta-1-i.hcs.io/identity.html?view=choose&federated=false',\
-            'identityProviderDomain': 'identity-v1-beta-1-i.hcs.io',\
-            'identityFederateBaseURI': 'identity://identity-v1-beta-1-i.hcs.io/',\
-            'namespaceGrantServiceURL': 'http://jsouter-v1-beta-1-i.hcs.io/grant.html',\
-            'lockBoxServiceDomain': 'lockbox-v1-beta-1-i.hcs.io',\
-            'archiveOutgoingTelnetLoggerServer': 'tcp-logger-v1-beta-1-i.hcs.io:8055',\
-            'archiveTelnetLoggerServer': '59999'\
-        }\
-    }";
-    
-    [[HOPSettings sharedSettings] applySettings:tmpSettings];
+    [self storeDefaultSettings:YES];
 
-    //Set log levels and start logging
-    //[Logger startAllSelectedLoggers];
-    [Logger startStdLogger:YES];
+    // temporary logging to debug. TODO: remove this
+    [OpenPeer startLogging];
 
     NSString* applicationName = [[CDVOP sharedObject] getSetting:@"applicationName"];
     NSString* applicationURL = [[CDVOP sharedObject] getSetting:@"applicationURL"];
@@ -161,8 +200,9 @@
 
     //Start with login procedure and display login view
     //[[LoginManager sharedLoginManager] login];
+
     /*
-    [[HOPMediaEngine sharedInstance] setEcEnabled:[[Settings sharedSettings] isMediaAECOn]];
+    [[HOPMediaEngine sharedInstance] setEcEnabled:[[CDVOP sharedObject] getSettingAsBool:@"isMediaAECOn"]];
     [[HOPMediaEngine sharedInstance] setAgcEnabled:[[Settings sharedSettings] isMediaAGCOn]];
     [[HOPMediaEngine sharedInstance] setNsEnabled:[[Settings sharedSettings] isMediaNSOn]];
      */
@@ -266,6 +306,33 @@
     NSString* userAgent = [NSString stringWithFormat:@"%@/%@ (%@ %@;%@) HOPID/1.0 (%@)",appName,appVersion,appOs,appVersionOs,model,developerId];
     
     return userAgent;
+}
+
+// this function for debugging purpose. TODO: remove this and replace with proper logger configuration
++ (void) startLogging {
+    HOPLoggerLevels logLevel = HOPLoggerLevelTrace;
+    [HOPLogger setLogLevelbyName:moduleApplication level:logLevel];
+    [HOPLogger setLogLevelbyName:moduleServices level:logLevel];
+    [HOPLogger setLogLevelbyName:moduleServicesWire level:logLevel];
+    [HOPLogger setLogLevelbyName:moduleServicesIce level:logLevel];
+    [HOPLogger setLogLevelbyName:moduleServicesTurn level:logLevel];
+    [HOPLogger setLogLevelbyName:moduleServicesRudp level:logLevel];
+    [HOPLogger setLogLevelbyName:moduleServicesHttp level:logLevel];
+    [HOPLogger setLogLevelbyName:moduleServicesMls level:logLevel];
+    [HOPLogger setLogLevelbyName:moduleServicesTcp level:logLevel];
+    [HOPLogger setLogLevelbyName:moduleServicesTransport level:logLevel];
+    [HOPLogger setLogLevelbyName:moduleCore level:logLevel];
+    [HOPLogger setLogLevelbyName:moduleStackMessage level:logLevel];
+    [HOPLogger setLogLevelbyName:moduleStack level:logLevel];
+    [HOPLogger setLogLevelbyName:moduleWebRTC level:logLevel];
+    [HOPLogger setLogLevelbyName:moduleZsLib level:logLevel];
+    [HOPLogger setLogLevelbyName:moduleSDK level:logLevel];
+    [HOPLogger setLogLevelbyName:moduleMedia level:logLevel];
+    [HOPLogger setLogLevelbyName:moduleJavaScript level:logLevel];
+
+    [Logger startStdLogger:YES];
+    
+    
 }
 
 @end

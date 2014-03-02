@@ -208,7 +208,7 @@
                 if (identityState.lastErrorCode)
                     //[self.loginDelegate onIdentityLoginError:[NSString stringWithFormat:@"Error: %@",identityState.lastErrorReason]];
                     NSLog(@"Identity shutting down because of %@", identityState.lastErrorReason);
-                [self.loginDelegate onIdentityLoginShutdown];
+                //[self.loginDelegate onIdentityLoginShutdown];
             }
                 break;
                 
