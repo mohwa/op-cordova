@@ -17,6 +17,8 @@ var OpenPeer = {
     applicationURL: 'AppURL',
     applicationImageURL: 'AppImageURL',
 
+    // Media Settings
+
     // Logger settings
     isLoggerEnabled: 'YES',
     telnetPortForLogger: '59999',

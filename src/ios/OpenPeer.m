@@ -100,13 +100,13 @@
     NSString *dataPathDirectory = [libraryPath stringByAppendingPathComponent:@"db"];
     [[HOPModelManager sharedModelManager] setDataPath:dataPathDirectory backupData:NO];
     NSString *cachePathDirectory = [libraryPath stringByAppendingPathComponent:@"cache"];
-    [[HOPModelManager sharedModelManager] setCachePath:cachePathDirectory];
+    //[[HOPModelManager sharedModelManager] setCachePath:cachePathDirectory];
     
     //Set settigns delegate
     [[HOPSettings sharedSettings] setup];//WithDelegate:[Settings sharedSettings]];
     
     //Cleare expired cookies and set delegate
-    [[HOPCache sharedCache] removeExpiredCookies];
+    //[[HOPCache sharedCache] removeExpiredCookies];
     //[[HOPCache sharedCache] setDelegate:self.cacheDelegate];
     
     // TODO: get this from client side
@@ -119,10 +119,29 @@
     'namespaceGrantServiceURL': 'http://jsouter-v1-beta-1-i.hcs.io/grant.html',\
     'lockBoxServiceDomain': 'lockbox-v1-beta-1-i.hcs.io',\
     'archiveOutgoingTelnetLoggerServer': 'tcp-logger-v1-beta-1-i.hcs.io:8055',\
-    'archiveTelnetLoggerServer': '59999'\
+    'archiveTelnetLoggerServer': '59999',\
+    'applicationId': 'test',\
+    'applicationName': 'AppName',\
+    'applicationURL': 'AppURL',\
+    'applicationImageURL': 'AppImageURL',\
+    'applicationIdSharedSecret': 'sharedsecret',\
+    'archiveDeviceId': '',\
+    'archiveStableUniqueId': '',\
+    'archiveIdentityURI': 'identity://identity-v1-beta-1-i.hcs.io/',\
+    'archivePeerURI': '',\
+    'archiveFullname': '',\
+    'archiveContactId': '',\
+    'archiveAccountSalt': '',\
+    'archivePasswordNonce': '',\
+    'archivePrivatePeerFile': '',\
+    'archivePrivatePeerFileSecret': '',\
+    'archivePeerFilePassword': '',\
+    'archiveAssociatedIdentities': '',\
+    'archiveLastProfileUpdateTimestamp': '',\
+    'archiveReloginInfo': ''\
     }\
     }";
-    
+
     [[HOPSettings sharedSettings] applySettings:tmpSettings];
     
     // for now manually apply the rest of the default settings. TODO: get all from client
@@ -132,12 +151,17 @@
     [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:archiveRemoteSessionActivationMode];
     [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:NO] forKey:archiveFaceDetectionMode];
     [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:archiveRedialMode];
+    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:archiveEnabled];
+    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:archiveColorized];
+    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:archiveTelnetLogger];
+    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:archiveStdOutLogger];
+    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:archiveOutgoingTelnetLogger];
 
     [[NSUserDefaults standardUserDefaults] synchronize];
     
     
-    if (![[HOPModelManager sharedModelManager] getLastLoggedInHomeUser])
-    {
+    //if (![[HOPModelManager sharedModelManager] getLastLoggedInHomeUser])
+    //{
         //If not already set, set default login settings
         /*
         BOOL isSetLoginSettings = [[Settings sharedSettings] isLoginSettingsSet];
@@ -175,7 +199,7 @@
         }
          */
         
-    }
+    //}
 }
 
 /**
