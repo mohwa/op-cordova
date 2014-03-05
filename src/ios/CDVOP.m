@@ -81,7 +81,7 @@ static CDVOP *shared;
 
 - (void)configureApp:(CDVInvokedUrlCommand*)command
 {
-    //CDVPluginResult* res = nil;
+    //CDVPluginResult* res = nil;w
     //NSArray* arguments = command.arguments;
     //TODO
 }
@@ -172,7 +172,7 @@ static CDVOP *shared;
  * set setting[key] to value
  */
 - (void) setSetting:(NSString*)key value:(NSString*)value {
-    NSString *jsCall = [NSString stringWithFormat:@"OP.settings['%@'] = %@;", key, value];
+    NSString *jsCall = [NSString stringWithFormat:@"OP.settings['%@'] = '%@';", key, value];
     [self.webView stringByEvaluatingJavaScriptFromString:jsCall];
 }
 

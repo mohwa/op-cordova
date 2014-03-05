@@ -112,6 +112,11 @@
     //[[HOPCache sharedCache] removeExpiredCookies];
     //[[HOPCache sharedCache] setDelegate:self.cacheDelegate];
     
+    [[CDVOP sharedObject] setSetting:@"openpeer/calculated/user-agent" value:[OpenPeer getUserAgentName]];
+    [[CDVOP sharedObject] setSetting:@"openpeer/calculated/device-id" value:[OpenPeer getGUIDstring]];
+    [[CDVOP sharedObject] setSetting:@"openpeer/calculated/os" value:[OpenPeer getDeviceOs]];
+    [[CDVOP sharedObject] setSetting:@"openpeer/calculated/system" value:[OpenPeer getPlatform]];
+    
     NSString* settings = [[CDVOP sharedObject] getAllSettingsJSON];
     [[HOPSettings sharedSettings] applySettings:settings];
 
@@ -183,6 +188,9 @@
     //If authorized application id is missing, generate it
     if ([[[HOPSettings sharedSettings] getAuthorizedApplicationId] length] == 0)
         [[HOPSettings sharedSettings] storeAuthorizedApplicationId:authorizedAppId];
+    
+    // send the authorized application id to client
+    [[CDVOP sharedObject] setSetting:@"openpeer/calculated/authorizated-application-id" value:[[HOPSettings sharedSettings] getAuthorizedApplicationId]];
     
     //Create all delegates required for communication with core
     [self createDelegates];

@@ -62,6 +62,7 @@
 
 // helpers and other internal functions
 - (NSString*) getSetting:(NSString*)setting;
+- (void) setSetting:(NSString*)key value:(NSString*)value;
 - (BOOL) getSettingAsBool:(NSString*)setting;
 - (NSString*) getAllSettingsJSON;
 

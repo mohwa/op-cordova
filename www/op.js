@@ -15,9 +15,9 @@ var OpenPeer = {
     'openpeer/stack/bootstrapper-force-well-known-using-post': true,
 
     // Application brand settings
-    applicationName: 'AppName',
-    applicationURL: 'AppURL',
-    applicationImageURL: 'AppImageURL',
+    //applicationName: 'AppName',
+    //applicationURL: 'AppURL',
+    //applicationImageURL: 'AppImageURL',
     'openpeer/common/application-name': 'appname2',
     'openpeer/common/application-url': 'appurl2',
     'openpeer/common/application-image-url': 'appimgurl2',
