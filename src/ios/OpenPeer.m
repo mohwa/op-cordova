@@ -95,12 +95,15 @@
 - (void) storeDefaultSettings:(BOOL)reset
 {
     //TODO: reset
+    
+    [[HOPSettings sharedSettings] applyDefaults]; //todo: only apply if no setting has been persisted before
+    
     //Set persistent stores
     NSString *libraryPath = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) lastObject];
     NSString *dataPathDirectory = [libraryPath stringByAppendingPathComponent:@"db"];
     [[HOPModelManager sharedModelManager] setDataPath:dataPathDirectory backupData:NO];
     NSString *cachePathDirectory = [libraryPath stringByAppendingPathComponent:@"cache"];
-    //[[HOPModelManager sharedModelManager] setCachePath:cachePathDirectory];
+    [[HOPModelManager sharedModelManager] setCachePath:cachePathDirectory];
     
     //Set settigns delegate
     [[HOPSettings sharedSettings] setup];//WithDelegate:[Settings sharedSettings]];
@@ -109,41 +112,10 @@
     //[[HOPCache sharedCache] removeExpiredCookies];
     //[[HOPCache sharedCache] setDelegate:self.cacheDelegate];
     
-    // TODO: get this from client side
-    NSString* tmpSettings =
-    @"{'root':\
-    {\
-    'outerFrameURL': 'http://jsouter-v1-beta-1-i.hcs.io/identity.html?view=choose&federated=false',\
-    'identityProviderDomain': 'identity-v1-beta-1-i.hcs.io',\
-    'identityFederateBaseURI': 'identity://identity-v1-beta-1-i.hcs.io/',\
-    'namespaceGrantServiceURL': 'http://jsouter-v1-beta-1-i.hcs.io/grant.html',\
-    'lockBoxServiceDomain': 'lockbox-v1-beta-1-i.hcs.io',\
-    'archiveOutgoingTelnetLoggerServer': 'tcp-logger-v1-beta-1-i.hcs.io:8055',\
-    'archiveTelnetLoggerServer': '59999',\
-    'applicationId': 'test',\
-    'applicationName': 'AppName',\
-    'applicationURL': 'AppURL',\
-    'applicationImageURL': 'AppImageURL',\
-    'applicationIdSharedSecret': 'sharedsecret',\
-    'archiveDeviceId': '',\
-    'archiveStableUniqueId': '',\
-    'archiveIdentityURI': 'identity://identity-v1-beta-1-i.hcs.io/',\
-    'archivePeerURI': '',\
-    'archiveFullname': '',\
-    'archiveContactId': '',\
-    'archiveAccountSalt': '',\
-    'archivePasswordNonce': '',\
-    'archivePrivatePeerFile': '',\
-    'archivePrivatePeerFileSecret': '',\
-    'archivePeerFilePassword': '',\
-    'archiveAssociatedIdentities': '',\
-    'archiveLastProfileUpdateTimestamp': '',\
-    'archiveReloginInfo': ''\
-    }\
-    }";
+    NSString* settings = [[CDVOP sharedObject] getAllSettingsJSON];
+    [[HOPSettings sharedSettings] applySettings:settings];
 
-    [[HOPSettings sharedSettings] applySettings:tmpSettings];
-    
+    /*
     // for now manually apply the rest of the default settings. TODO: get all from client
     [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:archiveMediaAEC];
     [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:archiveMediaAGC];
@@ -158,7 +130,7 @@
     [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:archiveOutgoingTelnetLogger];
 
     [[NSUserDefaults standardUserDefaults] synchronize];
-    
+    */
     
     //if (![[HOPModelManager sharedModelManager] getLastLoggedInHomeUser])
     //{
@@ -206,22 +178,30 @@
  Initializes the open peer stack. After initialization succeeds, login screen is displayed, or user relogin started.
  @param authorizedApplicationId that is generated based on app id and shared secret
  */
-- (void) setup:(NSString*)authorizedApplicationId
+- (void) setup:(NSString*)authorizedAppId
 {
+    //If authorized application id is missing, generate it
+    if ([[[HOPSettings sharedSettings] getAuthorizedApplicationId] length] == 0)
+        [[HOPSettings sharedSettings] storeAuthorizedApplicationId:authorizedAppId];
+    
     //Create all delegates required for communication with core
     [self createDelegates];
     [self storeDefaultSettings:YES];
 
     // temporary logging to debug. TODO: remove this
     [OpenPeer startLogging];
-
-    NSString* applicationName = [[CDVOP sharedObject] getSetting:@"applicationName"];
-    NSString* applicationURL = [[CDVOP sharedObject] getSetting:@"applicationURL"];
-    NSString* applicationImageURL = [[CDVOP sharedObject] getSetting:@"applicationImageURL"];
+    
     
     //TODO: Init openpeer stack using client side settings and set created delegates
-    [[HOPStack sharedStack] setupWithStackDelegate:self.stackDelegate mediaEngineDelegate:self.mediaEngineDelegate appID:authorizedApplicationId appName:applicationName appImageURL:applicationImageURL appURL:applicationURL userAgent:[OpenPeer getUserAgentName] deviceID:self.deviceId deviceOs:[OpenPeer getDeviceOs] system:[OpenPeer getPlatform]];
-
+    //[[HOPStack sharedStack] setupWithStackDelegate:self.stackDelegate mediaEngineDelegate:self.mediaEngineDelegate appID:authorizedApplicationId appName:applicationName appImageURL:applicationImageURL appURL:applicationURL userAgent:[OpenPeer getUserAgentName] deviceID:self.deviceId deviceOs:[OpenPeer getDeviceOs] system:[OpenPeer getPlatform]];
+    
+    if (![[HOPStack sharedStack] isStackReady])
+    {
+        NSLog(@"Stack is ready for setup");
+        //Init openpeer stack and set created delegates
+        [[HOPStack sharedStack] setupWithStackDelegate:self.stackDelegate mediaEngineDelegate:self.mediaEngineDelegate];
+    }
+    
     //Start with login procedure and display login view
     //[[LoginManager sharedLoginManager] login];
 
@@ -355,8 +335,9 @@
     [HOPLogger setLogLevelbyName:moduleJavaScript level:logLevel];
 
     [Logger startStdLogger:YES];
-    
-    
+    //[Logger startAllSelectedLoggers];
+    [Logger startTelnetLogger:YES];
+    [Logger startOutgoingTelnetLogger:YES];
 }
 
 @end

@@ -11,11 +11,22 @@ var OpenPeer = {
       'http://jsouter-v1-beta-1-i.hcs.io/identity.html?reload=true',
     lockBoxServiceDomain: 'lockbox-v1-beta-1-i.hcs.io',
     identityProviderDomain: 'identity-v1-beta-1-i.hcs.io',
+    'openpeer/stack/bootstrapper-force-well-known-over-insecure-http': true,
+    'openpeer/stack/bootstrapper-force-well-known-using-post': true,
 
     // Application brand settings
     applicationName: 'AppName',
     applicationURL: 'AppURL',
     applicationImageURL: 'AppImageURL',
+    'openpeer/common/application-name': 'appname2',
+    'openpeer/common/application-url': 'appurl2',
+    'openpeer/common/application-image-url': 'appimgurl2',
+
+    // calculated settings (these will be set by the SDK)
+    'openpeer/calculated/authorizated-application-id': '',
+    'openpeer/calculated/user-agent': '',
+    'openpeer/calculated/device-id': '',
+    'openpeer/calculated/os': '',
 
     // Media Settings
 
@@ -24,6 +35,8 @@ var OpenPeer = {
     telnetPortForLogger: '59999',
     isLoggerColorized: 'YES',
     outgoingTelnetServerPort: 'tcp-logger-v1-beta-1-i.hcs.io:8055',
+    archiveOutgoingTelnetLoggerServer: 'tcp-logger-v1-beta-1-i.hcs.io:8055',
+    archiveTelnetLoggerServer: '59999',
     isOutgoingTelnetColorized: 'YES'
   },
 

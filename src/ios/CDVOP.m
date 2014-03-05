@@ -168,15 +168,27 @@ static CDVOP *shared;
     return [self.webView stringByEvaluatingJavaScriptFromString:jsCall];
 }
 
+/*
+ * set setting[key] to value
+ */
+- (void) setSetting:(NSString*)key value:(NSString*)value {
+    NSString *jsCall = [NSString stringWithFormat:@"OP.settings['%@'] = %@;", key, value];
+    [self.webView stringByEvaluatingJavaScriptFromString:jsCall];
+}
+
 /**
  * read setting from JavaScript settings object and return it as BOOL
  */
-- (BOOL) getSettingAsBool:(NSString*)setting
-{
+- (BOOL) getSettingAsBool:(NSString*)setting {
     NSString *str = [self getSetting:setting];
     return [str boolValue];
 }
 
+- (NSString*) getAllSettingsJSON
+{
+    NSString *settings = [self.webView stringByEvaluatingJavaScriptFromString:@"JSON.stringify(OP.settings);"];
+    return [NSString stringWithFormat:@"{\"root\":%@}", settings];
+}
 
 - (void) showWebLoginView:(UIWebView*)webLoginView
 {
@@ -231,7 +243,7 @@ static CDVOP *shared;
 
 - (void) onAccountLoginError:(NSString*) error {
     //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Account login error: %@",error);
-    NSLog(@"Account login error: %@",error);
+    NSLog(@"Account login error: %@", error);
     //TODO: send error to client
 }
 
