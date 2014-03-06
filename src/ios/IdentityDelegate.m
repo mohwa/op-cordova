@@ -94,7 +94,10 @@
             //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> Identity - Created web view: %p \nidentity uri: %@ \nidentity object id:%d",identity, ret,[identity getIdentityURI],[[identity getObjectId] intValue]);
             NSLog(@"<%p> Identity - Created web view: %p \nidentity uri: %@ \nidentity object id:%d",identity, ret,[identity getIdentityURI],[[identity getObjectId] intValue]);
         }
-        ret.view.hidden = YES;
+        
+        //ret.view.hidden = YES;
+        ret.view.backgroundColor = [UIColor greenColor];
+        
         ret.coreObject = identity;
         [self.loginWebViewsDictionary setObject:ret forKey:[identity getObjectId]];
         //[[LoginManager sharedLoginManager] setPreloadedWebLoginViewController:nil];
@@ -152,10 +155,10 @@
             case HOPIdentityStateWaitingForBrowserWindowToBeLoaded:
             {
                 webLoginViewController = [self getLoginWebViewForIdentity:identity create:YES];
-                //if ([[LoginManager sharedLoginManager] isLogin] || [[LoginManager sharedLoginManager] isAssociation])
-                //{
-                //    [self.loginDelegate onOpeningLoginPage];
-                //}
+                if ([[LoginManager sharedLoginManager] isLogin] || [[LoginManager sharedLoginManager] isAssociation])
+                {
+                    [self.loginDelegate onOpeningLoginPage];
+                }
 
                 //if ([[LoginManager sharedLoginManager] preloadedWebLoginViewController] != webLoginViewController)
                 //{
@@ -196,9 +199,8 @@
             {
                 NSLog(@"HOPIdentity is in ready state");
                 [self.loginDelegate onIdentityLoginFinished];
-                // TODO: inform client
-                //if ([[LoginManager sharedLoginManager] isLogin] || [[LoginManager sharedLoginManager] isAssociation])
-                //    [[LoginManager sharedLoginManager] onIdentityAssociationFinished:identity];
+                if ([[LoginManager sharedLoginManager] isLogin] || [[LoginManager sharedLoginManager] isAssociation])
+                    [[LoginManager sharedLoginManager] onIdentityAssociationFinished:identity];
             }
                 break;
                 
@@ -208,7 +210,7 @@
                 if (identityState.lastErrorCode)
                     //[self.loginDelegate onIdentityLoginError:[NSString stringWithFormat:@"Error: %@",identityState.lastErrorReason]];
                     NSLog(@"Identity shutting down because of %@", identityState.lastErrorReason);
-                //[self.loginDelegate onIdentityLoginShutdown];
+                [self.loginDelegate onIdentityLoginShutdown];
             }
                 break;
                 

@@ -50,7 +50,7 @@
 @property (nonatomic) BOOL isLogin;
 @property (nonatomic) BOOL isAssociation;
  */
-@property (nonatomic, strong) LoginViewController *loginViewController;
+//@property (nonatomic, strong) LoginViewController *loginViewController;
 //@property (nonatomic, strong) ContactsViewController *contactsTableViewController;
 
 + (id) sharedObject;
@@ -68,15 +68,21 @@
 
 //login relate methods
 - (void) onStartLoginWithidentityURI;
+- (void) onOpeningLoginPage;
+- (void) onLoginWebViewVisible:(WebLoginViewController*) webLoginViewController;
 - (void) onRelogin;
 - (void) onLoginFinished;
+- (void) onIdentityLoginShutdown;
+- (void) onIdentityLoginWebViewClose:(WebLoginViewController*) webLoginViewController forIdentityURI:(NSString*) identityURI;
+- (void) onIdentityLoginFinished;
+- (void) onIdentityLoginError:(NSString*) error;
+- (void) onAccountLoginError:(NSString*) error;
+- (void) onAccountLoginWebViewClose:(WebLoginViewController*) webLoginViewController;
 - (void) getAccountState:(CDVInvokedUrlCommand*)command;
 - (void) logout:(CDVInvokedUrlCommand*)command;
 - (void) startLoginProcess:(CDVInvokedUrlCommand*)command;
-- (void) onAccountLoginError:(NSString*) error;
 - (void) showWebLoginView:(UIWebView*) webLoginView;
 - (void) closeWebLoginView:(UIWebView*) webLoginView;
-//- (void) onAccountLoginWebViewClose:(UIWebView*) webLoginView;
 @end
 
 

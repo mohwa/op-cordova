@@ -151,6 +151,7 @@
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error
 {
     //OPLog(HOPLoggerSeverityWarning, HOPLoggerLevelTrace, @"<%p> WebLoginViewController\nUIWebView _ERROR_ : %@",self,[error localizedDescription]);
+    NSLog(@"<%p> WebLoginViewController\nUIWebView _ERROR_ : %@",self,[error localizedDescription]);
 }
 
 - (void)notifyClient:(NSString *)message

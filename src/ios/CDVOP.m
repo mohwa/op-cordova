@@ -233,6 +233,10 @@ static CDVOP *shared;
     //TODO update client
 }
 
+- (void) onOpeningLoginPage {
+    //TODO
+}
+
 - (void) onRelogin {
     //TODO update client
 }
