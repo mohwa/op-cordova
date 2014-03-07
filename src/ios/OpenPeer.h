@@ -55,8 +55,6 @@
 @property (nonatomic,strong) IdentityLookupDelegate *identityLookupDelegate;
 @property (nonatomic,strong) CacheDelegate *cacheDelegate;
 
-@property (nonatomic,strong) NSString *authorizedApplicationId;
-
 @property (nonatomic) BOOL isRemoteSessionActivationModeOn;
 @property (nonatomic) BOOL isFaceDetectionModeOn;
 @property (nonatomic) BOOL isRedialModeOn;
@@ -72,6 +70,6 @@
 + (id) sharedOpenPeer;
 
 - (void) storeDefaultSettings:(BOOL)reset;
-- (void) setup:(NSString*)authorizedApplicationId;
+- (void) setup;
 - (void) shutdown;
 @end

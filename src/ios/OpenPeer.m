@@ -180,25 +180,17 @@
 }
 
 /**
- Initializes the open peer stack. After initialization succeeds, login screen is displayed, or user relogin started.
- @param authorizedApplicationId that is generated based on app id and shared secret
+ * Initializes the open peer stack. After initialization succeeds
+ * login screen is displayed, or user relogin started.
  */
-- (void) setup:(NSString*)authorizedAppId
+- (void) setup
 {
-    //If authorized application id is missing, generate it
-    if ([[[HOPSettings sharedSettings] getAuthorizedApplicationId] length] == 0)
-        [[HOPSettings sharedSettings] storeAuthorizedApplicationId:authorizedAppId];
-    
-    // send the authorized application id to client
-    [[CDVOP sharedObject] setSetting:@"openpeer/calculated/authorizated-application-id" value:[[HOPSettings sharedSettings] getAuthorizedApplicationId]];
-    
     //Create all delegates required for communication with core
     [self createDelegates];
     [self storeDefaultSettings:YES];
 
     // temporary logging to debug. TODO: remove this
     [OpenPeer startLogging];
-    
     
     //TODO: Init openpeer stack using client side settings and set created delegates
     //[[HOPStack sharedStack] setupWithStackDelegate:self.stackDelegate mediaEngineDelegate:self.mediaEngineDelegate appID:authorizedApplicationId appName:applicationName appImageURL:applicationImageURL appURL:applicationURL userAgent:[OpenPeer getUserAgentName] deviceID:self.deviceId deviceOs:[OpenPeer getDeviceOs] system:[OpenPeer getPlatform]];
@@ -213,11 +205,9 @@
     //Start with login procedure and display login view
     //[[LoginManager sharedLoginManager] login];
 
-    /*
     [[HOPMediaEngine sharedInstance] setEcEnabled:[[CDVOP sharedObject] getSettingAsBool:@"isMediaAECOn"]];
-    [[HOPMediaEngine sharedInstance] setAgcEnabled:[[Settings sharedSettings] isMediaAGCOn]];
-    [[HOPMediaEngine sharedInstance] setNsEnabled:[[Settings sharedSettings] isMediaNSOn]];
-     */
+    [[HOPMediaEngine sharedInstance] setAgcEnabled:[[CDVOP sharedObject] getSettingAsBool:@"isMediaAGCOn"]];
+    [[HOPMediaEngine sharedInstance] setNsEnabled:[[CDVOP sharedObject] getSettingAsBool:@"isMediaNSOn"]];
     NSLog(@"Finished setting up HOP stack");
 }
 
@@ -320,30 +310,30 @@
     return userAgent;
 }
 
-// this function for debugging purpose. TODO: remove this and replace with proper logger configuration
+// this function for debugging purpose.
+// TODO: remove this and replace with default logger configuration from JS
 + (void) startLogging {
-    HOPLoggerLevels logLevel = HOPLoggerLevelTrace;
-    [HOPLogger setLogLevelbyName:moduleApplication level:logLevel];
-    [HOPLogger setLogLevelbyName:moduleServices level:logLevel];
-    [HOPLogger setLogLevelbyName:moduleServicesWire level:logLevel];
-    [HOPLogger setLogLevelbyName:moduleServicesIce level:logLevel];
-    [HOPLogger setLogLevelbyName:moduleServicesTurn level:logLevel];
-    [HOPLogger setLogLevelbyName:moduleServicesRudp level:logLevel];
-    [HOPLogger setLogLevelbyName:moduleServicesHttp level:logLevel];
-    [HOPLogger setLogLevelbyName:moduleServicesMls level:logLevel];
-    [HOPLogger setLogLevelbyName:moduleServicesTcp level:logLevel];
-    [HOPLogger setLogLevelbyName:moduleServicesTransport level:logLevel];
-    [HOPLogger setLogLevelbyName:moduleCore level:logLevel];
-    [HOPLogger setLogLevelbyName:moduleStackMessage level:logLevel];
-    [HOPLogger setLogLevelbyName:moduleStack level:logLevel];
-    [HOPLogger setLogLevelbyName:moduleWebRTC level:logLevel];
-    [HOPLogger setLogLevelbyName:moduleZsLib level:logLevel];
-    [HOPLogger setLogLevelbyName:moduleSDK level:logLevel];
-    [HOPLogger setLogLevelbyName:moduleMedia level:logLevel];
-    [HOPLogger setLogLevelbyName:moduleJavaScript level:logLevel];
+    [HOPLogger setLogLevelbyName:moduleApplication level:HOPLoggerLevelTrace];
+    [HOPLogger setLogLevelbyName:moduleServices level:HOPLoggerLevelTrace];
+    [HOPLogger setLogLevelbyName:moduleServicesWire level:HOPLoggerLevelDebug];
+    [HOPLogger setLogLevelbyName:moduleServicesIce level:HOPLoggerLevelTrace];
+    [HOPLogger setLogLevelbyName:moduleServicesTurn level:HOPLoggerLevelTrace];
+    [HOPLogger setLogLevelbyName:moduleServicesRudp level:HOPLoggerLevelDebug];
+    [HOPLogger setLogLevelbyName:moduleServicesHttp level:HOPLoggerLevelDebug];
+    [HOPLogger setLogLevelbyName:moduleServicesMls level:HOPLoggerLevelTrace];
+    [HOPLogger setLogLevelbyName:moduleServicesTcp level:HOPLoggerLevelTrace];
+    [HOPLogger setLogLevelbyName:moduleServicesTransport level:HOPLoggerLevelDebug];
+    [HOPLogger setLogLevelbyName:moduleCore level:HOPLoggerLevelTrace];
+    [HOPLogger setLogLevelbyName:moduleStackMessage level:HOPLoggerLevelTrace];
+    [HOPLogger setLogLevelbyName:moduleStack level:HOPLoggerLevelTrace];
+    [HOPLogger setLogLevelbyName:moduleWebRTC level:HOPLoggerLevelDetail];
+    [HOPLogger setLogLevelbyName:moduleZsLib level:HOPLoggerLevelTrace];
+    [HOPLogger setLogLevelbyName:moduleSDK level:HOPLoggerLevelTrace];
+    [HOPLogger setLogLevelbyName:moduleMedia level:HOPLoggerLevelDetail];
+    [HOPLogger setLogLevelbyName:moduleJavaScript level:HOPLoggerLevelTrace];
 
-    [Logger startStdLogger:YES];
     //[Logger startAllSelectedLoggers];
+    [Logger startStdLogger:YES];
     [Logger startTelnetLogger:YES];
     [Logger startOutgoingTelnetLogger:YES];
 }

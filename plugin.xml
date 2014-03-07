@@ -7,7 +7,7 @@
   <keywords>OP, openpeer, webrtc</keywords>
   <author>Hookflash Inc</author>
   <engines>
-    <engine name="cordova" version=">=3.0.0" />
+    <engine name="cordova" version=">=3.3.0" />
   </engines>
   <js-module src="www/op.js" name="OP">
       <clobbers target="OP" />
@@ -31,7 +31,9 @@
       <framework src="Security.framework" />
       <framework src="UIKIT.framework" />
       <framework src="libz.dylib" />
+      <framework src="libstdc++.dylib" />
       <framework src="libxml2.dylib" />
+      <framework src="src/ios/OpenpeerSDK.framework/Libraries/boost.a" custom="true" />
       <framework src="src/ios/OpenpeerSDK.framework" custom="true" />
 
       <config-file target="config.xml" parent="/*">
@@ -70,6 +72,9 @@
       <header-file src="src/ios/Logger.h" />
       <source-file src="src/ios/Logger.m" />
 
+      <source-file src="src/ios/OpenpeerSDK.framework/Libraries/libcurl.a" compiler-flags="-lz -lstdc++" />
+
+      <resource-file src="src/ios/WebLoginViewController.xib" />
 
   </platform>
 </plugin>

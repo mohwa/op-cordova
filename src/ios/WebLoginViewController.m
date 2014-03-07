@@ -42,6 +42,15 @@
 
 @implementation WebLoginViewController
 
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self) {
+        self.outerFrameInitialised = NO;
+    }
+    return self;
+}
+
 - (id)init
 {
     self = [self initWithCoreObject:nil];
@@ -50,9 +59,7 @@
 
 - (id) initWithCoreObject:(id) inCoreObject
 {
-    //TODO: initialize self and webview
-    
-
+    self = [self initWithNibName:@"WebLoginViewController" bundle:nil];
     if (self)
     {
         self.coreObject = inCoreObject;

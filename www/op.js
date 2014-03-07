@@ -26,11 +26,14 @@ var OpenPeer = {
     'openpeer/calculated/os': '',
 
     // Media Settings
+    isMediaAECOn: true,
+    isMediaAGCOn: true,
+    isMediaNSOn: true,
 
     // Logger settings
-    isLoggerEnabled: 'YES',
+    isLoggerEnabled: true,
     telnetPortForLogger: '59999',
-    isLoggerColorized: 'YES',
+    isLoggerColorized: true,
     outgoingTelnetServerPort: 'tcp-logger-v1-beta-1-i.hcs.io:8055',
     archiveOutgoingTelnetLoggerServer: 'tcp-logger-v1-beta-1-i.hcs.io:8055',
     archiveTelnetLoggerServer: '59999',
@@ -116,4 +119,5 @@ var OpenPeer = {
 };
 
 module.exports = OpenPeer;
+
 

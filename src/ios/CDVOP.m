@@ -68,15 +68,24 @@ static CDVOP *shared;
 {
     CDVPluginResult* res = nil;
     NSArray* arguments = command.arguments;
-    NSDate* expiry = [[NSDate date] dateByAddingTimeInterval:(30 * 24 * 60 * 60)];
-    NSString* authorizedApplicationId = [HOPStack createAuthorizedApplicationID:arguments[0] applicationIDSharedSecret:arguments[1] expires:expiry];
+    NSString* authorizedApplicationId = [[HOPSettings sharedSettings] getAuthorizedApplicationId];
+    
+    //If authorized application id is missing, generate it
+    if ([authorizedApplicationId length] == 0) {
+        NSDate* expiry = [[NSDate date] dateByAddingTimeInterval:(30 * 24 * 60 * 60)];
+        authorizedApplicationId = [HOPStack createAuthorizedApplicationID:arguments[0] applicationIDSharedSecret:arguments[1] expires:expiry];
+        [[HOPSettings sharedSettings] storeAuthorizedApplicationId:authorizedApplicationId];
+    }
+    
+    // send the authorized application id to client
+    [[CDVOP sharedObject] setSetting:@"openpeer/calculated/authorizated-application-id" value:[[HOPSettings sharedSettings] getAuthorizedApplicationId]];
 
     // TODO: check that authorization was successful and send error otherwise
     res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:authorizedApplicationId];
     [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
     
     // initialize and setup HOP Stack
-    [[OpenPeer sharedOpenPeer] setup:authorizedApplicationId];
+    [[OpenPeer sharedOpenPeer] setup];
 }
 
 - (void)configureApp:(CDVInvokedUrlCommand*)command
@@ -190,43 +199,61 @@ static CDVOP *shared;
     return [NSString stringWithFormat:@"{\"root\":%@}", settings];
 }
 
-- (void) showWebLoginView:(UIWebView*)webLoginView
+/**
+ Show web view with opened login page.
+ @param url NSString Login page url.
+ */
+- (void) showWebLoginView:(WebLoginViewController*) webLoginViewController
 {
-    if (webLoginView)
+    if (webLoginViewController)
     {
-        NSLog(@"Displaying webLoginView");
-        //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Show WebLoginView <%p>", webLoginView);
-        webLoginView.frame = self.webView.bounds;
-        webLoginView.hidden = NO;
-        webLoginView.layer.zPosition = 1000;
-        [webLoginView setAlpha:0];
+        //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Show WebLoginViewController <%p>",webLoginViewController);
+        NSLog(@"Show WebLoginViewController <%p>",webLoginViewController);
+        webLoginViewController.view.frame = self.webView.superview.bounds;
+        webLoginViewController.view.hidden = NO;
+        webLoginViewController.view.layer.zPosition = 500;
+        [webLoginViewController.view setAlpha:0];
         
         [UIView animateWithDuration:1 animations:^
          {
-             [webLoginView setAlpha:1];
-             [self.webView.superview addSubview:webLoginView];
+             [webLoginViewController.view setAlpha:1];
+             [self.webView.superview addSubview:webLoginViewController.view];
          }
-        completion:nil];
-    } else {
-        NSLog(@"Error: webLoginView can not be displayed");
+                         completion:nil];
     }
 }
 
-- (void) closeWebLoginView:(UIWebView*)webLoginView
+- (void) onIdentityLoginWebViewClose:(WebLoginViewController*) webLoginViewController forIdentityURI:(NSString*) identityURI
 {
-    if (webLoginView)
+    //TODO: tell JS login that we receive identity for identity URI
+    NSLog(@"Got Login identity: %@",identityURI);
+
+    [self closeWebLoginView:webLoginViewController];
+}
+
+- (void) closeWebLoginView:(WebLoginViewController*) webLoginViewController
+{
+    if (webLoginViewController)
     {
-        //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Close WebLoginView <%p>", webLoginView);
+        //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Close WebLoginViewController <%p>",webLoginViewController);
+        NSLog(@"Close WebLoginViewController <%p>",webLoginViewController);
         
         [UIView animateWithDuration:1 animations:^
          {
-             [webLoginView setAlpha:0];
+             [webLoginViewController.view setAlpha:0];
          }
                          completion:^(BOOL finished)
          {
-             [webLoginView removeFromSuperview];
+             [webLoginViewController.view removeFromSuperview];
          }];
     }
+}
+
+- (void) onLoginWebViewVisible:(WebLoginViewController*) webLoginViewController {
+    //TODO: tell client login webview is about to show
+    
+    if (!webLoginViewController.view.superview)
+        [self showWebLoginView:webLoginViewController];
 }
 
 - (void) onStartLoginWithidentityURI {
@@ -241,8 +268,13 @@ static CDVOP *shared;
     //TODO update client
 }
 
+- (void) onIdentityLoginFinished {
+    
+}
+
 - (void) onLoginFinished {
     //TODO
+    NSLog(@"*********** Login finished ************");
 }
 
 - (void) onAccountLoginError:(NSString*) error {

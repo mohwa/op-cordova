@@ -11,6 +11,7 @@
 //OP SDK
 #import <OpenpeerSDK/HOPStack.h>
 #import <OpenpeerSDK/HOPLogger.h>
+#import <OpenpeerSDK/HOPSettings.h>
 #import <OpenpeerSDK/HOPMediaEngine.h>
 #import <OpenpeerSDK/HOPCache.h>
 #import <OpenpeerSDK/HOPAccount.h>
@@ -44,12 +45,6 @@
 @property (nonatomic, retain) UIImageView *peerImageView;
 @property (nonatomic, retain) UIImageView *selfImageView;
 
-// login properties
-/*
-@property (nonatomic, weak) WebLoginViewController *webLoginViewController;
-@property (nonatomic) BOOL isLogin;
-@property (nonatomic) BOOL isAssociation;
- */
 //@property (nonatomic, strong) LoginViewController *loginViewController;
 //@property (nonatomic, strong) ContactsViewController *contactsTableViewController;
 
@@ -81,8 +76,8 @@
 - (void) getAccountState:(CDVInvokedUrlCommand*)command;
 - (void) logout:(CDVInvokedUrlCommand*)command;
 - (void) startLoginProcess:(CDVInvokedUrlCommand*)command;
-- (void) showWebLoginView:(UIWebView*) webLoginView;
-- (void) closeWebLoginView:(UIWebView*) webLoginView;
+- (void) showWebLoginView:(WebLoginViewController*) webLoginViewController;
+- (void) closeWebLoginView:(WebLoginViewController*) webLoginViewController;
 @end
 
 

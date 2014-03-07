@@ -105,7 +105,7 @@
                 
             case HOPAccountWaitingForBrowserWindowToClose:
             {
-                [[CDVOP sharedObject] closeWebLoginView:self.webLoginViewController.loginWebView];
+                [[CDVOP sharedObject] closeWebLoginView:self.webLoginViewController];
                 
                 //Notify core that login web view is closed
                 [account notifyBrowserWindowClosed];
@@ -114,6 +114,7 @@
                 
             case HOPAccountStateReady:
                 // TODO inform client that login has finished and account is ready
+                NSLog(@"*********** HOP Account is ready *************");
                 break;
                 
             case HOPAccountStateShuttingDown:

@@ -94,8 +94,9 @@
     {
         NSString* server = [[CDVOP sharedObject] getSetting:@"outgoingTelnetServerPort"];
         BOOL colorized = [[[CDVOP sharedObject] getSetting:@"isOutgoingTelnetColorized"] boolValue];
+        NSString* appId = [[CDVOP sharedObject] getSetting:@"openpeer/calculated/authorizated-application-id"];
         if ([server length] > 0)
-            [HOPLogger installOutgoingTelnetLogger:server colorizeOutput:colorized stringToSendUponConnection:[[OpenPeer sharedOpenPeer] authorizedApplicationId]];
+            [HOPLogger installOutgoingTelnetLogger:server colorizeOutput:colorized stringToSendUponConnection:appId];
     }
     else
     {
