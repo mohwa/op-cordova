@@ -72,7 +72,7 @@
       <header-file src="src/ios/Logger.h" />
       <source-file src="src/ios/Logger.m" />
 
-      <source-file src="src/ios/OpenpeerSDK.framework/Libraries/libcurl.a" compiler-flags="-lz -lstdc++" />
+      <!-- source-file src="src/ios/OpenpeerSDK.framework/Libraries/libcurl.a" compiler-flags="-lz -lstdc++" / -->
 
       <resource-file src="src/ios/WebLoginViewController.xib" />
       <resource-file src="src/ios/OpenpeerDataModel.bundle" />
