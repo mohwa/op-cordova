@@ -75,6 +75,8 @@
       <source-file src="src/ios/OpenpeerSDK.framework/Libraries/libcurl.a" compiler-flags="-lz -lstdc++" />
 
       <resource-file src="src/ios/WebLoginViewController.xib" />
+      <resource-file src="src/ios/OpenpeerDataModel.bundle" />
+
 
   </platform>
 </plugin>

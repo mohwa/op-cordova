@@ -1,5 +1,9 @@
 #import "CDVOP.h"
 
+@interface CDVOP ()
+@property NSString* loginCallbackId;
+@end
+
 @implementation CDVOP
 
 @synthesize webView, selfImageView, peerImageView, callbackId;
@@ -155,7 +159,7 @@ static CDVOP *shared;
     [[LoginManager sharedLoginManager] login];
      
     // TODO: figure out a way to asynchronously update client when login finished
-
+    self.loginCallbackId = command.callbackId;
     //[self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
 }
 
@@ -269,7 +273,11 @@ static CDVOP *shared;
 }
 
 - (void) onIdentityLoginFinished {
-    
+    NSLog(@"*********** Identity Login finished ************");
+    CDVPluginResult* res = nil;
+    NSString* message = @"Login finished successfully";
+    res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:message];
+    [self.commandDelegate sendPluginResult:res callbackId:self.loginCallbackId];
 }
 
 - (void) onLoginFinished {
