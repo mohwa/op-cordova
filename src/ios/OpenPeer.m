@@ -47,6 +47,7 @@
 #import "MediaEngineDelegate.h"
 #import "ConversationThreadDelegate.h"
 #import "CallDelegate.h"
+#import "CacheDelegate.h"
 #import "AccountDelegate.h"
 #import "IdentityDelegate.h"
 #import "IdentityLookupDelegate.h"
@@ -109,8 +110,8 @@
     [[HOPSettings sharedSettings] setup];//WithDelegate:[Settings sharedSettings]];
     
     //Cleare expired cookies and set delegate
-    //[[HOPCache sharedCache] removeExpiredCookies];
-    //[[HOPCache sharedCache] setDelegate:self.cacheDelegate];
+    [[HOPCache sharedCache] removeExpiredCookies];
+    [[HOPCache sharedCache] setDelegate:self.cacheDelegate];
     
     [[CDVOP sharedObject] setSetting:@"openpeer/calculated/user-agent" value:[OpenPeer getUserAgentName]];
     [[CDVOP sharedObject] setSetting:@"openpeer/calculated/device-id" value:[OpenPeer getGUIDstring]];
