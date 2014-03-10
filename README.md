@@ -22,7 +22,6 @@ Current development workflow for iOS
   cordova plugin add ../op-cordova
   open platforms/ios/OPCordovaSample.xcodeproj
 ```
-  * configure linker [issue #6](https://github.com/openpeer/op-cordova/issues/6)
   * select a device (iPad, iPhone or iPod) and press run in xcode 
 
 > Note: any modification you do to the xcode project or plugin files is temporary and will be overwritten next time you run the cordova commands to add/rm plugin or platforms. If you make modifications to plugin files in xcode and want to commit them, first run the following script to copy the plugin files back to the repo:
