@@ -110,8 +110,8 @@
     [[HOPSettings sharedSettings] setup];//WithDelegate:[Settings sharedSettings]];
     
     //Cleare expired cookies and set delegate
-    [[HOPCache sharedCache] removeExpiredCookies];
-    [[HOPCache sharedCache] setDelegate:self.cacheDelegate];
+    //[[HOPCache sharedCache] removeExpiredCookies];
+    //[[HOPCache sharedCache] setDelegate:self.cacheDelegate];
     
     [[CDVOP sharedObject] setSetting:@"openpeer/calculated/user-agent" value:[OpenPeer getUserAgentName]];
     [[CDVOP sharedObject] setSetting:@"openpeer/calculated/device-id" value:[OpenPeer getGUIDstring]];
@@ -181,8 +181,7 @@
 }
 
 /**
- * Initializes the open peer stack. After initialization succeeds
- * login screen is displayed, or user relogin started.
+ * Initializes the open peer stack
  */
 - (void) setup
 {
@@ -193,18 +192,20 @@
     // temporary logging to debug. TODO: remove this
     [OpenPeer startLogging];
     
-    //TODO: Init openpeer stack using client side settings and set created delegates
-    //[[HOPStack sharedStack] setupWithStackDelegate:self.stackDelegate mediaEngineDelegate:self.mediaEngineDelegate appID:authorizedApplicationId appName:applicationName appImageURL:applicationImageURL appURL:applicationURL userAgent:[OpenPeer getUserAgentName] deviceID:self.deviceId deviceOs:[OpenPeer getDeviceOs] system:[OpenPeer getPlatform]];
-    
     if (![[HOPStack sharedStack] isStackReady])
     {
         NSLog(@"Stack is ready for setup");
         //Init openpeer stack and set created delegates
         [[HOPStack sharedStack] setupWithStackDelegate:self.stackDelegate mediaEngineDelegate:self.mediaEngineDelegate];
+        //Init openpeer stack using client side settings and set created delegates
+        /*
+        NSString* authorizedAppId = [[CDVOP sharedObject] getSetting:@"openpeer/calculated/authorizated-application-id"];
+        NSString* applicationName = [[CDVOP sharedObject] getSetting:@""];
+        NSString* applicationURL = [[CDVOP sharedObject] getSetting:@""];
+        NSString* applicationImageURL = [[CDVOP sharedObject] getSetting:@""];
+        [[HOPStack sharedStack] setupWithStackDelegate:self.stackDelegate mediaEngineDelegate:self.mediaEngineDelegate appID:authorizedAppId appName:applicationName appImageURL:applicationImageURL appURL:applicationURL userAgent:[OpenPeer getUserAgentName] deviceID:self.deviceId deviceOs:[OpenPeer getDeviceOs] system:[OpenPeer getPlatform]];
+        */
     }
-    
-    //Start with login procedure and display login view
-    //[[LoginManager sharedLoginManager] login];
 
     [[HOPMediaEngine sharedInstance] setEcEnabled:[[CDVOP sharedObject] getSettingAsBool:@"isMediaAECOn"]];
     [[HOPMediaEngine sharedInstance] setAgcEnabled:[[CDVOP sharedObject] getSettingAsBool:@"isMediaAGCOn"]];
@@ -236,7 +237,6 @@
     self.callDelegate = [[CallDelegate alloc] init];
     self.accountDelegate = [[AccountDelegate alloc] init];
     self.identityDelegate = [[IdentityDelegate alloc] init];
-    //self.identityDelegate.loginDelegate = self.mainViewController;
     self.identityDelegate.loginDelegate = [CDVOP sharedObject];
     self.identityLookupDelegate = [[IdentityLookupDelegate alloc] init];
     //self.cacheDelegate = [[CacheDelegate alloc] init];

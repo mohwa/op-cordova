@@ -20,13 +20,12 @@ static CDVOP *shared;
     self = (CDVOP*)[super initWithWebView:theWebView];
     NSLog(@">>> initializing with cordova webView <<<");
     
-    // configure the cordova webview
-    theWebView.opaque = NO;
-    theWebView.backgroundColor = [UIColor clearColor];
-    theWebView.scrollView.bounces = NO;
-    theWebView.layer.zPosition = 100;
-    
-    [self configureVideos];
+    self.webView.opaque = NO;
+    self.webView.backgroundColor = [UIColor clearColor];
+    self.webView.scrollView.bounces = NO;
+    self.webView.layer.zPosition = 100;
+
+    //[self configureVideos];
     //[self configureLoginView];
     
     shared = self;
@@ -39,8 +38,8 @@ static CDVOP *shared;
     NSTimeInterval interval = [command.arguments[0] doubleValue];
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     peerImageView = [[UIImageView alloc] initWithFrame:screenRect];
-    peerImageView.layer.zPosition = 10;
-    [webView.superview addSubview:peerImageView];
+    peerImageView.layer.zPosition = 1000;
+    [self.webView.superview addSubview:peerImageView];
     peerImageView.animationImages = [NSArray arrayWithObjects:
      [UIImage imageNamed:@"11.JPG"], [UIImage imageNamed:@"22.JPG"], [UIImage imageNamed:@"33.JPG"],
      [UIImage imageNamed:@"44.JPG"], [UIImage imageNamed:@"55.JPG"], [UIImage imageNamed:@"66.JPG"],
@@ -52,8 +51,8 @@ static CDVOP *shared;
     //initialize and configure self image view which normally would come from front facing cam1
     CGRect selfRect = CGRectMake(120, screenRect.size.height - 200, 180, 160);
     selfImageView = [[UIImageView alloc] initWithFrame:selfRect];
-    selfImageView.layer.zPosition = 20;
-    [webView.superview addSubview:selfImageView];
+    selfImageView.layer.zPosition = 2000;
+    [self.webView.superview addSubview:selfImageView];
     // load pictures and start animating
     NSLog(@"displaying cat pictures");
     selfImageView.animationImages = [NSArray arrayWithObjects:
@@ -119,19 +118,6 @@ static CDVOP *shared;
     self.selfImageView.hidden = NO;
     NSLog(@"video config done.");
 }
-
-/*
-- (void)configureLoginView
-{
-    CGRect screenRect = [[UIScreen mainScreen] bounds];
-    CGRect rect = CGRectMake(0, 0, screenRect.size.width, screenRect.size.height);
-    self.loginWebView = [[UIWebView alloc] initWithFrame:rect];
-    [self.webView.superview addSubview:self.loginWebView];
-    loginWebView.opaque = NO;
-    loginWebView.backgroundColor = [UIColor clearColor];
-    loginWebView.layer.zPosition = 1000;
-    NSLog(@"login view config done.");
-}*/
 
 // TODO: remove if not needed
 - (void)getAccountState:(CDVInvokedUrlCommand*)command
@@ -211,11 +197,16 @@ static CDVOP *shared;
 {
     if (webLoginViewController)
     {
+        CGRect screenRect = [[UIScreen mainScreen] bounds];
+        //testing, TODO: remove or extract out the padding
+        CGRect rect = CGRectMake(50, 50, screenRect.size.width - 100, screenRect.size.height - 100);
+        
         //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Show WebLoginViewController <%p>",webLoginViewController);
         NSLog(@"Show WebLoginViewController <%p>",webLoginViewController);
-        webLoginViewController.view.frame = self.webView.superview.bounds;
+        webLoginViewController.view.frame = rect;
         webLoginViewController.view.hidden = NO;
         webLoginViewController.view.layer.zPosition = 500;
+        webLoginViewController.view.backgroundColor = [UIColor clearColor];
         [webLoginViewController.view setAlpha:0];
         
         [UIView animateWithDuration:1 animations:^
@@ -232,6 +223,10 @@ static CDVOP *shared;
     //TODO: tell JS login that we receive identity for identity URI
     NSLog(@"Got Login identity: %@",identityURI);
 
+    [self closeWebLoginView:webLoginViewController];
+}
+
+- (void) onAccountLoginWebViewClose:(WebLoginViewController *)webLoginViewController {
     [self closeWebLoginView:webLoginViewController];
 }
 
@@ -283,6 +278,16 @@ static CDVOP *shared;
 - (void) onLoginFinished {
     //TODO
     NSLog(@"*********** Login finished ************");
+}
+
+- (void) onIdentityLoginShutdown {
+    //TODO
+    NSLog(@"Login shutdown");
+}
+
+- (void) onIdentityLoginError:(NSString *)error {
+    //TODO
+    NSLog(@"Account login error: %@",error);
 }
 
 - (void) onAccountLoginError:(NSString*) error {
