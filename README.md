@@ -29,3 +29,13 @@ Current development workflow for iOS
 `shjs update_from_ios.js`
 
 > you can then go back to `op-cordova` folder and commit your changes
+
+  * Reinstalling the plugin
+  
+If there are strange problems, you can remove the whole ios platform folder and also the plugin, then add them back
+```
+cordova platform remove ios
+cordova plugin remove org.openpeer.cordova
+cordova platform add ios
+cordova plugin add ../op-cordova
+```
