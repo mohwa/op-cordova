@@ -78,6 +78,7 @@
 
       <resource-file src="src/ios/WebLoginViewController.xib" />
       <resource-file src="src/ios/OpenpeerDataModel.bundle" />
+      <resource-file src="src/ios/OpenPeerModel.momd" />
 
   </platform>
 </plugin>

@@ -75,12 +75,13 @@
 - (void) login
 {
     //If peer file doesn't exists, show login view, otherwise start relogin
-    //if (![[HOPModelManager sharedModelManager] getLastLoggedInHomeUser]) {
+    // TOFIX: <NSInvalidArgumentException> Cannot create an NSPersistentStoreCoordinator with a nil model
+    if (![[HOPModelManager sharedModelManager] getLastLoggedInHomeUser]) {
         [self startLogin];
-    //}
-    //else {
-    //    [self startRelogin];
-    //}
+    }
+    else {
+        [self startRelogin];
+    }
 }
 
 /**
@@ -210,34 +211,42 @@
     {
         //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelDebug, @"Identity association finished - identityURI: %@  - accountStableId: %@", [identity getIdentityURI], [[HOPAccount sharedAccount] getStableID]);
         NSLog(@"Identity association finished - identityURI: %@  - accountStableId: %@", [identity getIdentityURI], [[HOPAccount sharedAccount] getStableID]);
-        HOPHomeUser* homeUser = [[HOPModelManager sharedModelManager] getHomeUserByStableID:[[HOPAccount sharedAccount] getStableID]];
         
-        if (!homeUser)
-        {
-            homeUser = (HOPHomeUser*)[[HOPModelManager sharedModelManager] createObjectForEntity:@"HOPHomeUser"];
-            homeUser.stableId = [[HOPAccount sharedAccount] getStableID];
-            homeUser.reloginInfo = [[HOPAccount sharedAccount] getReloginInformation];
-            homeUser.loggedIn = [NSNumber numberWithBool: YES];
-        }
-        
-        HOPAssociatedIdentity*  associatedIdentity = [[HOPModelManager sharedModelManager] getAssociatedIdentityBaseIdentityURI:[identity getBaseIdentityURI] homeUserStableId:homeUser.stableId];
-        
-        if (!associatedIdentity)
-            associatedIdentity = (HOPAssociatedIdentity*)[[HOPModelManager sharedModelManager] createObjectForEntity:@"HOPAssociatedIdentity"];
+        HOPHomeUser* homeUser = nil;
+        @try {
+            homeUser = [[HOPModelManager sharedModelManager] getHomeUserByStableID:[[HOPAccount sharedAccount] getStableID]];
+
+            if (!homeUser)
+            {
+                homeUser = (HOPHomeUser*)[[HOPModelManager sharedModelManager] createObjectForEntity:@"HOPHomeUser"];
+                homeUser.stableId = [[HOPAccount sharedAccount] getStableID];
+                homeUser.reloginInfo = [[HOPAccount sharedAccount] getReloginInformation];
+                homeUser.loggedIn = [NSNumber numberWithBool: YES];
+            }
             
-        HOPIdentityContact* homeIdentityContact = [identity getSelfIdentityContact];
-        associatedIdentity.domain = [identity getIdentityProviderDomain];
-        //associatedIdentity.downloadedVersion = @"";
-        associatedIdentity.name = [identity getBaseIdentityURI];
-        associatedIdentity.baseIdentityURI = [identity getBaseIdentityURI];
-        associatedIdentity.homeUserProfile = homeIdentityContact.rolodexContact;
-        associatedIdentity.homeUser = homeUser;
-        homeIdentityContact.rolodexContact.associatedIdentityForHomeUser = associatedIdentity;
-        
-        [[HOPModelManager sharedModelManager] saveContext];
-        
-        //[self.associatingIdentitiesDictionary removeObjectForKey:[identity getBaseIdentityURI]];
-        [self.associatingIdentitiesDictionary removeAllObjects];
+            HOPAssociatedIdentity*  associatedIdentity = [[HOPModelManager sharedModelManager] getAssociatedIdentityBaseIdentityURI:[identity getBaseIdentityURI] homeUserStableId:homeUser.stableId];
+            
+            if (!associatedIdentity)
+                associatedIdentity = (HOPAssociatedIdentity*)[[HOPModelManager sharedModelManager] createObjectForEntity:@"HOPAssociatedIdentity"];
+                
+            HOPIdentityContact* homeIdentityContact = [identity getSelfIdentityContact];
+            associatedIdentity.domain = [identity getIdentityProviderDomain];
+            //associatedIdentity.downloadedVersion = @"";
+            associatedIdentity.name = [identity getBaseIdentityURI];
+            associatedIdentity.baseIdentityURI = [identity getBaseIdentityURI];
+            associatedIdentity.homeUserProfile = homeIdentityContact.rolodexContact;
+            associatedIdentity.homeUser = homeUser;
+            homeIdentityContact.rolodexContact.associatedIdentityForHomeUser = associatedIdentity;
+            
+            [[HOPModelManager sharedModelManager] saveContext];
+            
+            //[self.associatingIdentitiesDictionary removeObjectForKey:[identity getBaseIdentityURI]];
+            [self.associatingIdentitiesDictionary removeAllObjects];
+            
+        } @catch (NSException *exception) {
+            //TODO: fix this
+            NSLog(@"ERROR: could not get record of existing user. %@", exception);
+        }
     }
     
     [self onUserLoggedIn];

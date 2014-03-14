@@ -197,14 +197,6 @@
         NSLog(@"Stack is ready for setup");
         //Init openpeer stack and set created delegates
         [[HOPStack sharedStack] setupWithStackDelegate:self.stackDelegate mediaEngineDelegate:self.mediaEngineDelegate];
-        //Init openpeer stack using client side settings and set created delegates
-        /*
-        NSString* authorizedAppId = [[CDVOP sharedObject] getSetting:@"openpeer/calculated/authorizated-application-id"];
-        NSString* applicationName = [[CDVOP sharedObject] getSetting:@""];
-        NSString* applicationURL = [[CDVOP sharedObject] getSetting:@""];
-        NSString* applicationImageURL = [[CDVOP sharedObject] getSetting:@""];
-        [[HOPStack sharedStack] setupWithStackDelegate:self.stackDelegate mediaEngineDelegate:self.mediaEngineDelegate appID:authorizedAppId appName:applicationName appImageURL:applicationImageURL appURL:applicationURL userAgent:[OpenPeer getUserAgentName] deviceID:self.deviceId deviceOs:[OpenPeer getDeviceOs] system:[OpenPeer getPlatform]];
-        */
     }
 
     [[HOPMediaEngine sharedInstance] setEcEnabled:[[CDVOP sharedObject] getSettingAsBool:@"isMediaAECOn"]];

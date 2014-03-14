@@ -140,13 +140,11 @@ static CDVOP *shared;
  */
 - (void) startLoginProcess:(CDVInvokedUrlCommand*)command
 {
-    NSLog(@"Starting the login process");
-    //CDVPluginResult* res = nil;
-    [[LoginManager sharedLoginManager] login];
-     
-    // TODO: figure out a way to asynchronously update client when login finished
     self.loginCallbackId = command.callbackId;
-    //[self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
+    //[self.commandDelegate runInBackground:^{
+        NSLog(@"Starting the login process");
+        [[LoginManager sharedLoginManager] login];
+    //}];
 }
 
 - (void)logout:(CDVInvokedUrlCommand*)command
