@@ -54,6 +54,8 @@
 - (void) authorizeApp:(CDVInvokedUrlCommand*)command;
 - (void) configureApp:(CDVInvokedUrlCommand*)command;
 - (void) showCatPictures:(CDVInvokedUrlCommand*)command;
+- (void) makeViewTransparent;
+- (void) initVideoViews;
 
 // helpers and other internal functions
 - (NSString*) getSetting:(NSString*)setting;

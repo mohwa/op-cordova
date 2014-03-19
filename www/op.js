@@ -40,6 +40,14 @@ var OpenPeer = {
     isOutgoingTelnetColorized: 'YES'
   },
 
+  initialize: function() {
+     exec(function() {
+        console.log('OP is initialized and ready');
+      }, function(error) {
+        //TODO: error
+      }, 'CDVOP', 'initialize', []);
+  },
+
   getAccountStatus: function(success, error, options) {
     exec(success, error, 'CDVOP', 'getAccountState', []);
   },
@@ -67,6 +75,16 @@ var OpenPeer = {
     var deferred = Q.defer();
     // TODO: copy values over onto settings
     return deferred.promise;
+  },
+
+  //TODO move to media object
+  configureSelfVideo: function(config) {
+    exec(function() {
+      console.log('successfully updated self video configuration');
+    }, function(error) {
+      console.log(error);
+      }, 'CDVOP', 'configureSelfVideo',
+      [config.top, config.left, config.width, config.height]);
   },
 
   // user constructor
@@ -118,6 +136,6 @@ var OpenPeer = {
   }
 };
 
+OpenPeer.initialize();
 module.exports = OpenPeer;
-
 

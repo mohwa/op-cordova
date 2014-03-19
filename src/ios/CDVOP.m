@@ -15,56 +15,86 @@ static CDVOP *shared;
     return shared;
 }
 
--(CDVPlugin*) initWithWebView:(UIWebView*)theWebView
-{
+-(CDVPlugin*) initWithWebView:(UIWebView*)theWebView {
     self = (CDVOP*)[super initWithWebView:theWebView];
-    NSLog(@">>> initializing with cordova webView <<<");
-    
-    self.webView.opaque = NO;
-    self.webView.backgroundColor = [UIColor clearColor];
-    self.webView.scrollView.bounces = NO;
-    self.webView.layer.zPosition = 100;
-
-    //[self configureVideos];
-    //[self configureLoginView];
-    
     shared = self;
     return self;
 }
 
-// stress test UIImageViews using a series of cat pictures
-- (void)showCatPictures:(CDVInvokedUrlCommand*)command
-{
-    NSTimeInterval interval = [command.arguments[0] doubleValue];
+// called from js when webview is loaded
+- (void) initialize:(CDVInvokedUrlCommand*)command {
+    [self makeViewTransparent];
+    [self initVideoViews];
+    CDVPluginResult* res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"success"];
+    [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
+}
+
+- (void) makeViewTransparent {
+    self.webView.opaque = NO;
+    self.webView.backgroundColor = [UIColor clearColor];
+    self.webView.scrollView.bounces = NO;
+    self.webView.layer.zPosition = 100;
+}
+
+// initialize UIImageView for self and peer video
+- (void) initVideoViews {
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     peerImageView = [[UIImageView alloc] initWithFrame:screenRect];
-    peerImageView.layer.zPosition = 1000;
+    peerImageView.layer.zPosition = 10;
     [self.webView.superview addSubview:peerImageView];
-    peerImageView.animationImages = [NSArray arrayWithObjects:
-     [UIImage imageNamed:@"11.JPG"], [UIImage imageNamed:@"22.JPG"], [UIImage imageNamed:@"33.JPG"],
-     [UIImage imageNamed:@"44.JPG"], [UIImage imageNamed:@"55.JPG"], [UIImage imageNamed:@"66.JPG"],
-     [UIImage imageNamed:@"77.JPG"], [UIImage imageNamed:@"88.JPG"], [UIImage imageNamed:@"99.JPG"],
-     [UIImage imageNamed:@"1010.JPG"], [UIImage imageNamed:@"1111.JPG"], nil];
-    peerImageView.animationDuration = interval;
-    [peerImageView startAnimating];
-    
-    //initialize and configure self image view which normally would come from front facing cam1
+
     CGRect selfRect = CGRectMake(120, screenRect.size.height - 200, 180, 160);
     selfImageView = [[UIImageView alloc] initWithFrame:selfRect];
-    selfImageView.layer.zPosition = 2000;
+    selfImageView.layer.zPosition = 20;
     [self.webView.superview addSubview:selfImageView];
+}
+
+// stress test UIImageViews using a series of cat pictures
+- (void) showCatPictures:(CDVInvokedUrlCommand*)command {
+    NSTimeInterval interval = [command.arguments[0] doubleValue];
+    peerImageView.animationImages = [NSArray arrayWithObjects:
+     [UIImage imageNamed:@"www/img/cats/peer1.jpg"], [UIImage imageNamed:@"www/img/cats/peer2.jpg"], [UIImage imageNamed:@"www/img/cats/peer3.jpg"],
+     [UIImage imageNamed:@"www/img/cats/peer4.jpg"], [UIImage imageNamed:@"www/img/cats/peer5.jpg"], [UIImage imageNamed:@"www/img/cats/peer6.jpg"],
+     [UIImage imageNamed:@"www/img/cats/peer7.jpg"], [UIImage imageNamed:@"www/img/cats/peer8.jpg"], [UIImage imageNamed:@"www/img/cats/peer9.jpg"],
+     [UIImage imageNamed:@"www/img/cats/peer10.jpg"], nil];
+    peerImageView.animationDuration = interval;
+    [peerImageView startAnimating];
+
     // load pictures and start animating
     NSLog(@"displaying cat pictures");
     selfImageView.animationImages = [NSArray arrayWithObjects:
-      [UIImage imageNamed:@"1.JPG"], [UIImage imageNamed:@"2.JPG"], [UIImage imageNamed:@"3.JPG"],
-      [UIImage imageNamed:@"4.JPG"], [UIImage imageNamed:@"5.JPG"], [UIImage imageNamed:@"6.JPG"], nil];
+      [UIImage imageNamed:@"www/img/cats/self1.jpg"], [UIImage imageNamed:@"www/img/cats/self2.jpg"], [UIImage imageNamed:@"www/img/cats/self3.jpg"],
+      [UIImage imageNamed:@"www/img/cats/self4.jpg"], [UIImage imageNamed:@"www/img/cats/self5.jpg"], [UIImage imageNamed:@"www/img/cats/self6.jpg"], [UIImage imageNamed:@"www/img/cats/self7.jpg"], [UIImage imageNamed:@"www/img/cats/self8.jpg"],
+      [UIImage imageNamed:@"www/img/cats/self9.jpg"], [UIImage imageNamed:@"www/img/cats/self10.jpg"], nil];
     selfImageView.animationDuration = interval;
     [selfImageView startAnimating];
+
+    //[self makeViewTransparent];
 }
 
-- (void)webViewDidStartLoad:(UIWebView *)webView
-{
-    NSLog(@"web view did start to load...");
+- (void)stopCatPictures:(CDVInvokedUrlCommand*)command {
+    [selfImageView stopAnimating];
+    [peerImageView stopAnimating];
+}
+
+/* configure self video image view with the following:
+ * [top, left, width, height, zindex, scale, opacity, cornerRadius, angle]
+ */
+- (void)configureSelfVideo:(CDVInvokedUrlCommand*)command {
+    CDVPluginResult* res = nil;
+    NSArray* arguments = command.arguments;
+    CGRect rect = CGRectMake([arguments[0] floatValue], [arguments[1] floatValue],
+                             [arguments[2] floatValue], [arguments[3] floatValue]);
+    @try {
+        selfImageView.frame = rect;
+        res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"success"];
+    }
+    @catch (NSException *exception) {
+        NSString *error = [NSString stringWithFormat:@"Error updating self video properties: %@", exception];
+        res = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error];
+    }
+    
+    [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
 }
 
 - (void)authorizeApp:(CDVInvokedUrlCommand*)command
@@ -156,6 +186,7 @@ static CDVOP *shared;
     
     [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
 }
+
 /**
  * read setting from JavaScript settings object and return it as NSString*
  */

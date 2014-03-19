@@ -76,6 +76,14 @@
 {
     //If peer file doesn't exists, show login view, otherwise start relogin
     // TOFIX: <NSInvalidArgumentException> Cannot create an NSPersistentStoreCoordinator with a nil model
+    //NSManagedObjectModel *testModel = [[HOPModelManager sharedModelManager] managedObjectModel];
+    /*
+    NSBundle *main = [NSBundle mainBundle];
+    NSArray *allBundles = [NSBundle allBundles];
+    NSString *bundlePath = [main pathForResource:@"OpenpeerDataModel" ofType:@"bundle"];
+    
+    NSURL *modelURL = [[NSBundle bundleWithPath:bundlePath] URLForResource:@"OpenPeerModel" withExtension:@"momd"];
+    */
     if (![[HOPModelManager sharedModelManager] getLastLoggedInHomeUser]) {
         [self startLogin];
     }
