@@ -71,6 +71,10 @@ var OpenPeer = {
     exec(null, null, 'CDVOP', 'showCatPictures', [interval]);
   },
 
+  stopCatPictures: function(interval) {
+    exec(null, null, 'CDVOP', 'stopCatPictures');
+  },
+
   configureApp: function(config) {
     var deferred = Q.defer();
     // TODO: copy values over onto settings
@@ -78,13 +82,17 @@ var OpenPeer = {
   },
 
   //TODO move to media object
-  configureSelfVideo: function(config) {
+  // 0:index, 1:top, 2:left, 3:width, 4:height, 5:zindex,
+  // 6:contentMode, 7:scale, 8:opacity, 9:cornerRadius, 10:angle
+  configureVideo: function(config) {
     exec(function() {
       console.log('successfully updated self video configuration');
     }, function(error) {
       console.log(error);
-      }, 'CDVOP', 'configureSelfVideo',
-      [config.top, config.left, config.width, config.height]);
+      }, 'CDVOP', 'configureVideo',
+      [config.index, config.left, config.top, config.width, config.height,
+       config.zindex, config.contentMode, config.scale, config.opacity,
+       config.cornerRadius, config.angle]);
   },
 
   // user constructor

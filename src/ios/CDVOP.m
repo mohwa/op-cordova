@@ -6,7 +6,7 @@
 
 @implementation CDVOP
 
-@synthesize webView, selfImageView, peerImageView, callbackId;
+@synthesize webView, videoViews, callbackId;
 
 static CDVOP *shared;
 
@@ -29,6 +29,7 @@ static CDVOP *shared;
     [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
 }
 
+// make the main webview transparent
 - (void) makeViewTransparent {
     self.webView.opaque = NO;
     self.webView.backgroundColor = [UIColor clearColor];
@@ -36,21 +37,27 @@ static CDVOP *shared;
     self.webView.layer.zPosition = 100;
 }
 
-// initialize UIImageView for self and peer video
+// initialize UIImageViews for self and peer video
 - (void) initVideoViews {
+    videoViews = [NSMutableArray array];
     CGRect screenRect = [[UIScreen mainScreen] bounds];
-    peerImageView = [[UIImageView alloc] initWithFrame:screenRect];
-    peerImageView.layer.zPosition = 10;
-    [self.webView.superview addSubview:peerImageView];
-
     CGRect selfRect = CGRectMake(120, screenRect.size.height - 200, 180, 160);
-    selfImageView = [[UIImageView alloc] initWithFrame:selfRect];
+    UIImageView *selfImageView = [[UIImageView alloc] initWithFrame:selfRect];
     selfImageView.layer.zPosition = 20;
+    selfImageView.layer.masksToBounds = YES;
     [self.webView.superview addSubview:selfImageView];
+    [videoViews addObject:selfImageView];
+    
+    UIImageView *peerImageView = [[UIImageView alloc] initWithFrame:screenRect];
+    peerImageView.layer.zPosition = 10;
+    peerImageView.layer.masksToBounds = YES;
+    [self.webView.superview addSubview:peerImageView];
+    [videoViews addObject:peerImageView];
 }
 
 // stress test UIImageViews using a series of cat pictures
 - (void) showCatPictures:(CDVInvokedUrlCommand*)command {
+    UIImageView *peerImageView = [videoViews objectAtIndex:1];
     NSTimeInterval interval = [command.arguments[0] doubleValue];
     peerImageView.animationImages = [NSArray arrayWithObjects:
      [UIImage imageNamed:@"www/img/cats/peer1.jpg"], [UIImage imageNamed:@"www/img/cats/peer2.jpg"], [UIImage imageNamed:@"www/img/cats/peer3.jpg"],
@@ -62,34 +69,53 @@ static CDVOP *shared;
 
     // load pictures and start animating
     NSLog(@"displaying cat pictures");
+    UIImageView *selfImageView = [videoViews objectAtIndex:0];
     selfImageView.animationImages = [NSArray arrayWithObjects:
       [UIImage imageNamed:@"www/img/cats/self1.jpg"], [UIImage imageNamed:@"www/img/cats/self2.jpg"], [UIImage imageNamed:@"www/img/cats/self3.jpg"],
       [UIImage imageNamed:@"www/img/cats/self4.jpg"], [UIImage imageNamed:@"www/img/cats/self5.jpg"], [UIImage imageNamed:@"www/img/cats/self6.jpg"], [UIImage imageNamed:@"www/img/cats/self7.jpg"], [UIImage imageNamed:@"www/img/cats/self8.jpg"],
       [UIImage imageNamed:@"www/img/cats/self9.jpg"], [UIImage imageNamed:@"www/img/cats/self10.jpg"], nil];
     selfImageView.animationDuration = interval;
     [selfImageView startAnimating];
-
-    //[self makeViewTransparent];
 }
 
 - (void)stopCatPictures:(CDVInvokedUrlCommand*)command {
-    [selfImageView stopAnimating];
-    [peerImageView stopAnimating];
+    for (NSUInteger index = 0; index < videoViews.count; index++) {
+        [[videoViews objectAtIndex:index] stopAnimating];
+    }
+    [self initVideoViews];
+    [self connectVideoViews];
 }
 
-/* configure self video image view with the following:
- * [top, left, width, height, zindex, scale, opacity, cornerRadius, angle]
+/**
+ * configure video imageview
+ * [0:index, // 0 is self video 1 (and up) are for peer video(s)
+ *  1:left, 2:top, 3:width, 4:height, 5:zindex,
+ *  6:contentMode, 7:scale, 8:opacity, 9:cornerRadius, 10:angle]
  */
-- (void)configureSelfVideo:(CDVInvokedUrlCommand*)command {
+- (void) configureVideo:(CDVInvokedUrlCommand*)command {
     CDVPluginResult* res = nil;
     NSArray* arguments = command.arguments;
-    CGRect rect = CGRectMake([arguments[0] floatValue], [arguments[1] floatValue],
-                             [arguments[2] floatValue], [arguments[3] floatValue]);
+
     @try {
-        selfImageView.frame = rect;
+        UIImageView *videoView = [videoViews objectAtIndex:[arguments[0] floatValue]];
+        CGRect rect = CGRectMake([arguments[1] floatValue], [arguments[2] floatValue],
+                                 [arguments[3] floatValue], [arguments[4] floatValue]);
+        videoView.frame = rect;
+        
+        videoView.layer.zPosition = [arguments[5] floatValue];
+        
+        videoView.contentMode = [self getContentMode:arguments[6]];
+        
+        videoView.contentScaleFactor = [arguments[7] floatValue];
+        
+        videoView.layer.opacity = [arguments[8] floatValue];
+        
+        videoView.layer.cornerRadius = [arguments[9] floatValue];
+        
+        videoView.transform = CGAffineTransformMakeRotation([arguments[10] floatValue]);
+        
         res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"success"];
-    }
-    @catch (NSException *exception) {
+    } @catch (NSException *exception) {
         NSString *error = [NSString stringWithFormat:@"Error updating self video properties: %@", exception];
         res = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error];
     }
@@ -97,7 +123,7 @@ static CDVOP *shared;
     [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
 }
 
-- (void)authorizeApp:(CDVInvokedUrlCommand*)command
+- (void) authorizeApp:(CDVInvokedUrlCommand*)command
 {
     CDVPluginResult* res = nil;
     NSArray* arguments = command.arguments;
@@ -121,32 +147,18 @@ static CDVOP *shared;
     [[OpenPeer sharedOpenPeer] setup];
 }
 
-- (void)configureApp:(CDVInvokedUrlCommand*)command
+/*
+ * connect video views to their video streams comming from SDK
+ * precondition: UIImageViews have been initialized and added to videoViews
+ */
+- (void) connectVideoViews
 {
-    //CDVPluginResult* res = nil;w
-    //NSArray* arguments = command.arguments;
-    //TODO
-}
-
-// Connect video streams to their native UI elements
-- (void)configureVideos
-{
-    CGRect rect = CGRectMake(0, 0, 100.0, 200.0);
-
-    self.selfImageView = [[UIImageView alloc] initWithFrame:rect];
-    //self.selfImageView.layer.cornerRadius = 5;
-    //self.selfImageView.layer.masksToBounds = YES;
-    [self.webView.superview addSubview:self.selfImageView];
-    
     //Set default video orientation to be portrait
     [[HOPMediaEngine sharedInstance] setDefaultVideoOrientation:HOPMediaEngineVideoOrientationPortrait];
     
     //Hook up UI images for self video preview and peer video
-    [[HOPMediaEngine sharedInstance] setCaptureRenderView:self.selfImageView];
-    [[HOPMediaEngine sharedInstance] setChannelRenderView:self.peerImageView];
-    
-    self.selfImageView.hidden = NO;
-    NSLog(@"video config done.");
+    [[HOPMediaEngine sharedInstance] setCaptureRenderView:[videoViews objectAtIndex:0]];
+    [[HOPMediaEngine sharedInstance] setChannelRenderView:[videoViews objectAtIndex:1]];
 }
 
 // TODO: remove if not needed
@@ -323,6 +335,38 @@ static CDVOP *shared;
     //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Account login error: %@",error);
     NSLog(@"Account login error: %@", error);
     //TODO: send error to client
+}
+
+- (UIViewContentMode) getContentMode:(NSString*)mode {
+    UIViewContentMode retMode = UIViewContentModeScaleAspectFill;
+    if ([mode isEqualToString:@"bottom"]) {
+        retMode = UIViewContentModeBottom;
+    } else if ([mode isEqualToString:@"bottomLeft"]) {
+        retMode = UIViewContentModeBottomLeft;
+    } else if ([mode isEqualToString:@"bottomRight"]) {
+        retMode = UIViewContentModeBottomRight;
+    } else if ([mode isEqualToString:@"center"]) {
+        retMode = UIViewContentModeCenter;
+    } else if ([mode isEqualToString:@"left"]) {
+        retMode = UIViewContentModeLeft;
+    } else if ([mode isEqualToString:@"redraw"]) {
+        retMode = UIViewContentModeRedraw;
+    } else if ([mode isEqualToString:@"right"]) {
+        retMode = UIViewContentModeRight;
+    } else if ([mode isEqualToString:@"scaleAspectFill"]) {
+        retMode = UIViewContentModeScaleAspectFill;
+    } else if ([mode isEqualToString:@"scaleAspectFit"]) {
+        retMode = UIViewContentModeScaleAspectFit;
+    } else if ([mode isEqualToString:@"scaleToFill"]) {
+        retMode = UIViewContentModeScaleToFill;
+    } else if ([mode isEqualToString:@"top"]) {
+        retMode = UIViewContentModeTop;
+    } else if ([mode isEqualToString:@"topLeft"]) {
+        retMode = UIViewContentModeTopLeft;
+    } else if ([mode isEqualToString:@"topRight"]) {
+        retMode = UIViewContentModeTopRight;
+    }
+    return retMode;
 }
 
 @end

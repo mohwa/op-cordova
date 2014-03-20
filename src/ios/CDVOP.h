@@ -37,22 +37,18 @@
 
 @interface CDVOP : CDVPlugin <UIWebViewDelegate,LoginEventsDelegate> {
     NSString* callbackId;
-    UIImageView* peerImageView;
-    UIImageView* selfImageView;
 }
 
 @property (nonatomic, copy) NSString* callbackId;
-@property (nonatomic, retain) UIImageView *peerImageView;
-@property (nonatomic, retain) UIImageView *selfImageView;
+@property (nonatomic, retain) NSMutableArray* videoViews;
 
-//@property (nonatomic, strong) LoginViewController *loginViewController;
 //@property (nonatomic, strong) ContactsViewController *contactsTableViewController;
 
 + (id) sharedObject;
 
 // cordova plugin functions
 - (void) authorizeApp:(CDVInvokedUrlCommand*)command;
-- (void) configureApp:(CDVInvokedUrlCommand*)command;
+- (void) initialize:(CDVInvokedUrlCommand*)command;
 - (void) showCatPictures:(CDVInvokedUrlCommand*)command;
 - (void) makeViewTransparent;
 - (void) initVideoViews;
@@ -62,6 +58,7 @@
 - (void) setSetting:(NSString*)key value:(NSString*)value;
 - (BOOL) getSettingAsBool:(NSString*)setting;
 - (NSString*) getAllSettingsJSON;
+- (UIViewContentMode) getContentMode:(NSString*)mode;
 
 //login relate methods
 - (void) onStartLoginWithidentityURI;
