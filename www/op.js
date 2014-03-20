@@ -81,20 +81,6 @@ var OpenPeer = {
     return deferred.promise;
   },
 
-  //TODO move to media object
-  // 0:index, 1:top, 2:left, 3:width, 4:height, 5:zindex,
-  // 6:contentMode, 7:scale, 8:opacity, 9:cornerRadius, 10:angle
-  configureVideo: function(config) {
-    exec(function() {
-      console.log('successfully updated self video configuration');
-    }, function(error) {
-      console.log(error);
-      }, 'CDVOP', 'configureVideo',
-      [config.index, config.left, config.top, config.width, config.height,
-       config.zindex, config.contentMode, config.scale, config.opacity,
-       config.cornerRadius, config.angle]);
-  },
-
   // user constructor
   user: function() {
 
@@ -128,6 +114,97 @@ var OpenPeer = {
       return deferred.promise;
     };
 
+  },
+
+  media: {
+        //video controller constructor
+    Video: function(index, config) {
+      if (!config) config = {};
+      var index = index;
+      this.__defineGetter__('index', function() { return index; });
+
+      var left = config.left || 0;
+      this.__defineGetter__('left', function() { return left; });
+      this.__defineSetter__('left', function(val) {
+        left = val;
+        _applyChanges(this);
+      });
+
+      var top = config.top || (200 * index);
+      this.__defineGetter__('top', function() { return top; });
+      this.__defineSetter__('top', function(val) {
+        top = val;
+        _applyChanges(this);
+      });
+
+      var width = config.width || 300;
+      this.__defineGetter__('width', function() { return width; });
+      this.__defineSetter__('width', function(val) {
+        width = val;
+        _applyChanges(this);
+      });
+
+      var height = config.height || 200;
+      this.__defineGetter__('height', function() { return height; });
+      this.__defineSetter__('height', function(val) {
+        height = val;
+        _applyChanges(this);
+      });
+
+      var zindex = config.zindex || (100 - 10 * index);
+      this.__defineGetter__('zindex', function() { return zindex; });
+      this.__defineSetter__('zindex', function(val) {
+        zindex = val;
+        _applyChanges(this);
+      });
+
+      var contentMode = config.contentMode || 'scaleAspectFill';
+      this.__defineGetter__('contentMode', function() { return contentMode; });
+      this.__defineSetter__('contentMode', function(val) {
+        contentMode = val;
+        _applyChanges(this);
+      });
+
+      var scale = config.scale || 1;
+      this.__defineGetter__('scale', function() { return scale; });
+      this.__defineSetter__('scale', function(val) {
+        scale = val;
+        _applyChanges(this);
+      });
+
+      var opacity = config.opacity || 1;
+      this.__defineGetter__('opacity', function() { return opacity; });
+      this.__defineSetter__('opacity', function(val) {
+        opacity = val;
+        _applyChanges(this);
+      });
+
+      var cornerRadius = config.cornerRadius || 20;
+      this.__defineGetter__('cornerRadius', function() { return cornerRadius;});
+      this.__defineSetter__('cornerRadius', function(val) {
+        cornerRadius = val;
+        _applyChanges(this);
+      });
+
+      var angle = config.angle || 0;
+      this.__defineGetter__('angle', function() { return angle; });
+      this.__defineSetter__('angle', function(val) {
+        angle = val;
+        _applyChanges(this);
+      });
+
+      function _applyChanges(video) {
+        exec(function() {
+          console.log('successfully updated self video configuration');
+        }, function(error) {
+          console.log(error);
+          }, 'CDVOP', 'configureVideo',
+          [video.index, video.left, video.top, video.width, video.height,
+           video.zindex, video.contentMode, video.scale, video.opacity,
+           video.cornerRadius, video.angle]);
+      };
+      _applyChanges(this);
+    }
   },
 
   // call constructor

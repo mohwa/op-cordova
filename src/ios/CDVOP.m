@@ -53,6 +53,7 @@ static CDVOP *shared;
     peerImageView.layer.masksToBounds = YES;
     [self.webView.superview addSubview:peerImageView];
     [videoViews addObject:peerImageView];
+    NSLog(@"what have we got %@", [videoViews objectAtIndex:0]);
 }
 
 // stress test UIImageViews using a series of cat pictures
