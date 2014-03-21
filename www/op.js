@@ -52,6 +52,7 @@ var OpenPeer = {
     exec(success, error, 'CDVOP', 'getAccountState', []);
   },
 
+
   authorizeApp: function(app) {
     var deferred = Q.defer();
     if (app.id && app.sharedSecret) {
@@ -71,8 +72,8 @@ var OpenPeer = {
     exec(null, null, 'CDVOP', 'showCatPictures', [interval]);
   },
 
-  stopCatPictures: function(interval) {
-    exec(null, null, 'CDVOP', 'stopCatPictures');
+  stopCatPictures: function() {
+    exec(null, null, 'CDVOP', 'stopCatPictures', []);
   },
 
   configureApp: function(config) {
@@ -113,11 +114,13 @@ var OpenPeer = {
       }, 'CDVOP', 'logout', [network]);
       return deferred.promise;
     };
-
   },
 
   media: {
-        //video controller constructor
+    switchCamera: function(success, error, camera) {
+      exec(success, error, 'CDVOP', 'switchCamera', [camera]);
+    },
+    //video controller constructor
     Video: function(index, config) {
       if (!config) config = {};
       var index = index;

@@ -53,7 +53,6 @@ static CDVOP *shared;
     peerImageView.layer.masksToBounds = YES;
     [self.webView.superview addSubview:peerImageView];
     [videoViews addObject:peerImageView];
-    NSLog(@"what have we got %@", [videoViews objectAtIndex:0]);
 }
 
 // stress test UIImageViews using a series of cat pictures
@@ -79,9 +78,16 @@ static CDVOP *shared;
     [selfImageView startAnimating];
 }
 
-- (void)stopCatPictures:(CDVInvokedUrlCommand*)command {
-    for (NSUInteger index = 0; index < videoViews.count; index++) {
-        [[videoViews objectAtIndex:index] stopAnimating];
+- (void) stopCatPictures:(CDVInvokedUrlCommand*)command {
+    @try {
+        UIImageView *selfImageView = [videoViews objectAtIndex: 0];
+        UIImageView *peerImageView = [videoViews objectAtIndex: 1];
+        [selfImageView removeFromSuperview];
+        [peerImageView removeFromSuperview];
+        [videoViews removeAllObjects];
+    }
+    @catch (NSException *exception) {
+        NSLog(@"Failed to terminate the felines: %@", exception);
     }
     [self initVideoViews];
     [self connectVideoViews];
@@ -160,6 +166,29 @@ static CDVOP *shared;
     //Hook up UI images for self video preview and peer video
     [[HOPMediaEngine sharedInstance] setCaptureRenderView:[videoViews objectAtIndex:0]];
     [[HOPMediaEngine sharedInstance] setChannelRenderView:[videoViews objectAtIndex:1]];
+}
+
+/*
+ * argument[0] front or back. will toggle otherwise
+ */
+- (void) switchCamera:(CDVInvokedUrlCommand*)command
+{
+    CDVPluginResult* res = nil;
+    NSString *whichCam = command.arguments[0];
+    if ([[AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo] count] > 1) {
+        if([whichCam isEqualToString:@"front"]) {
+            [[HOPMediaEngine sharedInstance] setCameraType:HOPMediaEngineCameraTypeFront];
+        } else if ([whichCam isEqualToString:@"back"]) {
+            [[HOPMediaEngine sharedInstance] setCameraType:HOPMediaEngineCameraTypeBack];
+        } else {
+            // toggle to the other camera
+            HOPMediaEngineCameraTypes currentCameraType = [[HOPMediaEngine sharedInstance] getCameraType];
+            currentCameraType = currentCameraType == HOPMediaEngineCameraTypeFront ? HOPMediaEngineCameraTypeBack : HOPMediaEngineCameraTypeFront;
+            [[HOPMediaEngine sharedInstance] setCameraType:currentCameraType];
+        }
+    }
+    res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"success"];
+    [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
 }
 
 // TODO: remove if not needed

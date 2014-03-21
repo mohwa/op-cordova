@@ -4,6 +4,7 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import <AVFoundation/AVFoundation.h>
 #import <Cordova/CDVPlugin.h>
 #import <Cordova/CDV.h>
 #import <Cordova/CDVViewController.h>
@@ -50,6 +51,8 @@
 - (void) authorizeApp:(CDVInvokedUrlCommand*)command;
 - (void) initialize:(CDVInvokedUrlCommand*)command;
 - (void) showCatPictures:(CDVInvokedUrlCommand*)command;
+- (void) stopCatPictures:(CDVInvokedUrlCommand*)command;
+- (void) switchCamera:(CDVInvokedUrlCommand*)command;
 - (void) makeViewTransparent;
 - (void) initVideoViews;
 
