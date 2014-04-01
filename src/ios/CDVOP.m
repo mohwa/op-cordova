@@ -219,13 +219,25 @@ static CDVOP *shared;
     //}];
 }
 
+// sends list of contacts to JS if user is logged in
+- (void)getListOfContacts:(CDVInvokedUrlCommand*)command
+{
+    CDVPluginResult* res = nil;
+    
+    //TODO
+    NSString* state = @"TODO";
+    res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:state];
+    
+    [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
+}
+
 - (void)logout:(CDVInvokedUrlCommand*)command
 {
     NSLog(@"logging out");
     CDVPluginResult* res = nil;
     
     //TODO
-    
+
     [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
 }
 

@@ -78,6 +78,7 @@
 - (void) getAccountState:(CDVInvokedUrlCommand*)command;
 - (void) logout:(CDVInvokedUrlCommand*)command;
 - (void) startLoginProcess:(CDVInvokedUrlCommand*)command;
+- (void) getListOfContacts:(CDVInvokedUrlCommand*)command;
 - (void) showWebLoginView:(WebLoginViewController*) webLoginViewController;
 - (void) closeWebLoginView:(WebLoginViewController*) webLoginViewController;
 @end

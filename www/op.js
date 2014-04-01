@@ -85,10 +85,13 @@ var OpenPeer = {
   // user constructor
   user: function() {
 
+    this.contacts = {};
+
     this.login = function(options) {
       var deferred = Q.defer();
       if (!options) var options = {};
       exec(function(identityId) {
+        // TODO: call _loadContacts when this is working
         deferred.resolve(identityId);
       }, function(error) {
         deferred.reject(new Error('login failed: ' + error));
@@ -112,6 +115,19 @@ var OpenPeer = {
       }, function(error) {
         deferred.reject(new Error('logout failed: ' + error));
       }, 'CDVOP', 'logout', [network]);
+      return deferred.promise;
+    };
+
+    // ask SDK to give us list of contacts for current user
+    this._loadContacts = function() {
+      var deferred = Q.defer();
+      exec(function(contactsList) {
+        this.contacts = contactsList;
+        deferred.resolve();
+      }, function(error) {
+        deferred.reject(new Error('failed to obtain list of contacts: ' +
+          error));
+      }, 'CDVOP', 'getListOfContacts');
       return deferred.promise;
     };
   },
