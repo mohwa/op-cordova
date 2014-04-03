@@ -103,8 +103,8 @@
     NSString *libraryPath = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) lastObject];
     NSString *dataPathDirectory = [libraryPath stringByAppendingPathComponent:@"db"];
     [[HOPModelManager sharedModelManager] setDataPath:dataPathDirectory backupData:NO];
-    NSString *cachePathDirectory = [libraryPath stringByAppendingPathComponent:@"cache"];
-    [[HOPModelManager sharedModelManager] setCachePath:cachePathDirectory];
+    //NSString *cachePathDirectory = [libraryPath stringByAppendingPathComponent:@"cache"];
+    //[[HOPModelManager sharedModelManager] setCachePath:cachePathDirectory];
     
     //Set settigns delegate
     [[HOPSettings sharedSettings] setup];//WithDelegate:[Settings sharedSettings]];

@@ -64,7 +64,9 @@
 - (void) startAccount;
 - (void) startLogin;
 - (void) login;
-- (void) logout;
+- (void) logout:(NSString*) identityURI;
+- (void) clearIdentities;
+- (void) removeCookiesAndClearCredentials;
 
 - (void) onIdentityAssociationFinished:(HOPIdentity*) identity;
 - (void) attachDelegateForIdentity:(HOPIdentity*) identity forceAttach:(BOOL) forceAttach;

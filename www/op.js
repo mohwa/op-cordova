@@ -90,9 +90,10 @@ var OpenPeer = {
     this.login = function(options) {
       var deferred = Q.defer();
       if (!options) var options = {};
-      exec(function(identityId) {
+      exec(function(identity) {
         // TODO: call _loadContacts when this is working
-        deferred.resolve(identityId);
+
+        deferred.resolve(identity);
       }, function(error) {
         deferred.reject(new Error('login failed: ' + error));
       }, 'CDVOP', 'startLoginProcess', [
@@ -242,4 +243,6 @@ var OpenPeer = {
 
 OpenPeer.initialize();
 module.exports = OpenPeer;
+
+
 

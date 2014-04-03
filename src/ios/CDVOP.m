@@ -160,12 +160,14 @@ static CDVOP *shared;
  */
 - (void) connectVideoViews
 {
+    HOPMediaEngine *mediaEngine = [HOPMediaEngine sharedInstance];
     //Set default video orientation to be portrait
-    [[HOPMediaEngine sharedInstance] setDefaultVideoOrientation:HOPMediaEngineVideoOrientationPortrait];
+    [mediaEngine setDefaultVideoOrientation:HOPMediaEngineVideoOrientationPortrait];
     
     //Hook up UI images for self video preview and peer video
-    [[HOPMediaEngine sharedInstance] setCaptureRenderView:[videoViews objectAtIndex:0]];
-    [[HOPMediaEngine sharedInstance] setChannelRenderView:[videoViews objectAtIndex:1]];
+    [mediaEngine setCaptureRenderView:[videoViews objectAtIndex:0]];
+    [mediaEngine setChannelRenderView:[videoViews objectAtIndex:1]];
+    [mediaEngine startVideoCapture];
 }
 
 /*
@@ -176,16 +178,19 @@ static CDVOP *shared;
     CDVPluginResult* res = nil;
     NSString *whichCam = command.arguments[0];
     if ([[AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo] count] > 1) {
+        HOPMediaEngine *mediaEngine = [HOPMediaEngine sharedInstance];
+        [mediaEngine stopVideoCapture];
         if([whichCam isEqualToString:@"front"]) {
-            [[HOPMediaEngine sharedInstance] setCameraType:HOPMediaEngineCameraTypeFront];
+            [mediaEngine setCameraType:HOPMediaEngineCameraTypeFront];
         } else if ([whichCam isEqualToString:@"back"]) {
-            [[HOPMediaEngine sharedInstance] setCameraType:HOPMediaEngineCameraTypeBack];
+            [mediaEngine setCameraType:HOPMediaEngineCameraTypeBack];
         } else {
             // toggle to the other camera
-            HOPMediaEngineCameraTypes currentCameraType = [[HOPMediaEngine sharedInstance] getCameraType];
+            HOPMediaEngineCameraTypes currentCameraType = [mediaEngine getCameraType];
             currentCameraType = currentCameraType == HOPMediaEngineCameraTypeFront ? HOPMediaEngineCameraTypeBack : HOPMediaEngineCameraTypeFront;
-            [[HOPMediaEngine sharedInstance] setCameraType:currentCameraType];
+            [mediaEngine setCameraType:currentCameraType];
         }
+        [mediaEngine startVideoCapture];
     }
     res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"success"];
     [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
@@ -233,10 +238,20 @@ static CDVOP *shared;
 
 - (void)logout:(CDVInvokedUrlCommand*)command
 {
-    NSLog(@"logging out");
     CDVPluginResult* res = nil;
     
-    //TODO
+    // TODO: use this to decide if we want to logout of only one identity or all of them
+    NSString *identityUri = command.arguments[0];
+    LoginManager *loginManager = [LoginManager sharedLoginManager];
+    
+    @try {
+        [loginManager logout:identityUri];
+        res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"success"];
+    }
+    @catch (NSException *exception) {
+        NSString *error = [NSString stringWithFormat:@"logout error: %@", exception];
+        res = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error];
+    }
 
     [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
 }
@@ -350,11 +365,19 @@ static CDVOP *shared;
     //TODO update client
 }
 
+// send an object to JS containing identity info
 - (void) onIdentityLoginFinished {
     NSLog(@"*********** Identity Login finished ************");
     CDVPluginResult* res = nil;
-    NSString* message = @"Login finished successfully";
-    res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:message];
+    //HOPHomeUser* homeUser = [[HOPModelManager sharedModelManager] getLastLoggedInHomeUser];
+    NSArray* associatedIdentites = [[HOPAccount sharedAccount] getAssociatedIdentities];
+    // TODO: check to see what would be right index and get more info about user identity
+    HOPIdentity* identity = [associatedIdentites objectAtIndex:0];
+    NSString * identityURI = [identity getIdentityURI];
+    //HOPIdentityContact* homeIdentityContact = [identity getSelfIdentityContact];
+    
+    NSDictionary* message = [[NSDictionary alloc] initWithObjectsAndKeys:identityURI, @"uri", nil];
+    res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:message];
     [self.commandDelegate sendPluginResult:res callbackId:self.loginCallbackId];
 }
 

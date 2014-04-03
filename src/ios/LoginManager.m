@@ -95,23 +95,27 @@
 /**
  Logout from the current account.
  */
-- (void) logout
-{    
+- (void) logout:(NSString*) identityURI {
     //TODO Delete all cookies.
     //[Utility removeCookiesAndClearCredentials];
+    // for now we logout of all associated identities
+    NSLog(@"logging out of all identities");
     
-    NSArray* associatedIdentities = [[HOPAccount sharedAccount] getAssociatedIdentities];
-    for (HOPIdentity* identity in associatedIdentities)
-    {
-        [identity cancel];
-    }
+    //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelInsane,@"Remove cookies");
+    //Delete all cookies.
+    [self removeCookiesAndClearCredentials];
     
-    for (HOPIdentity* identity in self.associatingIdentitiesDictionary)
-    {
-        [identity cancel];
-    }
-    [self.associatingIdentitiesDictionary removeAllObjects];
+    //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelInsane,@"Remove identity web view controllers");
+    //[[[OpenPeer sharedOpenPeer] identityDelegate] removeAllWebViewControllers];
     
+    //[[[[OpenPeer sharedOpenPeer] backgroundingDelegate] backgroundingSubscription] cancel];
+    //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelInsane,@"Clear all session objects");
+    //[[SessionManager sharedSessionManager] clearAllSessions];
+
+    //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelInsane,@"Clear all identity objects");
+    [self clearIdentities];
+    
+    //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelInsane,@"Start account shutdown");
     //Call to the SDK in order to shutdown Open Peer engine.
     [[HOPAccount sharedAccount] shutdown];
     
@@ -120,11 +124,35 @@
     [[HOPModelManager sharedModelManager] saveContext];
     
     self.isLogin = YES;
-
+    
+    //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelInsane,@"Clear session records from the database");
+    [[HOPModelManager sharedModelManager] clearSessionRecords];
+    
+    //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelInsane,@"Release all core objects");
+    [[HOPStack sharedStack] doLogoutCleanup];
 }
 
-- (void) startAccount
-{
+- (void) clearIdentities {
+    NSArray* associatedIdentities = [[HOPAccount sharedAccount] getAssociatedIdentities];
+    for (HOPIdentity* identity in associatedIdentities) {
+        [identity cancel];
+    }
+    
+    for (HOPIdentity* identity in self.associatingIdentitiesDictionary) {
+        [identity cancel];
+    }
+    [self.associatingIdentitiesDictionary removeAllObjects];
+}
+
+- (void) removeCookiesAndClearCredentials {
+    NSHTTPCookieStorage *cookieStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
+    for (NSHTTPCookie *each in [cookieStorage cookies])
+    {
+        [cookieStorage deleteCookie:each];
+    }
+}
+
+- (void) startAccount {
     NSString* outerFrameURL = [[CDVOP sharedObject] getSetting:@"outerFrameURL"];
     NSString* identityProviderDomain = [[CDVOP sharedObject] getSetting:@"identityProviderDomain"];
     NSString* deviceId = [[OpenPeer sharedOpenPeer] deviceId];
@@ -337,6 +365,23 @@
             {
                 [[CDVOP sharedObject] onLoginFinished];
                 //TODO Start loading contacts.
+                // TESTING
+                for (HOPIdentity* identity in associatedIdentites)
+                {
+                    if ([[identity getBaseIdentityURI] isEqualToString:@"identity://facebook.com/"])
+                    {
+                        HOPHomeUser* homeUser = [[HOPModelManager sharedModelManager] getLastLoggedInHomeUser];
+                        HOPAssociatedIdentity* associatedIdentity = [[HOPModelManager sharedModelManager] getAssociatedIdentityBaseIdentityURI:[identity getBaseIdentityURI] homeUserStableId:homeUser.stableId];
+                        
+                        if ([[LoginManager sharedLoginManager] isLogin] || [[LoginManager sharedLoginManager] isAssociation])
+                        {
+                            NSLog(@"********************* contact loading started *********************");
+                        };
+                        
+                        [identity startRolodexDownload:associatedIdentity.downloadedVersion];
+                        NSLog(@"Start rolodex contacts download - identity URI: - Version: %@", associatedIdentity.downloadedVersion);
+                    }
+                }
                 // [[ContactsManager sharedContactsManager] loadContacts];
             }
         }
