@@ -369,13 +369,17 @@ static CDVOP *shared;
 - (void) onIdentityLoginFinished {
     NSLog(@"*********** Identity Login finished ************");
     CDVPluginResult* res = nil;
-    //HOPHomeUser* homeUser = [[HOPModelManager sharedModelManager] getLastLoggedInHomeUser];
-    NSArray* associatedIdentites = [[HOPAccount sharedAccount] getAssociatedIdentities];
-    // TODO: check to see what would be right index and get more info about user identity
-    HOPIdentity* identity = [associatedIdentites objectAtIndex:0];
-    NSString * identityURI = [identity getIdentityURI];
-    //HOPIdentityContact* homeIdentityContact = [identity getSelfIdentityContact];
+    HOPHomeUser* homeUser = [[HOPModelManager sharedModelManager] getLastLoggedInHomeUser];
+    //NSArray* associatedIdentites = [[HOPAccount sharedAccount] getAssociatedIdentities];
+    NSSet *associatedIdentities = [homeUser associatedIdentities];
     
+    // TODO: check to see what would be right index and get more info about user identity
+    //HOPIdentity* identity = [associatedIdentites objectAtIndex:0];
+    //NSString * identityURI = [identity getIdentityURI];
+    HOPAssociatedIdentity *hopId = [associatedIdentities ]
+    HOPRolodexContact *homeUserProfile = [identity]
+    //HOPIdentityContact* homeIdentityContact = [identity getSelfIdentityContact];
+
     NSDictionary* message = [[NSDictionary alloc] initWithObjectsAndKeys:identityURI, @"uri", nil];
     res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:message];
     [self.commandDelegate sendPluginResult:res callbackId:self.loginCallbackId];

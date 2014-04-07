@@ -88,7 +88,7 @@
                 {
                     [self.webLoginViewController.loginWebView setFrame:[[CDVOP sharedObject] webView].bounds];
                     
-                    [[CDVOP sharedObject] showWebLoginView:self.webLoginViewController.loginWebView];
+                    [[CDVOP sharedObject] showWebLoginView:self.webLoginViewController];
                 }
                 
                 self.webLoginViewController.view.alpha = 0;

@@ -54,6 +54,8 @@
       <source-file src="src/ios/CacheDelegate.m" />
       <header-file src="src/ios/CallDelegate.h" />
       <source-file src="src/ios/CallDelegate.m" />
+      <header-file src="src/ios/ContactsManager.h" />
+      <source-file src="src/ios/ContactsManager.m" />
       <header-file src="src/ios/ConversationThreadDelegate.h" />
       <source-file src="src/ios/ConversationThreadDelegate.m" />
       <header-file src="src/ios/Delegates.h" />
@@ -67,8 +69,16 @@
       <source-file src="src/ios/LoginManager.m" />
       <header-file src="src/ios/MediaEngineDelegate.h" />
       <source-file src="src/ios/MediaEngineDelegate.m" />
+      <header-file src="src/ios/Message.h" />
+      <source-file src="src/ios/Message.m" />
+      <header-file src="src/ios/MessageManager.h" />
+      <source-file src="src/ios/MessageManager.m" />
       <header-file src="src/ios/OpenPeer.h" />
       <source-file src="src/ios/OpenPeer.m" />
+      <header-file src="src/ios/Session.h" />
+      <source-file src="src/ios/Session.m" />
+      <header-file src="src/ios/SessionManager.h" />
+      <source-file src="src/ios/SessionManager.m" />
       <header-file src="src/ios/StackDelegate.h" />
       <source-file src="src/ios/StackDelegate.m" />
       <header-file src="src/ios/WebLoginViewController.h" />
