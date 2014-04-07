@@ -29,6 +29,27 @@
  
  */
 
+#import "ContactsManager.h"
+#import "SessionManager.h"
+#import "MessageManager.h"
+#import "LoginManager.h"
+
+#import "OpenPeer.h"
+#import "AppConsts.h"
+
+#import <OpenpeerSDK/HOPIdentityLookup.h>
+#import <OpenpeerSDK/HOPIdentityLookupInfo.h>
+#import <OpenpeerSDK/HOPIdentity.h>
+#import <OpenpeerSDK/HOPAccount.h>
+#import <OpenpeerSDK/HOPModelManager.h>
+#import <OpenpeerSDK/HOPRolodexContact+External.h>
+#import <OpenpeerSDK/HOPHomeUser+External.h>
+#import <OpenpeerSDK/HOPContact.h>
+#import <OpenpeerSDK/HOPIdentityContact.h>
+#import <OpenpeerSDK/HOPAssociatedIdentity.h>
+#import <OpenpeerSDK/HOPPublicPeerFile.h>
+#import <OpenpeerSDK/HOPUtility.h>
+#import <AddressBook/AddressBook.h>
 #import <Foundation/Foundation.h>
 #import <OpenpeerSDK/HOPProtocols.h>
 

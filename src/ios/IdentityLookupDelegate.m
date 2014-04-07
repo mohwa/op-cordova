@@ -30,13 +30,11 @@
  */
 
 #import "IdentityLookupDelegate.h"
-#import <OpenpeerSDK/HOPIdentityLookup.h>
 @implementation IdentityLookupDelegate
 
 - (void) onIdentityLookupCompleted:(HOPIdentityLookup*) lookup
 {
-    //TODO: inform client and send over identity lookup
-    //[[ContactsManager sharedContactsManager] updateContactsWithDataFromLookup:lookup];
+    [[ContactsManager sharedContactsManager] updateContactsWithDataFromLookup:lookup];
     NSLog(@"Identity lookup completed for %@", lookup);
 }
 @end

@@ -31,6 +31,9 @@
 
 #import <Foundation/Foundation.h>
 #import <OpenpeerSDK/HOPProtocols.h>
+#import <OpenpeerSDK/HOPIdentityLookup.h>
+
+#import "ContactsManager.h"
 
 @interface IdentityLookupDelegate : NSObject<HOPIdentityLookupDelegate>
 

@@ -225,7 +225,7 @@ static CDVOP *shared;
 }
 
 // sends list of contacts to JS if user is logged in
-- (void)getListOfContacts:(CDVInvokedUrlCommand*)command
+- (void) getListOfContacts:(CDVInvokedUrlCommand*)command
 {
     CDVPluginResult* res = nil;
     
@@ -234,6 +234,11 @@ static CDVOP *shared;
     res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:state];
     
     [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
+}
+
+- (void) onContactsLoadingStarted {
+    //TODO: tell client
+    NSLog(@"loading contacts started");
 }
 
 - (void)logout:(CDVInvokedUrlCommand*)command
@@ -404,6 +409,10 @@ static CDVOP *shared;
     //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Account login error: %@",error);
     NSLog(@"Account login error: %@", error);
     //TODO: send error to client
+}
+
+- (void) updateSessionViewControllerId:(NSString*) oldSessionId newSesionId:(NSString*) newSesionId {
+    //TODO 
 }
 
 - (UIViewContentMode) getContentMode:(NSString*)mode {

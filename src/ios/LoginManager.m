@@ -395,7 +395,7 @@
     }
     else
     {
-        int o = [self.associatingIdentitiesDictionary count];
+        int o = (int)[self.associatingIdentitiesDictionary count];
         if (o > 0)
             //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelDebug, @"onUserLoggedIn - NOT Ready because of associatingIdentitiesDictionary is not empty: %d",o);
             NSLog(@"onUserLoggedIn - NOT Ready because of associatingIdentitiesDictionary is not empty: %d",o);

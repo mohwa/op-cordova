@@ -33,10 +33,7 @@
 #import "ContactsManager.h"
 #import "MainViewController.h"
 #import "MessageManager.h"
-#import "SessionViewController_iPhone.h"
-#import "SoundsManager.h"
 
-#import "Utility.h"
 #import "Session.h"
 #import "OpenPeer.h"
 #import "AppConsts.h"
@@ -99,7 +96,7 @@
 */
 - (Session*)createSessionForContact:(HOPRolodexContact *)contact
 {
-    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Creating session for contact peer URI: %@", contact.identityContact.peerFile.peerURI);
+    //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Creating session for contact peer URI: %@", contact.identityContact.peerFile.peerURI);
     Session* ret = nil;
     
     if (!contact)
@@ -141,7 +138,7 @@
                 }
             }
 #endif
-            OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Creating session record from conversation thread id: %@", [conversationThread getThreadId]);
+            //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Creating session record from conversation thread id: %@", [conversationThread getThreadId]);
             [[HOPModelManager sharedModelManager] addSession:[conversationThread getThreadId] type:nil date:nil name:nil participants:[NSArray arrayWithObject:contact]];
         }
         
@@ -164,7 +161,7 @@
 */
 - (Session*) createSessionForConversationThread:(HOPConversationThread*) inConversationThread
 {
-    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Creating session for conversation thread id: %@", [inConversationThread getThreadId]);
+    //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Creating session for conversation thread id: %@", [inConversationThread getThreadId]);
     Session* ret = nil;
     HOPRolodexContact* rolodexContact = nil;
     NSArray* contacts = [inConversationThread getContacts];
@@ -196,14 +193,14 @@
     
     if (rolodexContact)
     {
-        OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelDebug, @"%@ initiating a session with %@", [[rolodexContacts objectAtIndex:0] name], [[[HOPModelManager sharedModelManager] getLastLoggedInHomeUser] getFullName]);
+        //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelDebug, @"%@ initiating a session with %@", [[rolodexContacts objectAtIndex:0] name], [[[HOPModelManager sharedModelManager] getLastLoggedInHomeUser] getFullName]);
         
         ret = [[Session alloc] initWithContacts:rolodexContacts conversationThread:inConversationThread];
         
         if (ret)
         {
             [self.sessionsDictionary setObject:ret forKey:[inConversationThread getThreadId]];
-            OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Creating session record from conversation thread id: %@", [inConversationThread getThreadId]);
+            //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Creating session record from conversation thread id: %@", [inConversationThread getThreadId]);
             [[HOPModelManager sharedModelManager] addSession:[inConversationThread getThreadId] type:nil date:nil name:nil participants:contactAaray];
         }
     }
@@ -233,7 +230,7 @@
                 if (session)
                 {
                     //If session is created sucessfully, start a video call
-                    [[[OpenPeer sharedOpenPeer] mainViewController] showSessionViewControllerForSession:session forIncomingCall:NO  forIncomingMessage:NO];
+                    //[[[OpenPeer sharedOpenPeer] mainViewController] showSessionViewControllerForSession:session forIncomingCall:NO  forIncomingMessage:NO];
                     
                     [self makeCallForSession:session includeVideo:YES isRedial:NO];
                 }
@@ -275,7 +272,7 @@
     //[self.sessionsDictionary removeObjectForKey:oldSessionId];
     [self.sessionsDictionary setObject:inSession forKey:newSessionId];
     
-    [[[OpenPeer sharedOpenPeer] mainViewController] updateSessionViewControllerId:oldSessionId newSesionId:newSessionId];
+    [[OpenPeer sharedOpenPeer] updateSessionViewControllerId:oldSessionId newSesionId:newSessionId];
 }
 
 /**
@@ -285,7 +282,7 @@
  */
 - (Session*) proceedWithExistingSessionForContact:(HOPContact*) contact newConversationThread:(HOPConversationThread*) inConversationThread
 {
-    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Get existing session for contact peer URI: %@", [contact getPeerURI]);
+    //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Get existing session for contact peer URI: %@", [contact getPeerURI]);
     
     Session* ret = nil;
     NSArray* rolodexContacts = [[HOPModelManager sharedModelManager] getRolodexContactsByPeerURI:[contact getPeerURI]];
@@ -303,7 +300,7 @@
         
         NSArray* contacts = [inConversationThread getContacts];
         NSArray* contactAaray = [[HOPModelManager sharedModelManager] getRolodexContactsByPeerURI:[[contacts objectAtIndex:0] getPeerURI]];
-        OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Creating session record from conversation thread id: %@", [inConversationThread getThreadId]);
+        //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Creating session record from conversation thread id: %@", [inConversationThread getThreadId]);
         [[HOPModelManager sharedModelManager] addSession:[inConversationThread getThreadId] type:nil date:nil name:nil participants:contactAaray];
         
         [self setValidSession:ret newSessionId:newSessionId oldSessionId:oldSessionId];
@@ -341,7 +338,7 @@
 {
     if (!inSession.currentCall)
     {
-        OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Making a call for the session <%p>", inSession);
+        //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Making a call for the session <%p>", inSession);
         
         [[MessageManager sharedMessageManager]sendSystemMessageToCheckAvailability:inSession];
         //Currently we are not supporting group conferences, so only one participant is possible
@@ -354,7 +351,7 @@
     }
     else
     {
-        OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Call is already in a progress");
+        //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Call is already in a progress");
     }
 }
 
@@ -364,7 +361,7 @@
  */
 - (void) answerCallForSession:(Session*) inSession
 {
-    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Answer a call for the session <%p>", inSession);
+    //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Answer a call for the session <%p>", inSession);
     //Answer an incoming call
     [[inSession currentCall] answer];
 }
@@ -375,7 +372,7 @@
  */
 - (void) endCallForSession:(Session*) inSession
 {
-    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"End the call for the session <%p>", inSession);
+    //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"End the call for the session <%p>", inSession);
     //Hangup current active call
     [[inSession currentCall] hangup:HOPCallClosedReasonUser];
     //Set flag that there is no active call
@@ -398,31 +395,30 @@
         if (session)
         {
             //[[SessionManager sharedSessionManager] setValidSession:session newSessionId:[session.conversationThread getThreadId]oldSessionId:sessionId];
-            OPLog(HOPLoggerSeverityError, HOPLoggerLevelDebug, @"%Session for id %@ not found, but it is found other with id %@",sessionId,[session.conversationThread getThreadId]);
+           // OPLog(HOPLoggerSeverityError, HOPLoggerLevelDebug, @"%Session for id %@ not found, but it is found other with id %@",sessionId,[session.conversationThread getThreadId]);
         }
     }
     
+    //TODO: tell client
     if (session)
     {
-        SessionViewController_iPhone* sessionViewController = [[[[OpenPeer sharedOpenPeer] mainViewController] sessionViewControllersDictionary] objectForKey:[session.conversationThread getThreadId]];
-        
         //If it is an incomming call, get show session view controller
         /*if (![[call getCaller] isSelf])
         {
             [[[OpenPeer sharedOpenPeer] mainViewController] showSessionViewControllerForSession:session forIncomingCall:YES forIncomingMessage:NO];
         }
-        else*/
+        else
         if ([[call getCaller] isSelf])
         {
             if ([call hasVideo])
                 [sessionViewController showWaitingView:YES];
             else
                 [sessionViewController showCallViewControllerWithVideo:NO];
-        }
+        }*/
     }
     else
     {
-        OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelBasic, @"Incomming call for unknown session id %@", sessionId);
+        //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelBasic, @"Incomming call for unknown session id %@", sessionId);
     }
     //Stop recording if it is placed and remove recording button
     //[sessionViewController stopVideoRecording:YES hideRecordButton:YES];
@@ -435,11 +431,11 @@
  */
 - (void) onCallIncoming:(HOPCall*) call
 {
-    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Handle incoming call <%p>", call);
+    //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Handle incoming call <%p>", call);
     NSString* sessionId = [[call getConversationThread] getThreadId];
     Session* session = [[[SessionManager sharedSessionManager] sessionsDictionary] objectForKey:sessionId];
     
-    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Incoming a call for the session <%p>", session);
+    //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Incoming a call for the session <%p>", session);
     
     //Set current call
     //BOOL callFlagIsSet = [self setActiveCallSession:session callActive:YES];
@@ -455,19 +451,19 @@
             //If it is an incomming call, get show session view controller
             if (![[call getCaller] isSelf])
             {
-                [[[OpenPeer sharedOpenPeer] mainViewController] showSessionViewControllerForSession:session forIncomingCall:YES forIncomingMessage:NO];
+                //[[[OpenPeer sharedOpenPeer] mainViewController] showSessionViewControllerForSession:session forIncomingCall:YES forIncomingMessage:NO];
             }
             [call ring];
         }
         else
             [call answer];
         
-        BOOL callFlagIsSet = [self setActiveCallSession:session callActive:YES];
+        //BOOL callFlagIsSet = [self setActiveCallSession:session callActive:YES];
     }
     else //If callFlagIsSet is NO, hangup incoming call. 
     {
         [call hangup:HOPCallClosedReasonBusy];
-        [[[OpenPeer sharedOpenPeer] mainViewController] showNotification:[NSString stringWithFormat:@"%@ is busy.",[[[session participantsArray] objectAtIndex:0] name]]];
+        //[[[OpenPeer sharedOpenPeer] mainViewController] showNotification:[NSString stringWithFormat:@"%@ is busy.",[[[session participantsArray] objectAtIndex:0] name]]];
     }
 }
 
@@ -479,8 +475,8 @@
         Session* session = [[[SessionManager sharedSessionManager] sessionsDictionary] objectForKey:sessionId];
         if (session)
         {
-            [[[OpenPeer sharedOpenPeer] mainViewController] showIncominCallForSession:session];
-            [[SoundManager sharedSoundsManager] playRingingSound];
+            //[[[OpenPeer sharedOpenPeer] mainViewController] showIncominCallForSession:session];
+            //[[SoundManager sharedSoundsManager] playRingingSound];
         }
     }
 }
@@ -492,10 +488,9 @@
  */
 - (void) onCallOpened:(HOPCall*) call
 {
-     SessionViewController_iPhone* sessionViewController = [[[[OpenPeer sharedOpenPeer] mainViewController] sessionViewControllersDictionary] objectForKey:[[call getConversationThread] getThreadId]];
-    
-    [sessionViewController showIncomingCall:NO];
-    [sessionViewController showCallViewControllerWithVideo:[call hasVideo]];
+    // TODO
+    //[sessionViewController showIncomingCall:NO];
+    //[sessionViewController showCallViewControllerWithVideo:[call hasVideo]];
     //[sessionViewController prepareForCall:YES withVideo:[call hasVideo]];
     
     //At this moment it is possible to do recording, so show the recording button
@@ -565,18 +560,18 @@
  */
 - (void) onCallEnded:(HOPCall*) call
 {
+    // TODO
     //Get call session
     NSString* sessionId = [[call getConversationThread] getThreadId];
     Session* session = [[[SessionManager sharedSessionManager] sessionsDictionary] objectForKey:sessionId];
     
     [[HOPMediaEngine sharedInstance] stopVideoCapture];
     //Get view controller for call session
-    SessionViewController_iPhone* sessionViewController = [[[[OpenPeer sharedOpenPeer] mainViewController] sessionViewControllersDictionary] objectForKey:[[session conversationThread] getThreadId]];
-    
+    /*
     if (sessionViewController)
     {
         //[sessionViewController removeCallViews];
-        [sessionViewController onCallEnded];
+        //[sessionViewController onCallEnded];
         //Update view for case when call is not active
         //[sessionViewController prepareForCall:NO withVideo:NO];
         
@@ -612,6 +607,7 @@
     
     session.currentCall = nil;
     [[SessionManager sharedSessionManager] setLastEndedCallSession: session];
+     */
 }
 
 /**
@@ -627,7 +623,8 @@
  */
 - (void) startVideoRecording
 {
-    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Video recording is started");
+    // TODO
+    //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Video recording is started");
     NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
     [formatter setDateFormat:@"dd-MM-yyyy-HH-mm"];
     
@@ -642,7 +639,7 @@
  */
 - (void) stopVideoRecording
 {
-    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Video recording is stopped");
+    // OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Video recording is stopped");
     //Stop video recording
     [[HOPMediaEngine sharedInstance] stopRecordVideoCapture];
 }
