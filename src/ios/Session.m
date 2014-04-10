@@ -30,8 +30,6 @@
  */
 
 #import "Session.h"
-#import <OpenpeerSDK/HOPRolodexContact.h>
-#import <OpenpeerSDK/HOPConversationThread.h>
 
 @implementation Session
 

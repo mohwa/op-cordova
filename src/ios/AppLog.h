@@ -30,12 +30,13 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "OpenpeerSDK/HOPProtocols.h"
-#import "WebLoginViewController.h"
-#import "Delegates.h"
-#import "AppLog.h"
+#import <OpenPeerSDK/HOPLogger.h>
+#import "AppConsts.h"
 
-@interface IdentityDelegate : NSObject<HOPIdentityDelegate>
+extern BOOL isLoggerStarted;
+extern HOPLoggerLevels applicationLogerLevel;
 
-@property (nonatomic, weak) id<LoginEventsDelegate> loginDelegate;
-@end
+#define OPLog(severity, level,...) if (isLoggerStarted && applicationLogerLevel >= level) AppLog([NSString stringWithUTF8String:__PRETTY_FUNCTION__], [NSString stringWithUTF8String:__FILE__], __LINE__, severity, level, __VA_ARGS__)
+
+void AppLog(NSString* functionName, NSString* filePath, unsigned long lineNumber, HOPLoggerSeverities severity, HOPLoggerLevels level,  NSString* format,...);
+

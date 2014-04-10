@@ -241,6 +241,10 @@ static CDVOP *shared;
     NSLog(@"loading contacts started");
 }
 
+- (void) onContactsLoaded {
+    //TODO
+}
+
 - (void)logout:(CDVInvokedUrlCommand*)command
 {
     CDVPluginResult* res = nil;
@@ -304,8 +308,7 @@ static CDVOP *shared;
         //testing, TODO: remove or extract out the padding
         CGRect rect = CGRectMake(50, 50, screenRect.size.width - 100, screenRect.size.height - 100);
         
-        //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Show WebLoginViewController <%p>",webLoginViewController);
-        NSLog(@"Show WebLoginViewController <%p>",webLoginViewController);
+        OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Show WebLoginViewController <%p>",webLoginViewController);
         webLoginViewController.view.frame = rect;
         webLoginViewController.view.hidden = NO;
         webLoginViewController.view.layer.zPosition = 500;
@@ -337,7 +340,7 @@ static CDVOP *shared;
 {
     if (webLoginViewController)
     {
-        //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Close WebLoginViewController <%p>",webLoginViewController);
+        OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Close WebLoginViewController <%p>",webLoginViewController);
         NSLog(@"Close WebLoginViewController <%p>",webLoginViewController);
         
         [UIView animateWithDuration:1 animations:^
@@ -372,22 +375,63 @@ static CDVOP *shared;
 
 // send an object to JS containing identity info
 - (void) onIdentityLoginFinished {
-    NSLog(@"*********** Identity Login finished ************");
     CDVPluginResult* res = nil;
     HOPHomeUser* homeUser = [[HOPModelManager sharedModelManager] getLastLoggedInHomeUser];
-    //NSArray* associatedIdentites = [[HOPAccount sharedAccount] getAssociatedIdentities];
-    NSSet *associatedIdentities = [homeUser associatedIdentities];
+    NSArray* associatedIdentites = [[HOPAccount sharedAccount] getAssociatedIdentities];
+    //NSSet *associatedIdentities = [homeUser associatedIdentities];
     
     // TODO: check to see what would be right index and get more info about user identity
-    //HOPIdentity* identity = [associatedIdentites objectAtIndex:0];
-    //NSString * identityURI = [identity getIdentityURI];
-    HOPAssociatedIdentity *hopId = [associatedIdentities ]
-    HOPRolodexContact *homeUserProfile = [identity]
+    HOPIdentity* identity = [associatedIdentites objectAtIndex:0];
+    
+    NSString * identityURI = [identity getIdentityURI];
+    //HOPAssociatedIdentity *hopId = [associatedIdentities ]
+    //HOPRolodexContact *homeUserProfile = [identity]
     //HOPIdentityContact* homeIdentityContact = [identity getSelfIdentityContact];
-
-    NSDictionary* message = [[NSDictionary alloc] initWithObjectsAndKeys:identityURI, @"uri", nil];
+    HOPModelManager* modelManager = [HOPModelManager sharedModelManager];
+    
+    //TODO: get home user info
+    
+    NSDictionary* message = [[NSDictionary alloc] initWithObjectsAndKeys:identityURI, @"uri", [homeUser getFullName], @"name", nil];
     res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:message];
     [self.commandDelegate sendPluginResult:res callbackId:self.loginCallbackId];
+}
+
+/**
+ *  create and return a list of all contacts for currently logged in user
+ *
+ *  @return
+ */
+- (NSDictionary*) getContactsJSON {
+    NSMutableDictionary* ret = [[NSMutableDictionary alloc] init];
+    
+    NSArray* associatedIdentites = [[HOPAccount sharedAccount] getAssociatedIdentities];
+    
+    // TODO: check to see what would be right index and get more info about user identity.
+    // Should we iterate and aggregate contacts from each identity?
+    HOPIdentity* identity = [associatedIdentites objectAtIndex:0];
+    
+    NSString * identityURI = [identity getIdentityURI];
+    HOPModelManager* modelManager = [HOPModelManager sharedModelManager];
+    
+    [[ContactsManager sharedContactsManager] loadContacts];
+    
+    // TODO: check why refresh does not pull new contacts from facebook
+    //[[ContactsManager sharedContactsManager] refreshRolodexContacts];
+    //[[ContactsManager sharedContactsManager] refreshExisitngContacts];
+    
+    NSArray* fullContactsList = [modelManager getAllRolodexContactForHomeUserIdentityURI:identityURI];
+    //NSArray* rolodexContactsList = [modelManager getRolodexContactsForHomeUserIdentityURI:identityURI openPeerContacts:YES];
+    
+    for (HOPRolodexContact* contact in fullContactsList) {
+        
+        // for now get the only avatar url we have
+        NSURL* avatar = [[[contact avatars] anyObject] url];
+        
+        NSDictionary* cDict = [[NSDictionary alloc] initWithObjectsAndKeys:[contact name], @"name", avatar, "avatarUrl", nil];
+        [ret setObject:cDict forKey:[contact identityURI]];
+    }
+    
+    return ret;
 }
 
 - (void) onLoginFinished {
@@ -406,8 +450,7 @@ static CDVOP *shared;
 }
 
 - (void) onAccountLoginError:(NSString*) error {
-    //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Account login error: %@",error);
-    NSLog(@"Account login error: %@", error);
+    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Account login error: %@",error);
     //TODO: send error to client
 }
 

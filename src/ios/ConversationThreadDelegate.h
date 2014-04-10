@@ -31,6 +31,7 @@
 
 #import <Foundation/Foundation.h>
 #import <OpenpeerSDK/HOPProtocols.h>
+#import "AppLog.h"
 
 @interface ConversationThreadDelegate : NSObject<HOPConversationThreadDelegate>
 

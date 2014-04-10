@@ -30,16 +30,12 @@
  */
 
 #import "CallDelegate.h"
-#import "OpenPeer.h"
-#import <OpenpeerSDK/HOPCall.h>
-#import <OpenpeerSDK/HOPTypes.h>
-#import <OpenpeerSDK/HOPConversationThread.h>
 
 @implementation CallDelegate
 
 - (void) onCallStateChanged:(HOPCall*) call callState:(HOPCallStates) callState
 {
-    //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelDebug, @"Call state: %@", [Utility getCallStateAsString:[call getState]]);
+    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelDebug, @"Call state: %@", [Utility getCallStateAsString:[call getState]]);
     
     NSString* sessionId = [[call getConversationThread] getThreadId];
     dispatch_async(dispatch_get_main_queue(), ^{

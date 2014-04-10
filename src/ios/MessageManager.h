@@ -30,6 +30,24 @@
  */
 
 #import <Foundation/Foundation.h>
+#import "SessionManager.h"
+#import "ContactsManager.h"
+
+#import "AppConsts.h"
+#import "AppLog.h"
+#import "Session.h"
+#import "Message.h"
+#import "OpenPeer.h"
+#import "MainViewController.h"
+
+#import <OpenpeerSDK/HOPRolodexContact+External.h>
+#import <OpenpeerSDK/HOPIdentityContact.h>
+#import <OpenpeerSDK/HOPPublicPeerFile.h>
+#import <OpenpeerSDK/HOPMessage.h>
+#import <OpenpeerSDK/HOPConversationThread.h>
+#import <OpenpeerSDK/HOPContact.h>
+#import <OpenpeerSDK/HOPModelManager.h>
+#import <OpenPeerSDK/HOPMessageRecord.h>
 
 @class HOPMessage;
 @class Session;

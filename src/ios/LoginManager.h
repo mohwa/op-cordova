@@ -31,13 +31,14 @@
 
 #import <Foundation/Foundation.h>
 #import "OpenPeer.h"
+#import "AppLog.h"
 #import "WebLoginViewController.h"
 #import "StackDelegate.h"
 #import "CDVOP.h"
 
 //Managers
-//#import "ContactsManager.h"
-//#import "SessionManager.h"
+#import "ContactsManager.h"
+#import "SessionManager.h"
 
 //SDK
 #import <OpenPeerSDK/HOPAccount.h>

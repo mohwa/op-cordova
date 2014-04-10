@@ -31,6 +31,12 @@
 
 #import <Foundation/Foundation.h>
 #import <OpenpeerSDK/HOPProtocols.h>
+#import <OpenpeerSDK/HOPCall.h>
+#import <OpenpeerSDK/HOPTypes.h>
+#import <OpenpeerSDK/HOPConversationThread.h>
+
+#import "AppLog.h"
+#import "OpenPeer.h"
 
 @interface CallDelegate : NSObject<HOPCallDelegate>
 

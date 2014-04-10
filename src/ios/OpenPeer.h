@@ -72,4 +72,11 @@
 - (void) storeDefaultSettings:(BOOL)reset;
 - (void) setup;
 - (void) shutdown;
+
+//utility functions
++ (NSString*) getGUIDstring;
++ (NSString*) getDeviceOs;
++ (NSString*) getPlatform;
++ (NSString*) getUserAgentName;
+
 @end

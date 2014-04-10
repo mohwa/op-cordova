@@ -61,8 +61,7 @@
 //This method handles account state changes from SDK.
 - (void) account:(HOPAccount*) account stateChanged:(HOPAccountStates) accountState
 {
-    //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelDebug, @"Account login state: %@", [HOPAccount stringForAccountState:accountState]);
-    NSLog(@"Account login state: %@", [HOPAccount stringForAccountState:accountState]);
+    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelDebug, @"Account login state: %@", [HOPAccount stringForAccountState:accountState]);
 
     dispatch_async(dispatch_get_main_queue(), ^
     {
@@ -143,7 +142,7 @@
 
 - (void)onAccountAssociatedIdentitiesChanged:(HOPAccount *)account
 {
-    //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Account associated identities has changed.");
+    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Account associated identities has changed.");
     dispatch_async(dispatch_get_main_queue(), ^
     {
         NSArray* associatedIdentities = [account getAssociatedIdentities];
@@ -157,7 +156,7 @@
 
 - (void)onAccountPendingMessageForInnerBrowserWindowFrame:(HOPAccount*) account
 {
-    //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Account: pending message for inner browser window frame.");
+    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Account: pending message for inner browser window frame.");
     NSLog(@"Account: pending message for inner browser window frame.");
     dispatch_async(dispatch_get_main_queue(), ^
     {

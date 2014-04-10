@@ -109,8 +109,7 @@
         ABAddressBookRef addressBookRef = ABAddressBookCreateWithOptions(NULL, &error);
         if (error)
         {
-            //OPLog(HOPLoggerSeverityError, HOPLoggerLevelDebug, @"Unable to read the contacts from the address book.");
-            NSLog(@"Unable to read the contacts from the address book.");
+            OPLog(HOPLoggerSeverityError, HOPLoggerLevelDebug, @"Unable to read the contacts from the address book.");
             
             if (addressBookRef)
                 CFRelease(addressBookRef);
@@ -195,8 +194,7 @@
             }
             CFRelease(addressBookRef);
         }
-        //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Finished loading contacts from the address book.");
-        NSLog(@"Finished loading contacts from the address book.");
+        OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Finished loading contacts from the address book.");
     }
     
     HOPIdentityLookup* identityLookup = [[HOPIdentityLookup alloc] initWithDelegate:(id<HOPIdentityLookupDelegate>)[[OpenPeer sharedOpenPeer] identityLookupDelegate] identityLookupInfos:contactsForIdentityLookup identityServiceDomain:idProviderDomain];
@@ -210,7 +208,7 @@
 - (void) loadContacts
 {
     //BOOL downloadedEnded = NO;
-    //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelDebug, @"Init loading contacts");
+    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelDebug, @"Init loading contacts");
     
     //For the first login and association it should be performed contacts download on just associated identity
     NSArray* associatedIdentities = [[HOPAccount sharedAccount] getAssociatedIdentities];
@@ -309,7 +307,7 @@
     {
         if (refreshContacts)
         {
-            [[[[OpenPeer sharedOpenPeer] mainViewController] contactsTableViewController] onContactsLoaded];
+            [[CDVOP sharedObject] onContactsLoaded];
         }
      });
     
@@ -395,8 +393,8 @@
 - (HOPRolodexContact*) getRolodexContactByProfileBundle:(NSString*) profileBundle coreContact:(HOPContact*) coreContact
 {
     HOPRolodexContact* ret = nil;
+    /*
     NSString* name = nil;
-    
     SBJsonParser* parser = [[SBJsonParser alloc] init];
     NSDictionary* bundleDictionary = [parser objectWithString: profileBundle];
     NSDictionary* profileBundleDictionary = [bundleDictionary objectForKey:profileXmlTagProfile];
@@ -481,6 +479,7 @@
         }
 
     }
+     */
     return ret;
 }
 

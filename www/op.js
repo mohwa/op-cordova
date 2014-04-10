@@ -1,4 +1,4 @@
-var exec = require('cordova/exec');
+cordova.define("org.openpeer.cordova.OP", function(require, exports, module) { var exec = require('cordova/exec');
 var OpenPeer = {
   version: 0.0,
 
@@ -247,3 +247,4 @@ module.exports = OpenPeer;
 
 
 
+});

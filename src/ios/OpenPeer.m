@@ -194,7 +194,6 @@
     
     if (![[HOPStack sharedStack] isStackReady])
     {
-        NSLog(@"Stack is ready for setup");
         //Init openpeer stack and set created delegates
         [[HOPStack sharedStack] setupWithStackDelegate:self.stackDelegate mediaEngineDelegate:self.mediaEngineDelegate];
     }
@@ -202,7 +201,6 @@
     [[HOPMediaEngine sharedInstance] setEcEnabled:[[CDVOP sharedObject] getSettingAsBool:@"isMediaAECOn"]];
     [[HOPMediaEngine sharedInstance] setAgcEnabled:[[CDVOP sharedObject] getSettingAsBool:@"isMediaAGCOn"]];
     [[HOPMediaEngine sharedInstance] setNsEnabled:[[CDVOP sharedObject] getSettingAsBool:@"isMediaNSOn"]];
-    NSLog(@"Finished setting up HOP stack");
 }
 
 - (void) shutdown

@@ -28,6 +28,7 @@
       <framework src="QuartzCore.framework" />
       <framework src="AudioToolbox.framework" />
       <framework src="AVFoundation.framework" />
+      <framework src="AddressBook.framework" />
       <framework src="Security.framework" />
       <framework src="UIKIT.framework" />
       <framework src="libz.dylib" />
@@ -50,6 +51,8 @@
       <source-file src="src/ios/AccountDelegate.m" />
       <header-file src="src/ios/AppConsts.h" />
       <source-file src="src/ios/AppConsts.m" />
+      <header-file src="src/ios/AppLog.h" />
+      <source-file src="src/ios/AppLog.m" />
       <header-file src="src/ios/CacheDelegate.h" />
       <source-file src="src/ios/CacheDelegate.m" />
       <header-file src="src/ios/CallDelegate.h" />

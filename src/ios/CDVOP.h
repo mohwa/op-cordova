@@ -28,13 +28,15 @@
 //OP delegates
 #import "OpenPeer.h"
 #import "Delegates.h"
+#import "AppLog.h"
 #import "LoginManager.h"
+#import "ContactsManager.h"
+#import "SessionManager.h"
 #import "WebLoginViewController.h"
 
-//@class Session;
+@class Session;
 @class LoginViewController;
 @class WebLoginViewController;
-//@class ContactsViewController;
 
 @interface CDVOP : CDVPlugin <UIWebViewDelegate,LoginEventsDelegate> {
     NSString* callbackId;
@@ -84,6 +86,7 @@
 // contacts
 - (void) getListOfContacts:(CDVInvokedUrlCommand*)command;
 - (void) onContactsLoadingStarted;
+- (void) onContactsLoaded;
 
 // session
 - (void) updateSessionViewControllerId:(NSString*) oldSessionId newSesionId:(NSString*) newSesionId;

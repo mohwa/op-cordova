@@ -30,6 +30,10 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <OpenpeerSDK/HOPRolodexContact.h>
+#import <OpenpeerSDK/HOPConversationThread.h>
+
+#import "AppLog.h"
 
 @class HOPContact;
 @class HOPCall;

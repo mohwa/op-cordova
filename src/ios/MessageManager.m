@@ -30,27 +30,6 @@
  */
 
 #import "MessageManager.h"
-#import "SessionManager.h"
-#import "ContactsManager.h"
-
-#import "AppConsts.h"
-#import "Session.h"
-#import "Utility.h"
-#import "Message.h"
-#import "OpenPeer.h"
-#import "MainViewController.h"
-
-#import "XMLWriter.h"
-#import "RXMLElement.h"
-
-#import <OpenpeerSDK/HOPRolodexContact+External.h>
-#import <OpenpeerSDK/HOPIdentityContact.h>
-#import <OpenpeerSDK/HOPPublicPeerFile.h>
-#import <OpenpeerSDK/HOPMessage.h>
-#import <OpenpeerSDK/HOPConversationThread.h>
-#import <OpenpeerSDK/HOPContact.h>
-#import <OpenpeerSDK/HOPModelManager.h>
-#import <OpenPeerSDK/HOPMessageRecord.h>
 
 @interface MessageManager ()
 
@@ -90,9 +69,10 @@
 
 - (HOPMessage*) createSystemMessageWithType:(SystemMessageTypes) type andText:(NSString*) text andRecipient:(HOPRolodexContact*) contact
 {
-    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Creating system message with type %d, text:%@ recipient:%@",type,text,contact.name);
+    //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Creating system message with type %d, text:%@ recipient:%@",type,text,contact.name);
     
     HOPMessage* hopMessage = nil;
+    /*
     XMLWriter *xmlWriter = [[XMLWriter alloc] init];
     
     //<Event>
@@ -125,7 +105,8 @@
     {
         OPLog(HOPLoggerSeverityError, HOPLoggerLevelDebug, @"Failed creating a system messsage");
     }
-    
+
+    */
     return hopMessage;
 }
 
@@ -159,6 +140,7 @@
 }
 - (void) parseSystemMessage:(HOPMessage*) inMessage forSession:(Session*) inSession
 {
+    /*
     if ([inMessage.type isEqualToString:messageTypeSystem])
     {
         RXMLElement *eventElement = [RXMLElement elementFromXMLString:inMessage.text encoding:NSUTF8StringEncoding];
@@ -218,6 +200,7 @@
             }
         }
     }
+     */
 }
 
 
@@ -226,9 +209,9 @@
     //Currently it is not available group chat, so we can have only one message recipients
     HOPRolodexContact* contact = [[inSession participantsArray] objectAtIndex:0];
     //Create a message object
-    HOPMessage* hopMessage = [[HOPMessage alloc] initWithMessageId:[Utility getGUIDstring] andMessage:message andContact:[contact getCoreContact] andMessageType:messageTypeText andMessageDate:[NSDate date]];
+    HOPMessage* hopMessage = [[HOPMessage alloc] initWithMessageId:[[OpenPeer sharedOpenPeer] getGUIDstring] andMessage:message andContact:[contact getCoreContact] andMessageType:messageTypeText andMessageDate:[NSDate date]];
     
-    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Sending message: %@ - message id: %@ - for session with id: %@",message,hopMessage.messageID,[inSession.conversationThread getThreadId]);
+    //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Sending message: %@ - message id: %@ - for session with id: %@",message,hopMessage.messageID,[inSession.conversationThread getThreadId]);
     
     //Send message
     [inSession.conversationThread sendMessage:hopMessage];
@@ -295,8 +278,7 @@
             //[session.messageArray addObject:messageObj];
             [session.unreadMessageArray addObject:messageObj];*/
 
-            //If session view controller with message sender is not yet shown, show it
-            [[[OpenPeer sharedOpenPeer] mainViewController] showSessionViewControllerForSession:session forIncomingCall:NO forIncomingMessage:YES];
+            //TODO: send message to client side via CDVOP
         }
         else
         {
@@ -314,11 +296,13 @@
     SystemMessageTypes ret = SystemMessage_None;
     if ([message.type isEqualToString:messageTypeSystem])
     {
+        /*
         RXMLElement *eventElement = [RXMLElement elementFromXMLString:message.text encoding:NSUTF8StringEncoding];
         if ([eventElement.tag isEqualToString:TagEvent])
         {
             ret = (SystemMessageTypes) [[eventElement child:TagId].text intValue];
         }
+         */
     }
     return ret;
 }

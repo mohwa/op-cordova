@@ -36,6 +36,7 @@
 
 #import "OpenPeer.h"
 #import "AppConsts.h"
+#import "AppLog.h"
 
 #import <OpenpeerSDK/HOPIdentityLookup.h>
 #import <OpenpeerSDK/HOPIdentityLookupInfo.h>

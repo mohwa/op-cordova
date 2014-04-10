@@ -29,13 +29,18 @@
  
  */
 
-#import <Foundation/Foundation.h>
-#import "OpenpeerSDK/HOPProtocols.h"
-#import "WebLoginViewController.h"
-#import "Delegates.h"
 #import "AppLog.h"
 
-@interface IdentityDelegate : NSObject<HOPIdentityDelegate>
+BOOL isLoggerStarted;
+HOPLoggerLevels applicationLogerLevel;
 
-@property (nonatomic, weak) id<LoginEventsDelegate> loginDelegate;
-@end
+void AppLog(NSString* functionName, NSString* filePath, unsigned long lineNumber, HOPLoggerSeverities severity, HOPLoggerLevels level, NSString* format,...)
+{
+    va_list argumentList;
+    va_start(argumentList, format);
+    unsigned int subsystemid = [HOPLogger getApplicationSubsystemID];
+    NSString* message = [[NSString alloc] initWithFormat:format arguments:argumentList];
+    [HOPLogger log:subsystemid severity:severity level:level message:[@"Application:  " stringByAppendingString: message] function: functionName filePath:filePath lineNumber:lineNumber];
+    
+    va_end(argumentList);
+}
