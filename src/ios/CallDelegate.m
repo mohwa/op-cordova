@@ -33,9 +33,60 @@
 
 @implementation CallDelegate
 
+- (NSString*) getCallStateAsString:(HOPCallStates) callState
+{
+    NSString *res = nil;
+    
+    switch (callState)
+    {
+        case HOPCallStateNone:
+            //res = NSLocalizedString(@"none", @"");
+            break;
+        case HOPCallStatePreparing:
+            res = NSLocalizedString(@"preparing", @"");
+            break;
+        case HOPCallStateIncoming:
+            res = NSLocalizedString(@"incoming", @"");
+            break;
+        case HOPCallStatePlaced:
+            res = NSLocalizedString(@"placed", @"");
+            break;
+        case HOPCallStateEarly:
+            res = NSLocalizedString(@"early", @"");
+            break;
+        case HOPCallStateRinging:
+            res = NSLocalizedString(@"ringing", @"");
+            break;
+        case HOPCallStateRingback:
+            res = NSLocalizedString(@"ringback", @"");
+            break;
+        case HOPCallStateOpen:
+            res = NSLocalizedString(@"open", @"");
+            break;
+        case HOPCallStateActive:
+            res = NSLocalizedString(@"active", @"");
+            break;
+        case HOPCallStateInactive:
+            res = NSLocalizedString(@"inactive", @"");
+            break;
+        case HOPCallStateHold:
+            res = NSLocalizedString(@"hold", @"");
+            break;
+        case HOPCallStateClosing:
+            res = NSLocalizedString(@"closing", @"");
+            break;
+        case HOPCallStateClosed:
+            res = NSLocalizedString(@"closed", @"");
+            break;
+        default:
+            return nil;
+    }
+    return res;
+}
+
 - (void) onCallStateChanged:(HOPCall*) call callState:(HOPCallStates) callState
 {
-    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelDebug, @"Call state: %@", [Utility getCallStateAsString:[call getState]]);
+    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelDebug, @"Call state: %@", [self getCallStateAsString:[call getState]]);
     
     NSString* sessionId = [[call getConversationThread] getThreadId];
     dispatch_async(dispatch_get_main_queue(), ^{

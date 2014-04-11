@@ -40,4 +40,7 @@
 
 @interface CallDelegate : NSObject<HOPCallDelegate>
 
+- (NSString*) getCallStateAsString:(HOPCallStates) callState;
+- (void) onCallStateChanged:(HOPCall*) call callState:(HOPCallStates) callState;
+
 @end

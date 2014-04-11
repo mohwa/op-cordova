@@ -87,6 +87,7 @@
 - (void) getListOfContacts:(CDVInvokedUrlCommand*)command;
 - (void) onContactsLoadingStarted;
 - (void) onContactsLoaded;
+- (NSDictionary*) prepareContactsList;
 
 // session
 - (void) updateSessionViewControllerId:(NSString*) oldSessionId newSesionId:(NSString*) newSesionId;

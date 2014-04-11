@@ -224,14 +224,21 @@ static CDVOP *shared;
     //}];
 }
 
-// sends list of contacts to JS if user is logged in
+/**
+ *  sends list of contacts to JS if user is logged in
+ *
+ *  @param command.arguments[0] BOOL refresh to load latest contacts from server. If true will also rolodex to reload contacts
+ */
 - (void) getListOfContacts:(CDVInvokedUrlCommand*)command
 {
     CDVPluginResult* res = nil;
+    BOOL refresh = [command.arguments[0] boolValue];
     
-    //TODO
-    NSString* state = @"TODO";
-    res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:state];
+    if (refresh) {
+        //TODO: ask rolodex to update contacts
+    }
+    
+    res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:[self prepareContactsList]];
     
     [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
 }
@@ -242,7 +249,7 @@ static CDVOP *shared;
 }
 
 - (void) onContactsLoaded {
-    //TODO
+    //TODO: autoload contact list
 }
 
 - (void)logout:(CDVInvokedUrlCommand*)command
@@ -399,9 +406,9 @@ static CDVOP *shared;
 /**
  *  create and return a list of all contacts for currently logged in user
  *
- *  @return
+ *  @return NSDictionary of contacts
  */
-- (NSDictionary*) getContactsJSON {
+- (NSDictionary*) prepareContactsList {
     NSMutableDictionary* ret = [[NSMutableDictionary alloc] init];
     
     NSArray* associatedIdentites = [[HOPAccount sharedAccount] getAssociatedIdentities];
@@ -419,15 +426,17 @@ static CDVOP *shared;
     //[[ContactsManager sharedContactsManager] refreshRolodexContacts];
     //[[ContactsManager sharedContactsManager] refreshExisitngContacts];
     
-    NSArray* fullContactsList = [modelManager getAllRolodexContactForHomeUserIdentityURI:identityURI];
-    //NSArray* rolodexContactsList = [modelManager getRolodexContactsForHomeUserIdentityURI:identityURI openPeerContacts:YES];
+    //NSArray* fullContactsList = [modelManager getAllRolodexContactForHomeUserIdentityURI:identityURI];
+    NSArray* rolodexContacts = [modelManager getRolodexContactsForHomeUserIdentityURI:identityURI openPeerContacts:NO];
     
-    for (HOPRolodexContact* contact in fullContactsList) {
-        
+    for (HOPRolodexContact* contact in rolodexContacts) {
         // for now get the only avatar url we have
         NSURL* avatar = [[[contact avatars] anyObject] url];
+        NSString* name = [contact name];
+        BOOL isRegistered = [contact identityContact] != nil;
+        NSArray* info = [modelManager getAllIdentitiesInfoForHomeUserIdentityURI:[contact identityURI]];
         
-        NSDictionary* cDict = [[NSDictionary alloc] initWithObjectsAndKeys:[contact name], @"name", avatar, "avatarUrl", nil];
+        NSDictionary* cDict = [[NSDictionary alloc] initWithObjectsAndKeys:name, @"name", avatar, @"avatarUrl", isRegistered, @"isRegistered", nil];
         [ret setObject:cDict forKey:[contact identityURI]];
     }
     

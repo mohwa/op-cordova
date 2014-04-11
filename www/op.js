@@ -1,4 +1,4 @@
-cordova.define("org.openpeer.cordova.OP", function(require, exports, module) { var exec = require('cordova/exec');
+var exec = require('cordova/exec');
 var OpenPeer = {
   version: 0.0,
 
@@ -52,7 +52,6 @@ var OpenPeer = {
     exec(success, error, 'CDVOP', 'getAccountState', []);
   },
 
-
   authorizeApp: function(app) {
     var deferred = Q.defer();
     if (app.id && app.sharedSecret) {
@@ -84,14 +83,14 @@ var OpenPeer = {
 
   // user constructor
   user: function() {
-
-    this.contacts = {};
+    this.name = '';
+    this.avatarUrl = '';
+    this.contacts = {test: 'empty'};
 
     this.login = function(options) {
       var deferred = Q.defer();
       if (!options) var options = {};
       exec(function(identity) {
-        // TODO: call _loadContacts when this is working
 
         deferred.resolve(identity);
       }, function(error) {
@@ -119,16 +118,23 @@ var OpenPeer = {
       return deferred.promise;
     };
 
-    // ask SDK to give us list of contacts for current user
-    this._loadContacts = function() {
+    // ask SDK to give us the list of contacts for current user
+    // when finished the list will be loaded into `user.contacts`
+    this.loadContacts = function(options) {
       var deferred = Q.defer();
+      var user = this;
+      if (!options) options = {};
+
       exec(function(contactsList) {
-        this.contacts = contactsList;
+        user.contacts = contactsList;
         deferred.resolve();
       }, function(error) {
         deferred.reject(new Error('failed to obtain list of contacts: ' +
           error));
-      }, 'CDVOP', 'getListOfContacts');
+      }, 'CDVOP', 'getListOfContacts', [
+        options.loadAvatar & true, // load an actual image into `contact.avatar`
+        options.onlyOPContacts | false, // only get users registered in OP
+        options.hardRefresh | false]); // tell server to pull latest contacts
       return deferred.promise;
     };
   },
@@ -246,5 +252,3 @@ module.exports = OpenPeer;
 
 
 
-
-});
