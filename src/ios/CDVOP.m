@@ -232,13 +232,18 @@ static CDVOP *shared;
 - (void) getListOfContacts:(CDVInvokedUrlCommand*)command
 {
     CDVPluginResult* res = nil;
-    BOOL refresh = [command.arguments[0] boolValue];
+    NSNumber* avatarWidth = [NSNumber numberWithDouble:[command.arguments[0] doubleValue]];
+    BOOL onlyOPContacts = [command.arguments[1] boolValue];
+    BOOL refresh = [command.arguments[2] boolValue];
     
     if (refresh) {
-        //TODO: ask rolodex to update contacts
+        // TODO: check why refresh does not pull new contacts from facebook
+        [[ContactsManager sharedContactsManager] refreshRolodexContacts];
+        //[[ContactsManager sharedContactsManager] refreshExisitngContacts];
     }
     
-    res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:[self prepareContactsList]];
+    NSDictionary* contacts = [self prepareContactsList:avatarWidth onlyOPContacts:onlyOPContacts];
+    res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:contacts];
     
     [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
 }
@@ -258,6 +263,7 @@ static CDVOP *shared;
     
     // TODO: use this to decide if we want to logout of only one identity or all of them
     NSString *identityUri = command.arguments[0];
+    
     LoginManager *loginManager = [LoginManager sharedLoginManager];
     
     @try {
@@ -384,6 +390,7 @@ static CDVOP *shared;
 - (void) onIdentityLoginFinished {
     CDVPluginResult* res = nil;
     HOPHomeUser* homeUser = [[HOPModelManager sharedModelManager] getLastLoggedInHomeUser];
+    
     NSArray* associatedIdentites = [[HOPAccount sharedAccount] getAssociatedIdentities];
     //NSSet *associatedIdentities = [homeUser associatedIdentities];
     
@@ -408,7 +415,7 @@ static CDVOP *shared;
  *
  *  @return NSDictionary of contacts
  */
-- (NSDictionary*) prepareContactsList {
+- (NSDictionary*) prepareContactsList:(NSNumber*) avatarWidth onlyOPContacts:(BOOL) onlyOPContacts {
     NSMutableDictionary* ret = [[NSMutableDictionary alloc] init];
     
     NSArray* associatedIdentites = [[HOPAccount sharedAccount] getAssociatedIdentities];
@@ -417,27 +424,32 @@ static CDVOP *shared;
     // Should we iterate and aggregate contacts from each identity?
     HOPIdentity* identity = [associatedIdentites objectAtIndex:0];
     
-    NSString * identityURI = [identity getIdentityURI];
+    NSString* identityURI = [identity getIdentityURI];
     HOPModelManager* modelManager = [HOPModelManager sharedModelManager];
+    NSString* identityDomain = [identity getIdentityProviderDomain];
     
     [[ContactsManager sharedContactsManager] loadContacts];
+    //[[ContactsManager sharedContactsManager] saveContext];
     
-    // TODO: check why refresh does not pull new contacts from facebook
-    //[[ContactsManager sharedContactsManager] refreshRolodexContacts];
-    //[[ContactsManager sharedContactsManager] refreshExisitngContacts];
+    NSArray* rolodexContacts;
+    if (onlyOPContacts) {
+        rolodexContacts = [modelManager getRolodexContactsForHomeUserIdentityURI:identityURI openPeerContacts:YES];
+    } else {
+        rolodexContacts = [modelManager getAllRolodexContactForHomeUserIdentityURI:identityURI];
+    }
     
-    //NSArray* fullContactsList = [modelManager getAllRolodexContactForHomeUserIdentityURI:identityURI];
-    NSArray* rolodexContacts = [modelManager getRolodexContactsForHomeUserIdentityURI:identityURI openPeerContacts:NO];
+    [[ContactsManager sharedContactsManager] identityLookupForContacts:rolodexContacts identityServiceDomain:identityDomain];
     
     for (HOPRolodexContact* contact in rolodexContacts) {
-        // for now get the only avatar url we have
-        NSURL* avatar = [[[contact avatars] anyObject] url];
-        NSString* name = [contact name];
-        BOOL isRegistered = [contact identityContact] != nil;
-        NSArray* info = [modelManager getAllIdentitiesInfoForHomeUserIdentityURI:[contact identityURI]];
+
+        // TODO: fix this when avatar path can be obtained by size
+        HOPAvatar* hopAvatar = [contact getAvatarForWidth:avatarWidth height:avatarWidth];
         
-        NSDictionary* cDict = [[NSDictionary alloc] initWithObjectsAndKeys:name, @"name", avatar, @"avatarUrl", isRegistered, @"isRegistered", nil];
-        [ret setObject:cDict forKey:[contact identityURI]];
+        //TODO: find out why this is not working as expected (contact identity is nill for all)
+        NSString* isRegistered = ([contact identityContact] != nil) ? @"YES" : @"NO";
+
+        NSDictionary* cDict = [[NSDictionary alloc] initWithObjectsAndKeys:contact.name, @"name", hopAvatar.url, @"avatarUrl", isRegistered, @"isRegistered", nil];
+        [ret setObject:cDict forKey:contact.identityURI];
     }
     
     return ret;

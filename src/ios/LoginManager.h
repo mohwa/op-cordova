@@ -34,6 +34,7 @@
 #import "AppLog.h"
 #import "WebLoginViewController.h"
 #import "StackDelegate.h"
+#import "IdentityDelegate.h"
 #import "CDVOP.h"
 
 //Managers
@@ -52,6 +53,7 @@
 
 @class WebLoginViewController;
 @class HOPIdentity;
+@class IdentityDelegate;
 
 @interface LoginManager : NSObject
 

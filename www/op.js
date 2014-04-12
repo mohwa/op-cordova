@@ -132,9 +132,9 @@ var OpenPeer = {
         deferred.reject(new Error('failed to obtain list of contacts: ' +
           error));
       }, 'CDVOP', 'getListOfContacts', [
-        options.loadAvatar & true, // load an actual image into `contact.avatar`
-        options.onlyOPContacts | false, // only get users registered in OP
-        options.hardRefresh | false]); // tell server to pull latest contacts
+        options.avatarWidth || 64,
+        options.onlyOPContacts || false, // only get users registered in OP
+        options.hardRefresh || false]); // tell server to pull latest contacts
       return deferred.promise;
     };
   },
@@ -249,6 +249,7 @@ var OpenPeer = {
 
 OpenPeer.initialize();
 module.exports = OpenPeer;
+
 
 
 

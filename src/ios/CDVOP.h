@@ -18,6 +18,8 @@
 #import <OpenpeerSDK/HOPAccount.h>
 #import <OpenpeerSDK/HOPIdentity.h>
 #import <OpenPeerSDK/HOPTypes.h>
+#import <OpenpeerSDK/HOPAvatar.h>
+#import <OpenpeerSDK/HOPImage.h>
 #import <OpenpeerSDK/HOPHomeUser.h>
 #import <OpenpeerSDK/HOPModelManager.h>
 #import <OpenpeerSDK/HOPAssociatedIdentity.h>
@@ -37,6 +39,9 @@
 @class Session;
 @class LoginViewController;
 @class WebLoginViewController;
+@class HOPAvatar;
+@class HOPImage;
+@class HOPRolodexContact;
 
 @interface CDVOP : CDVPlugin <UIWebViewDelegate,LoginEventsDelegate> {
     NSString* callbackId;
@@ -87,7 +92,7 @@
 - (void) getListOfContacts:(CDVInvokedUrlCommand*)command;
 - (void) onContactsLoadingStarted;
 - (void) onContactsLoaded;
-- (NSDictionary*) prepareContactsList;
+- (NSDictionary*) prepareContactsList:(NSNumber*) avatarWidth onlyOPContacts:(BOOL) onlyOPContacts;
 
 // session
 - (void) updateSessionViewControllerId:(NSString*) oldSessionId newSesionId:(NSString*) newSesionId;

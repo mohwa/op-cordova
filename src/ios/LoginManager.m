@@ -96,12 +96,13 @@
  Logout from the current account.
  */
 - (void) logout:(NSString*) identityURI {
-    //TODO Delete all cookies.
-    //[Utility removeCookiesAndClearCredentials];
+    //Delete all cookies.
+    [self removeCookiesAndClearCredentials];
+    
     // for now we logout of all associated identities
     NSLog(@"logging out of all identities");
     
-    //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelInsane,@"Remove cookies");
+    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelInsane,@"Remove cookies");
     //Delete all cookies.
     [self removeCookiesAndClearCredentials];
     
