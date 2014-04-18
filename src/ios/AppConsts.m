@@ -35,6 +35,8 @@ NSString* const identityFacebookBaseURI = @"identity://facebook.com/";
 
 NSString * const keyOpenPeerUser = @"keyOpenPeerUser";
 
+NSString * const settingsKeyDefaultSettingsSnapshot = @"defaultSettingsSnapshot";
+
 //User defaults keys
 
 NSString * const archiveDeviceId = @"archiveDeviceId";

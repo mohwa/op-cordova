@@ -70,6 +70,8 @@
 + (id) sharedOpenPeer;
 
 - (void) storeDefaultSettings:(BOOL)reset;
+
+- (void) preSetup;
 - (void) setup;
 - (void) shutdown;
 

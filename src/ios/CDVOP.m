@@ -25,6 +25,9 @@ static CDVOP *shared;
 - (void) initialize:(CDVInvokedUrlCommand*)command {
     [self makeViewTransparent];
     [self initVideoViews];
+    
+    [[OpenPeer sharedOpenPeer] preSetup];
+    
     CDVPluginResult* res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"success"];
     [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
 }
@@ -130,10 +133,15 @@ static CDVOP *shared;
     [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
 }
 
+/*
+ * this method is called as soon as client side is loaded
+ * load settings and authorize app if necessary
+ */
 - (void) authorizeApp:(CDVInvokedUrlCommand*)command
 {
     CDVPluginResult* res = nil;
     NSArray* arguments = command.arguments;
+    
     NSString* authorizedApplicationId = [[HOPSettings sharedSettings] getAuthorizedApplicationId];
     
     //If authorized application id is missing, generate it
@@ -145,13 +153,12 @@ static CDVOP *shared;
     
     // send the authorized application id to client
     [[CDVOP sharedObject] setSetting:@"openpeer/calculated/authorizated-application-id" value:[[HOPSettings sharedSettings] getAuthorizedApplicationId]];
-
+    
+    [[OpenPeer sharedOpenPeer] setup];
+    
     // TODO: check that authorization was successful and send error otherwise
     res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:authorizedApplicationId];
     [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
-    
-    // initialize and setup HOP Stack
-    [[OpenPeer sharedOpenPeer] setup];
 }
 
 /*

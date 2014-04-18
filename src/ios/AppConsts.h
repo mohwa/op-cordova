@@ -35,6 +35,8 @@ extern NSString* const identityFacebookBaseURI;
 
 extern NSString * const keyOpenPeerUser;
 
+extern NSString * const settingsKeyDefaultSettingsSnapshot;
+
 //User defaults keys
 extern NSString * const archiveDeviceId;
 extern NSString * const archiveStableUniqueId;

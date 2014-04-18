@@ -97,87 +97,35 @@
 {
     //TODO: reset
     
-    [[HOPSettings sharedSettings] applyDefaults]; //todo: only apply if no setting has been persisted before
-    
-    //Set persistent stores
-    NSString *libraryPath = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) lastObject];
-    NSString *dataPathDirectory = [libraryPath stringByAppendingPathComponent:@"db"];
-    [[HOPModelManager sharedModelManager] setDataPath:dataPathDirectory backupData:NO];
-    //NSString *cachePathDirectory = [libraryPath stringByAppendingPathComponent:@"cache"];
-    //[[HOPModelManager sharedModelManager] setCachePath:cachePathDirectory];
-    
-    //Set settigns delegate
-    [[HOPSettings sharedSettings] setup];//WithDelegate:[Settings sharedSettings]];
-    
-    //Cleare expired cookies and set delegate
-    //[[HOPCache sharedCache] removeExpiredCookies];
-    //[[HOPCache sharedCache] setDelegate:self.cacheDelegate];
+    //[[HOPSettings sharedSettings] applyDefaults]; //todo: only apply if no setting has been persisted before
     
     [[CDVOP sharedObject] setSetting:@"openpeer/calculated/user-agent" value:[OpenPeer getUserAgentName]];
     [[CDVOP sharedObject] setSetting:@"openpeer/calculated/device-id" value:[OpenPeer getGUIDstring]];
     [[CDVOP sharedObject] setSetting:@"openpeer/calculated/os" value:[OpenPeer getDeviceOs]];
     [[CDVOP sharedObject] setSetting:@"openpeer/calculated/system" value:[OpenPeer getPlatform]];
-    
-    NSString* settings = [[CDVOP sharedObject] getAllSettingsJSON];
-    [[HOPSettings sharedSettings] applySettings:settings];
+}
 
-    /*
-    // for now manually apply the rest of the default settings. TODO: get all from client
-    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:archiveMediaAEC];
-    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:archiveMediaAGC];
-    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:archiveMediaNS];
-    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:archiveRemoteSessionActivationMode];
-    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:NO] forKey:archiveFaceDetectionMode];
-    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:archiveRedialMode];
-    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:archiveEnabled];
-    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:archiveColorized];
-    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:archiveTelnetLogger];
-    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:archiveStdOutLogger];
-    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:archiveOutgoingTelnetLogger];
-
-    [[NSUserDefaults standardUserDefaults] synchronize];
-    */
+- (void) preSetup
+{
+    //Create all delegates required for communication with core
+    [self createDelegates];
     
-    //if (![[HOPModelManager sharedModelManager] getLastLoggedInHomeUser])
-    //{
-        //If not already set, set default login settings
-        /*
-        BOOL isSetLoginSettings = [[Settings sharedSettings] isLoginSettingsSet];
-        if (!isSetLoginSettings)
-        {
-            [[HOPSettings sharedSettings] applyDefaults];
-            
-            NSString *filePath = [[NSBundle mainBundle] pathForResource:@"DefaultSettings" ofType:@"plist"];
-            if ([filePath length] > 0)
-            {
-                NSDictionary* filteredDictionary = [[Settings sharedSettings] dictionaryWithRemovedAllInvalidEntriesForPath:filePath];
-                if ([filteredDictionary count] > 0)
-                    [[HOPSettings sharedSettings] storeSettingsFromDictionary:filteredDictionary];
-                //[[HOPSettings sharedSettings] storeSettingsFromPath:filePath];
-            }
-            
-            isSetLoginSettings = [[Settings sharedSettings] isLoginSettingsSet];
-        }
-        */
-        
-        //If not already set, set default app data
-        /*
-        BOOL isSetAppData = [[Settings sharedSettings] isAppDataSet];
-        if (!isSetAppData)
-        {
-            NSString* filePath = [[NSBundle mainBundle] pathForResource:@"CustomerSpecific" ofType:@"plist"];
-            if ([filePath length] > 0)
-            {
-                NSDictionary* filteredDictionary = [[Settings sharedSettings] dictionaryWithRemovedAllInvalidEntriesForPath:filePath];
-                if ([filteredDictionary count] > 0)
-                    [[HOPSettings sharedSettings] storeSettingsFromDictionary:filteredDictionary];
-                //[[HOPSettings sharedSettings] storeSettingsFromPath:filePath];
-            }
-            isSetAppData = [[Settings sharedSettings] isAppDataSet];
-        }
-         */
-        
-    //}
+    //Set persistent stores
+    NSString *libraryPath = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) lastObject];
+    NSString *dataPathDirectory = [libraryPath stringByAppendingPathComponent:@"db"];
+    [[HOPModelManager sharedModelManager] setDataPath:dataPathDirectory backupData:NO];
+    [[HOPModelManager sharedModelManager] clearSessionRecords];
+    
+    //Cleare expired cookies and set delegate
+    [[HOPCache sharedCache] removeExpiredCookies];
+    [[HOPCache sharedCache] setup];
+    
+    //Set settigns delegate
+    [[HOPSettings sharedSettings] setup];
+    [[HOPSettings sharedSettings] applyDefaults];
+    
+    [OpenPeer startLogging];
+    [self updateDefaultSettingsFromPath:[[NSBundle mainBundle] pathForResource:@"DefaultSettings" ofType:@"plist"] notToUpdateKeys:nil];
 }
 
 /**
@@ -186,12 +134,12 @@
 - (void) setup
 {
     //Create all delegates required for communication with core
-    [self createDelegates];
+    //[self createDelegates];
     [self storeDefaultSettings:YES];
 
-    // temporary logging to debug. TODO: remove this
-    [OpenPeer startLogging];
-    
+    NSString* settings = [[CDVOP sharedObject] getAllSettingsJSON];
+    [[HOPSettings sharedSettings] applySettings:settings];
+
     if (![[HOPStack sharedStack] isStackReady])
     {
         //Init openpeer stack and set created delegates
@@ -230,6 +178,39 @@
     self.identityDelegate.loginDelegate = [CDVOP sharedObject];
     self.identityLookupDelegate = [[IdentityLookupDelegate alloc] init];
     //self.cacheDelegate = [[CacheDelegate alloc] init];
+}
+
+- (void)updateDefaultSettingsFromPath:(NSString *)filePath notToUpdateKeys:(NSMutableArray *)notToUpdateKeys
+{
+    if ([filePath length] > 0)
+    {
+        //Clean disctionary from invalid entries
+        NSDictionary* filteredDictionary = [NSDictionary dictionaryWithContentsOfFile:filePath];
+        if ([filteredDictionary count] > 0)
+        {
+            for (NSString* key in [filteredDictionary allKeys])
+            {
+                //Check if value for specific key should be updated
+                if (![notToUpdateKeys containsObject:key])
+                {
+                    id value = [filteredDictionary objectForKey:key];
+                    [[HOPSettings sharedSettings] storeSettingsObject:value key:[[HOPSettings sharedSettings]getCoreKeyForAppKey:key]];
+                    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelInsane, @"Updated value: %@ for key: %@",value,key);
+                }
+            }
+        }
+        
+        //Save new default settings
+        NSMutableDictionary* defaultSettings = nil;
+        if ([[NSUserDefaults standardUserDefaults] objectForKey:settingsKeyDefaultSettingsSnapshot])
+            defaultSettings = [NSMutableDictionary dictionaryWithDictionary:[[NSUserDefaults standardUserDefaults] objectForKey:settingsKeyDefaultSettingsSnapshot]];
+        else
+            defaultSettings = [[NSMutableDictionary alloc] init];
+        [defaultSettings addEntriesFromDictionary:filteredDictionary];
+        [[NSUserDefaults standardUserDefaults] setObject:defaultSettings forKey:settingsKeyDefaultSettingsSnapshot];
+        
+        [[NSUserDefaults standardUserDefaults] synchronize];
+    }
 }
 
 // Utility functions

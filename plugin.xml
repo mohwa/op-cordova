@@ -6,6 +6,7 @@
   <license>Apache 2.0</license>
   <keywords>OP, openpeer, webrtc</keywords>
   <author>Hookflash Inc</author>
+  <info>Welcome to OpenPeer Cordova Plugin!</info>
   <engines>
     <engine name="cordova" version=">=3.3.0" />
   </engines>
@@ -90,6 +91,7 @@
       <source-file src="src/ios/OpenpeerSDK.framework/Libraries/libcurl.a" />
       <resource-file src="src/ios/OpenpeerSDK.framework/Resources/OpenpeerDataModel.bundle" />
       <resource-file src="src/ios/WebLoginViewController.xib" />
+      <resource-file src="src/ios/DefaultSettings.plist" />
 
   </platform>
 </plugin>

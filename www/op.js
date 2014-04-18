@@ -3,14 +3,60 @@ var OpenPeer = {
   version: 0.0,
 
   settings: {
-    namespaceGrantServiceURL: 'http://jsouter-v1-beta-1-i.hcs.io/grant.html',
-    identityFederateBaseURI: 'identity://identity-v1-beta-1-i.hcs.io/',
     outerFrameURL:
-      'http://jsouter-v1-beta-1-i.hcs.io/identity.html?view=choose&federated=false',
+      'http://jsouter-v1-rel-lespaul-i.hcs.io/identity.html?view=choose',
+    identityProviderDomain: 'identity-v1-rel-lespaul-i.hcs.io',
+    identityFederateBaseURI: 'identity://identity-v1-rel-lespaul-i.hcs.io/',
+    namespaceGrantServiceURL:
+      'http://jsouter-v1-rel-lespaul-i.hcs.io/grant.html',
+    lockBoxServiceDomain: 'lockbox-v1-rel-lespaul-i.hcs.io',
+    defaultOutgoingTelnetServer: 'tcp-logger-v1-rel-lespaul-i.hcs.io:8055',
+    applicationSettingsVersion: '1',
+
+//TODO: investigate why enabling (some of?) these causes performance issue
+/*
+    'applicationSettingsBackgroundingPhaseRichPush': 4,
+    'openpeer/core/core-thread-priority': 'normal',
+    'openpeer/core/media-thread-priority': 'real-time',
+    'openpeer/core/backgrounding-phase-conversation-thread': 1,
+    'openpeer/core/backgrounding-phase-account': 1,
+    'openpeer/core/auto-find-peers-added-to-conversation-in-seconds': 600,
+    'openpeer/stack/stack-thread-priority': 'normal',
+    'openpeer/stack/key-generation-thread-priority': 'low',
+    'openpeer/stack/backgrounding-phase-account': 2,
+    'openpeer/stack/bootstrapper-force-well-known-over-insecure-http': true,
+    'openpeer/stack/bootstrapper-force-well-known-using-post': true,
+    'openpeer/stack/finder-max-client-session-keep-alive-in-seconds': 300,
+    'openpeer/stack/finder-connection-send-ping-keep-alive-after-in-seconds': 0,
+    'openpeer/stack/move-publication-to-cache-time-in-seconds': 120,
+    'openpeer/stack/debug/force-p2p-messages-over-finder-relay': false,
+    'openpeer/services/services-thread-priority': 'high',
+    'openpeer/services/logger-thread-priority': 'normal',
+    'openpeer/services/socket-monitor-thread-priority': 'real-time',
+    'openpeer/services/timer-monitor-thread-priority': 'normal',
+    'openpeer/services/http-thread-priority': 'normal',
+    'openpeer/services/backgrounding-phase-ice-socket-session': 3,
+    'openpeer/services/backgrounding-phase-turn': 3,
+    'openpeer/services/backgrounding-phase-tcp-messaging': 3,
+    'openpeer/services/backgrounding-phase-telnet-logger': 5,
+    'openpeer/services/backgrounding-phase-1-timeout-in-seconds': 8,
+    'openpeer/services/backgrounding-phase-2-timeout-in-seconds': 0,
+    'openpeer/services/backgrounding-phase-3-timeout-in-seconds': 0,
+    'openpeer/services/backgrounding-phase-4-timeout-in-seconds': 0,
+    'openpeer/services/backgrounding-phase-5-timeout-in-seconds': 0,
+    'openpeer/services/process-application-message-queue-on-quit': true,
+    'openpeer/services/turn-candidates-must-remain-alive-after-ice-wake-up-in-seconds': 600,
+    'openpeer/services/interface-name-order': 'lo;en;pdp_ip;stf;gif;bbptp;p2p',
+    'openpeer/services/support-ipv6': false,
+    'openpeer/services/debug/force-packets-over-turn': false,
+    'openpeer/services/debug/force-turn-to-use-tcp': false,
+    'openpeer/services/debug/force-turn-to-use-udp': false,
+    'openpeer/services/debug/only-allow-data-sent-to-specific-ips': '',
+    'openpeer/services/debug/only-allow-turn-to-relay-data-sent-to-specific-ips': '',
+*/
+
     redirectAfterLoginCompleteURL:
-      'http://jsouter-v1-beta-1-i.hcs.io/identity.html?reload=true',
-    lockBoxServiceDomain: 'lockbox-v1-beta-1-i.hcs.io',
-    identityProviderDomain: 'identity-v1-beta-1-i.hcs.io',
+      'http://jsouter-v1-rel-lespaul-i.hcs.io/identity.html?reload=true',
     'openpeer/stack/bootstrapper-force-well-known-over-insecure-http': true,
     'openpeer/stack/bootstrapper-force-well-known-using-post': true,
 
@@ -34,10 +80,11 @@ var OpenPeer = {
     isLoggerEnabled: true,
     telnetPortForLogger: '59999',
     isLoggerColorized: true,
-    outgoingTelnetServerPort: 'tcp-logger-v1-beta-1-i.hcs.io:8055',
+    outgoingTelnetServerPort: 'tcp-logger-v1-rel-lespaul-i.hcs.io:8055',
     archiveOutgoingTelnetLoggerServer: 'tcp-logger-v1-beta-1-i.hcs.io:8055',
     archiveTelnetLoggerServer: '59999',
-    isOutgoingTelnetColorized: 'YES'
+    'localTelnetLoggerPort': 59999,
+    isOutgoingTelnetColorized: true
   },
 
   initialize: function() {
@@ -249,7 +296,5 @@ var OpenPeer = {
 
 OpenPeer.initialize();
 module.exports = OpenPeer;
-
-
 
 
