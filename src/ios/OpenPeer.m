@@ -125,6 +125,7 @@
     [[HOPSettings sharedSettings] applyDefaults];
     
     [OpenPeer startLogging];
+    
     [self updateDefaultSettingsFromPath:[[NSBundle mainBundle] pathForResource:@"DefaultSettings" ofType:@"plist"] notToUpdateKeys:nil];
 }
 

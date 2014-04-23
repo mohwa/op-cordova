@@ -128,6 +128,36 @@ var OpenPeer = {
     return deferred.promise;
   },
 
+  // chat session constructor
+  chat: function(config) {
+    if (!config.peerList || config.peerList.length < 1) {
+      throw 'InvalidChatPeerList';
+    } else {
+      var self = this;
+      exec(function(id) {
+        self.id = id;
+        console.log('chat [' + self.id + '] is ready');
+      }, function(error) {
+        console.log('Error: preparing chat session failed');
+      }, 'CDVOP', 'prepareChat', config.peerList);
+    }
+
+    this.send = function(msg) {
+      var deferred = Q.defer();
+      var options = [msg, this.id].concat(config.peerList);
+      if (!msg) {
+        console.log('Error: please provide a message to send');
+      } else {
+        exec(function() {
+          deferred.resolve();
+        }, function(error) {
+          deferred.reject(new Error('could not send message. ' + error));
+        }, 'CDVOP', 'sendMessage', options);
+      }
+    };
+
+  },
+
   // user constructor
   user: function() {
     this.name = '';

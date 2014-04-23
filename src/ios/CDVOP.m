@@ -202,6 +202,43 @@ static CDVOP *shared;
     res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"success"];
     [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
 }
+/**
+ * @param command.arguments list of peers to include in chat session
+ * Currently only one peer is expected, so first item will be used only
+ */
+- (void) prepareChat:(CDVInvokedUrlCommand *)command
+{
+    CDVPluginResult* res = nil;
+    
+    //TODO: update this with a loop when we support multiple peer chat
+    NSString* peerURI = command.arguments[0];
+    HOPRolodexContact* contact  = [[[HOPModelManager sharedModelManager] getRolodexContactsByPeerURI:peerURI] objectAtIndex:0];
+    Session* session = [[SessionManager sharedSessionManager] getSessionForContact:contact];
+    
+    //send conversation thread id to client
+    res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:[session.conversationThread getThreadId]];
+    [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
+}
+
+/**
+ *  @param command.arguments[0] the message to send
+ *  @param command.arguments[1] conversation thread id
+ */
+- (void) sendMessage:(CDVInvokedUrlCommand *)command
+{
+    CDVPluginResult* res = nil;
+    NSString* msg = command.arguments[0];
+    NSString* sessionId = command.arguments[1];
+    
+    // find the session based on conversation thread id
+    Session* session = [[SessionManager sharedSessionManager] getSessionForSessionId:sessionId];
+    
+    //TODO
+    //[[MessageManager sharedMessageManager] sendMessage: ];
+    
+    res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"success"];
+    [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
+}
 
 // TODO: remove if not needed
 - (void)getAccountState:(CDVInvokedUrlCommand*)command
