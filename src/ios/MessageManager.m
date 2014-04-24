@@ -97,7 +97,7 @@
     
     if (messageBody)
     {
-        hopMessage = [[HOPMessage alloc] initWithMessageId:[Utility getGUIDstring] andMessage:messageBody andContact:[contact getCoreContact] andMessageType:messageTypeSystem andMessageDate:[NSDate date]];
+        hopMessage = [[HOPMessage alloc] initWithMessageId:[OpenPeer getGUIDstring] andMessage:messageBody andContact:[contact getCoreContact] andMessageType:messageTypeSystem andMessageDate:[NSDate date]];
         
         OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Created system messsage with id:%@ %@\n",hopMessage.messageID,messageBody);
     }

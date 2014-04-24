@@ -212,7 +212,8 @@ static CDVOP *shared;
     
     //TODO: update this with a loop when we support multiple peer chat
     NSString* peerURI = command.arguments[0];
-    HOPRolodexContact* contact  = [[[HOPModelManager sharedModelManager] getRolodexContactsByPeerURI:peerURI] objectAtIndex:0];
+    //HOPRolodexContact* contact  = [[[HOPModelManager sharedModelManager] getRolodexContactsByPeerURI:peerURI] objectAtIndex:0];
+    HOPRolodexContact* contact  = [[HOPModelManager sharedModelManager] getRolodexContactByIdentityURI:peerURI];
     Session* session = [[SessionManager sharedSessionManager] getSessionForContact:contact];
     
     //send conversation thread id to client
@@ -233,8 +234,12 @@ static CDVOP *shared;
     // find the session based on conversation thread id
     Session* session = [[SessionManager sharedSessionManager] getSessionForSessionId:sessionId];
     
-    //TODO
-    //[[MessageManager sharedMessageManager] sendMessage: ];
+    // TODO: update this when group chat is supported
+    HOPRolodexContact* contact = [[session participantsArray] objectAtIndex:0];
+    
+    HOPMessage* hopMessage = [[HOPMessage alloc] initWithMessageId:[OpenPeer getGUIDstring] andMessage:msg andContact:[contact getCoreContact] andMessageType:messageTypeText andMessageDate:[NSDate date]];
+    
+    [[MessageManager sharedMessageManager] sendMessage:hopMessage];
     
     res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"success"];
     [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
