@@ -203,6 +203,22 @@
      */
 }
 
+- (void) sendMessage:(NSString*) msg sessionId:(NSString*) sessionId
+{
+    // find the session based on conversation thread id
+    Session* session = [[SessionManager sharedSessionManager] getSessionForSessionId:sessionId];
+    
+    // TODO: update this when group chat is supported
+    HOPRolodexContact* contact = [[session participantsArray] objectAtIndex:0];
+    
+    HOPMessage* hopMessage = [[HOPMessage alloc] initWithMessageId:[OpenPeer getGUIDstring] andMessage:msg andContact:[contact getCoreContact] andMessageType:messageTypeText andMessageDate:[NSDate date]];
+    
+    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Sending message: %@ - message id: %@ - for session with id: %@", msg, hopMessage.messageID, [session.conversationThread getThreadId]);
+    
+    //Send message
+    [session.conversationThread sendMessage:hopMessage];
+    [[HOPModelManager sharedModelManager] addMessage:msg type:messageTypeText date:hopMessage.date session:[session.conversationThread getThreadId] rolodexContact:nil messageId:hopMessage.messageID];
+}
 
 - (void) sendMessage:(NSString*) message forSession:(Session*) inSession
 {
@@ -211,7 +227,7 @@
     //Create a message object
     HOPMessage* hopMessage = [[HOPMessage alloc] initWithMessageId:[[OpenPeer sharedOpenPeer] getGUIDstring] andMessage:message andContact:[contact getCoreContact] andMessageType:messageTypeText andMessageDate:[NSDate date]];
     
-    //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Sending message: %@ - message id: %@ - for session with id: %@",message,hopMessage.messageID,[inSession.conversationThread getThreadId]);
+    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Sending message: %@ - message id: %@ - for session with id: %@",message,hopMessage.messageID,[inSession.conversationThread getThreadId]);
     
     //Send message
     [inSession.conversationThread sendMessage:hopMessage];
