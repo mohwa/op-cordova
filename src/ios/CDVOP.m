@@ -6,7 +6,7 @@
 
 @implementation CDVOP
 
-@synthesize webView, videoViews, callbackId;
+@synthesize webView, videoViews;
 
 static CDVOP *shared;
 
@@ -202,14 +202,13 @@ static CDVOP *shared;
     res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"success"];
     [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
 }
+
 /**
  * @param command.arguments list of peers to include in chat session
  * Currently only one peer is expected, so first item will be used only
  */
 - (void) prepareChat:(CDVInvokedUrlCommand *)command
 {
-    CDVPluginResult* res = nil;
-    
     //TODO: update this with a loop when we support multiple peer chat
     NSString* peerURI = command.arguments[0];
     //HOPRolodexContact* contact  = [[[HOPModelManager sharedModelManager] getRolodexContactsByPeerURI:peerURI] objectAtIndex:0];
@@ -219,9 +218,14 @@ static CDVOP *shared;
         session = [[SessionManager sharedSessionManager] createSessionForContact:contact];
     }
     
-    //send conversation thread id to client
-    res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:[session.conversationThread getThreadId]];
-    [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
+    session.receiveMsgCallbackId = command.callbackId;
+}
+
+- (void) onMessageReceived:(NSString *)msg callbackId:(NSString *)callbackId
+{
+    CDVPluginResult* res = nil;
+    res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:msg];
+    [self.commandDelegate sendPluginResult:res callbackId:callbackId];
 }
 
 /**

@@ -133,11 +133,8 @@ var OpenPeer = {
     if (!config.peerList || config.peerList.length < 1) {
       throw 'InvalidChatPeerList';
     } else {
-      var self = this;
-      exec(function(id) {
-        self.id = id;
-        console.log('chat [' + self.id + '] is ready');
-      }, function(error) {
+      // connect message recived callback for this chat session
+      exec(this.onMessageReceived, function(error) {
         console.log('Error: preparing chat session failed');
       }, 'CDVOP', 'prepareChat', config.peerList);
     }
@@ -154,6 +151,10 @@ var OpenPeer = {
           deferred.reject(new Error('could not send message. ' + error));
         }, 'CDVOP', 'sendMessage', options);
       }
+    };
+
+    this.onMessageReceived = function(msg) {
+      console.log('message received: ' + msg);
     };
 
   },

@@ -44,13 +44,10 @@
 @class HOPRolodexContact;
 
 @interface CDVOP : CDVPlugin <UIWebViewDelegate,LoginEventsDelegate> {
-    NSString* callbackId;
+
 }
 
-@property (nonatomic, copy) NSString* callbackId;
 @property (nonatomic, retain) NSMutableArray* videoViews;
-
-//@property (nonatomic, strong) ContactsViewController *contactsTableViewController;
 
 + (id) sharedObject;
 
@@ -61,6 +58,7 @@
 - (void) stopCatPictures:(CDVInvokedUrlCommand*)command;
 - (void) switchCamera:(CDVInvokedUrlCommand*)command;
 - (void) prepareChat:(CDVInvokedUrlCommand*)command;
+- (void) onMessageReceived:(NSString*)msg callbackId:(NSString*)callbackId;
 - (void) makeViewTransparent;
 - (void) initVideoViews;
 

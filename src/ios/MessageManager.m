@@ -138,6 +138,7 @@
     HOPMessage* hopMessage = [self createSystemMessageWithType:SystemMessage_CheckAvailability andText:systemMessageRequest andRecipient:[[inSession participantsArray] objectAtIndex:0]];
     [inSession.conversationThread sendMessage:hopMessage];
 }
+
 - (void) parseSystemMessage:(HOPMessage*) inMessage forSession:(Session*) inSession
 {
     /*
@@ -257,7 +258,7 @@
         return;
     }
  
-    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Received %@ message with id: %@ for session:%@",[messageType lowercaseString],message.messageID,sessionId);
+    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Received %@ message with id: %@ for session:%@",[messageType lowercaseString],message.messageID, sessionId);
     
     Session* session = [[SessionManager sharedSessionManager] getSessionForSessionId:sessionId];
     
@@ -273,7 +274,7 @@
         }
         else
         {
-            //[[SessionManager sharedSessionManager] setValidSession:session newSessionId:[session.conversationThread getThreadId]oldSessionId:sessionId];
+            [[SessionManager sharedSessionManager] setValidSession:session newSessionId:[session.conversationThread getThreadId]oldSessionId:sessionId];
             OPLog(HOPLoggerSeverityError, HOPLoggerLevelDebug, @"%Session for id %@ not found, but it is found other with id %@",sessionId,[session.conversationThread getThreadId]);
         }
     }
@@ -294,7 +295,7 @@
             //[session.messageArray addObject:messageObj];
             [session.unreadMessageArray addObject:messageObj];*/
 
-            //TODO: send message to client side via CDVOP
+            [[CDVOP sharedObject] onMessageReceived:messageObj.text callbackId:session.receiveMsgCallbackId];
         }
         else
         {

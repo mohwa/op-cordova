@@ -50,6 +50,7 @@
 @property (strong) NSMutableArray* unreadMessageArray;
 @property (strong) NSMutableSet* sessionIdsHistory;
 @property (strong) NSMutableArray* arrayMergedConversationThreads;
+@property (strong) NSString* receiveMsgCallbackId;
 
 - (id) initWithContact:(HOPRolodexContact*) inContact conversationThread:(HOPConversationThread*) inConverationThread;
 - (id) initWithContacts:(NSArray*) inContacts conversationThread:(HOPConversationThread*) inConverationThread;
