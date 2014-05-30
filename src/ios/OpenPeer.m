@@ -124,7 +124,9 @@
     [[HOPSettings sharedSettings] setup];
     [[HOPSettings sharedSettings] applyDefaults];
     
-    [OpenPeer startLogging];
+    if ([[[CDVOP sharedObject] getSetting:@"isLoggerEnabled"] boolValue]) {
+        [OpenPeer startLogging];
+    }
     
     [self updateDefaultSettingsFromPath:[[NSBundle mainBundle] pathForResource:@"DefaultSettings" ofType:@"plist"] notToUpdateKeys:nil];
 }

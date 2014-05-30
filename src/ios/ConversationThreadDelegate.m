@@ -31,12 +31,6 @@
 
 #import "ConversationThreadDelegate.h"
 
-#import <OpenpeerSDK/HOPConversationThread.h>
-#import <OpenpeerSDK/HOPContact.h>
-#import <OpenpeerSDK/HOPRolodexContact.h>
-#import <OpenpeerSDK/HOPMessage.h>
-#import <OpenpeerSDK/HOPModelManager.h>
-
 #ifdef APNS_ENABLED
 #import "APNSManager.h"
 #import <OpenpeerSDK/HOPModelManager.h>
@@ -58,12 +52,11 @@
                 HOPContact* participant = [participants objectAtIndex:0];
                 
                 // TODO: inform client about conversation thread
-                /*
+                
                 if (![[SessionManager sharedSessionManager] proceedWithExistingSessionForContact:participant newConversationThread:conversationThread])
                 {
                     [[SessionManager sharedSessionManager] createSessionForConversationThread: conversationThread];
                 }
-                 */
             }
         }
     });
@@ -92,8 +85,10 @@
         HOPMessage* message = [conversationThread getMessageForID:messageID];
         if (message)
         {
-            // TODO: send message received to client
-            //[[MessageManager sharedMessageManager] onMessageReceived:message forSessionId:[conversationThread getThreadId]];
+            NSString* sessionId = [conversationThread getThreadId];
+            //Session* session = [[SessionManager sharedSessionManager] getSessionForSessionId:sessionId];
+            //[[CDVOP sharedObject] onMessageReceived:message.text callbackId:session.receiveMsgCallbackId];
+            [[MessageManager sharedMessageManager] onMessageReceived:message forSessionId:sessionId];
         }
     });
 }

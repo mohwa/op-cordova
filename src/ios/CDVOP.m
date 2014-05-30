@@ -221,6 +221,7 @@ static CDVOP *shared;
     session.receiveMsgCallbackId = command.callbackId;
 }
 
+
 - (void) onMessageReceived:(NSString *)msg callbackId:(NSString *)callbackId
 {
     CDVPluginResult* res = nil;

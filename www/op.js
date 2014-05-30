@@ -1,3 +1,4 @@
+cordova.define("org.openpeer.cordova.OP", function(require, exports, module) { 
 var exec = require('cordova/exec');
 var OpenPeer = {
   version: 0.0,
@@ -134,10 +135,20 @@ var OpenPeer = {
       throw 'InvalidChatPeerList';
     } else {
       // connect message recived callback for this chat session
-      exec(this.onMessageReceived, function(error) {
+      var self = this;
+      exec(function(msg) {
+        var message = {text: msg, side: 'peer'};
+        self.conversation.push(message);
+        console.log('got message! ' + message);
+        self.onMessageReceived(message);
+      }, function(error) {
         console.log('Error: preparing chat session failed');
       }, 'CDVOP', 'prepareChat', config.peerList);
     }
+
+    // list of messages in this chat
+    // TODO: when history is supported, load this from SDK
+    this.conversation = [];
 
     this.send = function(msg) {
       var deferred = Q.defer();
@@ -153,8 +164,12 @@ var OpenPeer = {
       }
     };
 
+    // overwrite this method to listen for new messages
     this.onMessageReceived = function(msg) {
-      console.log('message received: ' + msg);
+      // assume peerList only have one item for now
+      var contact = user.contacts[config.peerList[0]];
+      console.log('message received: ' + msg + ' for contact: ' + contact.name);
+      console.log('overwrite `chat.onMessageReceived` to listen for messages');
     };
 
   },
@@ -329,3 +344,4 @@ OpenPeer.initialize();
 module.exports = OpenPeer;
 
 
+});

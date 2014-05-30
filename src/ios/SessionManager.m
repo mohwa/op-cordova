@@ -252,8 +252,7 @@
 {
     //[self.sessionsDictionary removeObjectForKey:oldSessionId];
     [self.sessionsDictionary setObject:inSession forKey:newSessionId];
-    
-    [[OpenPeer sharedOpenPeer] updateSessionViewControllerId:oldSessionId newSesionId:newSessionId];
+    //[[OpenPeer sharedOpenPeer] updateSessionViewControllerId:oldSessionId newSesionId:newSessionId];
 }
 
 /**
