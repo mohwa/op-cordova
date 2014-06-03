@@ -1,5 +1,4 @@
-cordova.define("org.openpeer.cordova.OP", function(require, exports, module) { 
-var exec = require('cordova/exec');
+cordova.define("org.openpeer.cordova.OP", function(require, exports, module) { var exec = require('cordova/exec');
 var OpenPeer = {
   version: 0.0,
 
@@ -78,7 +77,7 @@ var OpenPeer = {
     isMediaNSOn: true,
 
     // Logger settings
-    isLoggerEnabled: true,
+    isLoggerEnabled: false,
     telnetPortForLogger: '59999',
     isLoggerColorized: true,
     outgoingTelnetServerPort: 'tcp-logger-v1-rel-lespaul-i.hcs.io:8055',
@@ -139,7 +138,7 @@ var OpenPeer = {
       exec(function(msg) {
         var message = {text: msg, side: 'peer'};
         self.conversation.push(message);
-        console.log('got message! ' + message);
+        alert('got message! ' + message.text);
         self.onMessageReceived(message);
       }, function(error) {
         console.log('Error: preparing chat session failed');
@@ -342,6 +341,7 @@ var OpenPeer = {
 
 OpenPeer.initialize();
 module.exports = OpenPeer;
+
 
 
 });

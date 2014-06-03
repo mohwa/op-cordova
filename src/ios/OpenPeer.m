@@ -30,27 +30,6 @@
  */
 
 #import "OpenPeer.h"
-#import "AppConsts.h"
-#import "Logger.h"
-#import "CDVOP.h"
-
-//SDK
-#import "OpenpeerSDK/HOPStack.h"
-#import "OpenpeerSDK/HOPLogger.h"
-#import "OpenpeerSDK/HOPMediaEngine.h"
-#import "OpenpeerSDK/HOPCache.h"
-#import "OpenpeerSDK/HOPModelManager.h"
-#import "OpenpeerSDK/HOPSettings.h"
-
-//Delegates
-#import "StackDelegate.h"
-#import "MediaEngineDelegate.h"
-#import "ConversationThreadDelegate.h"
-#import "CallDelegate.h"
-#import "CacheDelegate.h"
-#import "AccountDelegate.h"
-#import "IdentityDelegate.h"
-#import "IdentityLookupDelegate.h"
 
 //Private methods
 @interface OpenPeer ()

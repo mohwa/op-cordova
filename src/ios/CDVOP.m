@@ -494,7 +494,6 @@ static CDVOP *shared;
         // TODO: fix this when avatar path can be obtained by size
         HOPAvatar* hopAvatar = [contact getAvatarForWidth:avatarWidth height:avatarWidth];
         
-        //TODO: find out why this is not working as expected (contact identity is nill for all)
         NSString* isRegistered = ([contact identityContact] != nil) ? @"YES" : @"NO";
 
         NSDictionary* cDict = [[NSDictionary alloc] initWithObjectsAndKeys:contact.name, @"name", hopAvatar.url, @"avatarUrl", isRegistered, @"isRegistered", nil];

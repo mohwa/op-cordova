@@ -96,9 +96,9 @@
         
         switch (callState)
         {
-            case HOPCallStatePreparing:             //Receives both parties, caller and callee.
-                //TODO
-                //[[SessionManager sharedSessionManager] onCallPreparing:call];
+            case HOPCallStatePreparing:
+                //Receives both parties, caller and callee.
+                [[SessionManager sharedSessionManager] onCallPreparing:call];
                 break;
                 
             case HOPCallStateIncoming:              //Receives just callee

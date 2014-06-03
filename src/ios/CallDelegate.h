@@ -36,6 +36,7 @@
 #import <OpenpeerSDK/HOPConversationThread.h>
 
 #import "AppLog.h"
+#import "SessionManager.h"
 #import "OpenPeer.h"
 
 @interface CallDelegate : NSObject<HOPCallDelegate>

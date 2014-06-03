@@ -156,9 +156,8 @@
 - (void) startAccount {
     NSString* outerFrameURL = [[CDVOP sharedObject] getSetting:@"outerFrameURL"];
     NSString* identityProviderDomain = [[CDVOP sharedObject] getSetting:@"identityProviderDomain"];
-    NSString* deviceId = [[OpenPeer sharedOpenPeer] deviceId];
     
-    [[HOPAccount sharedAccount] loginWithAccountDelegate:(id<HOPAccountDelegate>)[[OpenPeer sharedOpenPeer] accountDelegate] conversationThreadDelegate:(id<HOPConversationThreadDelegate>) [[OpenPeer sharedOpenPeer] conversationThreadDelegate] callDelegate:(id<HOPCallDelegate>) [[OpenPeer sharedOpenPeer] callDelegate]  namespaceGrantOuterFrameURLUponReload:outerFrameURL grantID:deviceId lockboxServiceDomain:identityProviderDomain forceCreateNewLockboxAccount:NO];
+    [[HOPAccount sharedAccount] loginWithAccountDelegate:(id<HOPAccountDelegate>)[[OpenPeer sharedOpenPeer] accountDelegate] conversationThreadDelegate:(id<HOPConversationThreadDelegate>) [[OpenPeer sharedOpenPeer] conversationThreadDelegate] callDelegate:(id<HOPCallDelegate>) [[OpenPeer sharedOpenPeer] callDelegate]  namespaceGrantOuterFrameURLUponReload:outerFrameURL lockboxServiceDomain:identityProviderDomain forceCreateNewLockboxAccount:NO];
 }
 
 - (void) startLogin
