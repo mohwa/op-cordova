@@ -19,8 +19,8 @@ open opios/openpeer-ios-sdk.xcodeproj
 ## Compress and Upload the SDK
 > Before compressing, for now we need to manually copy the actual SDK binary file which is referenced outside, into the framework.
 
-* Open the `OpenpeerSDK.framework` and take a look. It should contains the data model bundle needed by SDK as well as a build of `libcurl` and `boost` libraries which it depends on. 
-* `cd versions/current
+* Open the `OpenpeerSDK.framework` and take a look. It should contain the data model bundle, as well as a build of `libcurl` and `boost` libraries which it depends on. 
+* `cd versions/current`
 * Find the alias `OpenpeerSDK` to the actual framework binary.
 * Find the binary file `libOpenpeerSDK.a` by checking the path the alias points to
 * Copy the real binary fild (~90MB) to the current location. Delete the alias and rename the binary file to `OpenpeerSDK`
