@@ -1,4 +1,4 @@
-cordova.define("org.openpeer.cordova.OP", function(require, exports, module) { var exec = require('cordova/exec');
+var exec = require('cordova/exec');
 var OpenPeer = {
   version: 0.0,
 
@@ -122,10 +122,12 @@ var OpenPeer = {
     exec(null, null, 'CDVOP', 'stopCatPictures', []);
   },
 
-  configureApp: function(config) {
-    var deferred = Q.defer();
-    // TODO: copy values over onto settings
-    return deferred.promise;
+  // a chance to change default configurations
+  // usually this is only useful before initialization
+  updateSettings: function(config) {
+    for (var name in config) {
+      OpenPeer.settings[name] = config[name];
+    }
   },
 
   // chat session constructor
@@ -339,9 +341,6 @@ var OpenPeer = {
   }
 };
 
-OpenPeer.initialize();
 module.exports = OpenPeer;
 
 
-
-});
