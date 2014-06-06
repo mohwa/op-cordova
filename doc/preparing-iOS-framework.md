@@ -1,5 +1,5 @@
-# Why build iOS Framework
-This document explains the process to build, upload and reference the iOS framework for use in the cordova app. This procedure is part of mainaining the op-cordova plugin. We upload the framework containing the binary files, and add it to the pluin before installing the Cordova plugin in an app, by running the `prepare` script. By doing so, we save a lot of time and effort that would take to build the SDK from source, each time. If you are interested in building the iOS framework from source, and include it in the plugin yourself, you can also follow this doc.
+# Building the iOS Framework
+This document explains the process to build, upload and reference the iOS framework for use in this Cordova plugin. This procedure is part of mainaining the plugin, you dont need to do this if you are just using the plugin. We upload the framework containing the binary files, and add it to the pluin before installing the it in an app, by running the `prepare.sh` script. By doing so, we save a lot of time and effort that would take to build the SDK from source each time.
 
 ## Building the latest master
 You can either build using the later `dev-stable` branch or the `master` branch.
@@ -34,5 +34,5 @@ Now we are ready to compress the framework:
 * Make the file public
 
 ## Update the Install Script
-Update the reference to the file in build script
+Update the reference to the file in [`prepare.sh` script](https://github.com/openpeer/op-cordova/blob/master/prepare.sh)
 
