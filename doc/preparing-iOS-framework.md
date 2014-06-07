@@ -1,5 +1,5 @@
 # Building the iOS Framework
-This document explains the process to build, upload and reference the iOS framework for use in this Cordova plugin. This procedure is part of mainaining the plugin, you dont need to do this if you are just using the plugin. We upload the framework containing the binary files, and add it to the pluin before installing the it in an app, by running the `prepare.sh` script. By doing so, we save a lot of time and effort that would take to build the SDK from source each time.
+This document explains the process to build, upload and reference the iOS framework for use in this Cordova plugin. This procedure is part of mainaining the plugin, you dont need to do this if you are just using the plugin. We upload the framework containing the binary files, and add it to the plugin before installing it in an app, by running the `prepare.sh` script. By doing so, we save a lot of time and effort that would take to build the SDK from source each time.
 
 ## Building the latest master
 You can either build using the later `dev-stable` branch or the `master` branch.
