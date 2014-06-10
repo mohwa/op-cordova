@@ -58,6 +58,8 @@
 - (void) stopCatPictures:(CDVInvokedUrlCommand*)command;
 - (void) switchCamera:(CDVInvokedUrlCommand*)command;
 - (void) prepareChat:(CDVInvokedUrlCommand*)command;
+- (void) sendMessage:(CDVInvokedUrlCommand *)command;
+- (void) placeCall:(CDVInvokedUrlCommand *)command;
 - (void) onMessageReceived:(NSString*)msg callbackId:(NSString*)callbackId;
 - (void) makeViewTransparent;
 - (void) initVideoViews;

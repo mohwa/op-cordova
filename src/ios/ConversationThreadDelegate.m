@@ -87,7 +87,6 @@
         {
             NSString* sessionId = [conversationThread getThreadId];
             //Session* session = [[SessionManager sharedSessionManager] getSessionForSessionId:sessionId];
-            //[[CDVOP sharedObject] onMessageReceived:message.text callbackId:session.receiveMsgCallbackId];
             [[MessageManager sharedMessageManager] onMessageReceived:message forSessionId:sessionId];
         }
     });

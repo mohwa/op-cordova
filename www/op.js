@@ -13,8 +13,6 @@ var OpenPeer = {
     defaultOutgoingTelnetServer: 'tcp-logger-v1-rel-lespaul-i.hcs.io:8055',
     applicationSettingsVersion: '1',
 
-//TODO: investigate why enabling (some of?) these causes performance issue
-/*
     'applicationSettingsBackgroundingPhaseRichPush': 4,
     'openpeer/core/core-thread-priority': 'normal',
     'openpeer/core/media-thread-priority': 'real-time',
@@ -51,9 +49,6 @@ var OpenPeer = {
     'openpeer/services/debug/force-packets-over-turn': false,
     'openpeer/services/debug/force-turn-to-use-tcp': false,
     'openpeer/services/debug/force-turn-to-use-udp': false,
-    'openpeer/services/debug/only-allow-data-sent-to-specific-ips': '',
-    'openpeer/services/debug/only-allow-turn-to-relay-data-sent-to-specific-ips': '',
-*/
 
     redirectAfterLoginCompleteURL:
       'http://jsouter-v1-rel-lespaul-i.hcs.io/identity.html?reload=true',
@@ -163,6 +158,23 @@ var OpenPeer = {
           deferred.reject(new Error('could not send message. ' + error));
         }, 'CDVOP', 'sendMessage', options);
       }
+
+      return deferred.promise;
+    };
+
+    this.call = function() {
+      var deferred = Q.defer();
+
+      // TODO: set call options
+      var options = [this.id].concat(config.peerList);
+
+      exec(function() {
+        deferred.resolve();
+      }, function(error) {
+        deferred.reject(new Error('could not make the call: ' + error));
+      }, 'CDVOP', 'placeCall', options);
+
+      return deferred.promise;
     };
 
     // overwrite this method to listen for new messages

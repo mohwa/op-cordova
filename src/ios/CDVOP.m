@@ -2,6 +2,7 @@
 
 @interface CDVOP ()
 @property NSString* loginCallbackId;
+@property HOPCall* currentCall;
 @end
 
 @implementation CDVOP
@@ -245,6 +246,34 @@ static CDVOP *shared;
     [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
 }
 
+/**
+ * place a call to a contact
+ * @param command.arguments[0] identityURI of the contact to call
+ * @param command.arguments[1] conversation thread id/session id
+ */
+- (void) placeCall:(CDVInvokedUrlCommand *)command
+{
+    CDVPluginResult* res = nil;
+    
+    //TODO: see if we need sessionId
+    //NSString* sessionId = command.arguments[0];
+    
+    NSString* identityURI = command.arguments[1];
+    
+    HOPRolodexContact* contact = [[HOPModelManager sharedModelManager] getRolodexContactByIdentityURI:identityURI];
+    Session* session = [[SessionManager sharedSessionManager] getSessionForContact:contact];
+    if (session == nil) {
+        session = [[SessionManager sharedSessionManager] createSessionForContact:contact];
+    }
+
+    //TODO get parameters from client
+    [[SessionManager sharedSessionManager] makeCallForSession:session includeVideo:YES isRedial:NO];
+    
+    res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"success"];
+    
+    [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
+}
+
 // TODO: remove if not needed
 - (void)getAccountState:(CDVInvokedUrlCommand*)command
 {
@@ -333,7 +362,7 @@ static CDVOP *shared;
 - (NSString*) getSetting:(NSString*)setting
 {
     NSString *jsCall = [NSString stringWithFormat:@"OP.settings['%@'];", setting];
-    return [self.webView stringByEvaluatingJavaScriptFromString:jsCall];
+    return [self writeJavascript:jsCall];
 }
 
 /*
@@ -341,7 +370,7 @@ static CDVOP *shared;
  */
 - (void) setSetting:(NSString*)key value:(NSString*)value {
     NSString *jsCall = [NSString stringWithFormat:@"OP.settings['%@'] = '%@';", key, value];
-    [self.webView stringByEvaluatingJavaScriptFromString:jsCall];
+    [self writeJavascript:jsCall];
 }
 
 /**
@@ -354,7 +383,7 @@ static CDVOP *shared;
 
 - (NSString*) getAllSettingsJSON
 {
-    NSString *settings = [self.webView stringByEvaluatingJavaScriptFromString:@"JSON.stringify(OP.settings);"];
+    NSString *settings = [self writeJavascript:@"JSON.stringify(OP.settings);"];
     return [NSString stringWithFormat:@"{\"root\":%@}", settings];
 }
 

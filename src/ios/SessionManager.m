@@ -320,7 +320,7 @@
     {
         //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Making a call for the session <%p>", inSession);
         
-        [[MessageManager sharedMessageManager]sendSystemMessageToCheckAvailability:inSession];
+        // [[MessageManager sharedMessageManager]sendSystemMessageToCheckAvailability:inSession];
         //Currently we are not supporting group conferences, so only one participant is possible
         HOPContact* contact = [[[inSession participantsArray] objectAtIndex:0] getCoreContact];
         
@@ -329,7 +329,7 @@
         inSession.currentCall = [HOPCall placeCall:inSession.conversationThread toContact:contact includeAudio:YES includeVideo:includeVideo];
         [self setActiveCallSession:inSession callActive:YES];
     }
-    else
+    else    
     {
         //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Call is already in a progress");
     }
