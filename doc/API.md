@@ -1,4 +1,4 @@
-# op-cordova JavaScript API
+# Open Peer Cordova Plugin JavaScript API
 This document desctibes the JavaScript API you can use to interact with this Open Peer Cordova Plugin. 
 
 ## Update Settings
@@ -12,7 +12,7 @@ OP.updateSettings({
   identityProviderDomain: 'your.identity.provider'
 })
 ```
-There are many more options available. To see a full list of options available checkout the (op.js)[https://github.com/openpeer/op-cordova/blob/master/www/op.js] default settings object.
+There are many more options available. To see a full list of options available checkout the [op.js](https://github.com/openpeer/op-cordova/blob/master/www/op.js) default settings object.
 
 ## Initialize
 This will initialize the native SDK
