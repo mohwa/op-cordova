@@ -10,12 +10,17 @@
   <engines>
     <engine name="cordova" version=">=3.3.0" />
   </engines>
+
+  <!-- during testing we will get op.js from server
   <js-module src="www/op.js" name="OP">
       <clobbers target="OP" />
   </js-module>
+-->
+
   <js-module src="www/qPromise.js" name="Q">
       <clobbers target="Q" />
   </js-module>
+
 
   <platform name="ios">
       <framework src="CoreAudio.framework" />
@@ -95,4 +100,3 @@
 
   </platform>
 </plugin>
-

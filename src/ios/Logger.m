@@ -35,28 +35,24 @@
 
 + (void) setLogLevels
 {
-    //For each system you can choose log level from HOPClientLogLevelNone (turned off) to HOPClientLogLevelInsane (most detail).
-    /*
-     TODO: get log level settings from client side (from CDVOP instance
-    [HOPLogger setLogLevelbyName:moduleApplication level:[[Settings sharedSettings] getLoggerLevelForAppModuleKey:moduleApplication]];
-    [HOPLogger setLogLevelbyName:moduleServices level:[[Settings sharedSettings] getLoggerLevelForAppModuleKey:moduleServices]];
-    [HOPLogger setLogLevelbyName:moduleServicesWire level:[[Settings sharedSettings] getLoggerLevelForAppModuleKey:moduleServicesWire]];
-    [HOPLogger setLogLevelbyName:moduleServicesIce level:[[Settings sharedSettings] getLoggerLevelForAppModuleKey:moduleServicesIce]];
-    [HOPLogger setLogLevelbyName:moduleServicesTurn level:[[Settings sharedSettings] getLoggerLevelForAppModuleKey:moduleServicesTurn]];
-    [HOPLogger setLogLevelbyName:moduleServicesRudp level:[[Settings sharedSettings] getLoggerLevelForAppModuleKey:moduleServicesRudp]];
-    [HOPLogger setLogLevelbyName:moduleServicesHttp level:[[Settings sharedSettings] getLoggerLevelForAppModuleKey:moduleServicesHttp]];
-    [HOPLogger setLogLevelbyName:moduleServicesMls level:[[Settings sharedSettings] getLoggerLevelForAppModuleKey:moduleServicesMls]];
-    [HOPLogger setLogLevelbyName:moduleServicesTcp level:[[Settings sharedSettings] getLoggerLevelForAppModuleKey:moduleServicesTcp]];
-    [HOPLogger setLogLevelbyName:moduleServicesTransport level:[[Settings sharedSettings] getLoggerLevelForAppModuleKey:moduleServicesTransport]];
-    [HOPLogger setLogLevelbyName:moduleCore level:[[Settings sharedSettings] getLoggerLevelForAppModuleKey:moduleCore]];
-    [HOPLogger setLogLevelbyName:moduleStackMessage level:[[Settings sharedSettings] getLoggerLevelForAppModuleKey:moduleStackMessage]];
-    [HOPLogger setLogLevelbyName:moduleStack level:[[Settings sharedSettings] getLoggerLevelForAppModuleKey:moduleStack]];
-    [HOPLogger setLogLevelbyName:moduleWebRTC level:[[Settings sharedSettings] getLoggerLevelForAppModuleKey:moduleWebRTC]];
-    [HOPLogger setLogLevelbyName:moduleZsLib level:[[Settings sharedSettings] getLoggerLevelForAppModuleKey:moduleZsLib]];
-    [HOPLogger setLogLevelbyName:moduleSDK level:[[Settings sharedSettings] getLoggerLevelForAppModuleKey:moduleSDK]];
-    [HOPLogger setLogLevelbyName:moduleMedia level:[[Settings sharedSettings] getLoggerLevelForAppModuleKey:moduleMedia]];
-    [HOPLogger setLogLevelbyName:moduleJavaScript level:[[Settings sharedSettings] getLoggerLevelForAppModuleKey:moduleJavaScript]];
-     */
+    [HOPLogger setLogLevelbyName:moduleApplication level:HOPLoggerLevelTrace];
+    [HOPLogger setLogLevelbyName:moduleServices level:HOPLoggerLevelTrace];
+    [HOPLogger setLogLevelbyName:moduleServicesWire level:HOPLoggerLevelDebug];
+    [HOPLogger setLogLevelbyName:moduleServicesIce level:HOPLoggerLevelTrace];
+    [HOPLogger setLogLevelbyName:moduleServicesTurn level:HOPLoggerLevelTrace];
+    [HOPLogger setLogLevelbyName:moduleServicesRudp level:HOPLoggerLevelDebug];
+    [HOPLogger setLogLevelbyName:moduleServicesHttp level:HOPLoggerLevelDebug];
+    [HOPLogger setLogLevelbyName:moduleServicesMls level:HOPLoggerLevelTrace];
+    [HOPLogger setLogLevelbyName:moduleServicesTcp level:HOPLoggerLevelTrace];
+    [HOPLogger setLogLevelbyName:moduleServicesTransport level:HOPLoggerLevelDebug];
+    [HOPLogger setLogLevelbyName:moduleCore level:HOPLoggerLevelTrace];
+    [HOPLogger setLogLevelbyName:moduleStackMessage level:HOPLoggerLevelTrace];
+    [HOPLogger setLogLevelbyName:moduleStack level:HOPLoggerLevelTrace];
+    [HOPLogger setLogLevelbyName:moduleWebRTC level:HOPLoggerLevelDetail];
+    [HOPLogger setLogLevelbyName:moduleZsLib level:HOPLoggerLevelTrace];
+    [HOPLogger setLogLevelbyName:moduleSDK level:HOPLoggerLevelTrace];
+    [HOPLogger setLogLevelbyName:moduleMedia level:HOPLoggerLevelDetail];
+    [HOPLogger setLogLevelbyName:moduleJavaScript level:HOPLoggerLevelTrace];
 }
 
 
@@ -92,7 +88,7 @@
 {
     if (start)
     {
-        NSString* server = [[CDVOP sharedObject] getSetting:@"outgoingTelnetServerPort"];
+        NSString* server = [[CDVOP sharedObject] getSetting:@"defaultOutgoingTelnetServer"];
         BOOL colorized = [[[CDVOP sharedObject] getSetting:@"isOutgoingTelnetColorized"] boolValue];
         NSString* appId = [[CDVOP sharedObject] getSetting:@"openpeer/calculated/authorizated-application-id"];
         if ([server length] > 0)
@@ -119,7 +115,7 @@
         case LOGGER_STD_OUT:
             [self startStdLogger:start];
             break;
-            
+                    
         case LOGGER_TELNET:
             [self startTelnetLogger:start];
             break;
@@ -132,14 +128,6 @@
             break;
     }
     
-}
-
-+ (void) startTelnetLoggerOnStartUp
-{
-    [Logger startAllSelectedLoggers];
-
-    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"OpenPeer" message:@"Logger is started! Almost all log levels are set to trace. If you want to change that, you can do that from the settings." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
-    [alert show];
 }
 
 @end

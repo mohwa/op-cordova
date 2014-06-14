@@ -29,6 +29,8 @@ static CDVOP *shared;
     
     [[OpenPeer sharedOpenPeer] preSetup];
     
+    [[OpenPeer sharedOpenPeer] setup];
+
     CDVPluginResult* res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"success"];
     [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
 }
@@ -154,8 +156,6 @@ static CDVOP *shared;
     
     // send the authorized application id to client
     [[CDVOP sharedObject] setSetting:@"openpeer/calculated/authorizated-application-id" value:[[HOPSettings sharedSettings] getAuthorizedApplicationId]];
-    
-    [[OpenPeer sharedOpenPeer] setup];
     
     // TODO: check that authorization was successful and send error otherwise
     res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:authorizedApplicationId];

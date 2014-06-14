@@ -103,10 +103,6 @@
     [[HOPSettings sharedSettings] setup];
     [[HOPSettings sharedSettings] applyDefaults];
     
-    if ([[[CDVOP sharedObject] getSetting:@"isLoggerEnabled"] boolValue]) {
-        [OpenPeer startLogging];
-    }
-    
     [self updateDefaultSettingsFromPath:[[NSBundle mainBundle] pathForResource:@"DefaultSettings" ofType:@"plist"] notToUpdateKeys:nil];
 }
 
@@ -126,6 +122,10 @@
     {
         //Init openpeer stack and set created delegates
         [[HOPStack sharedStack] setupWithStackDelegate:self.stackDelegate mediaEngineDelegate:self.mediaEngineDelegate];
+    }
+    
+    if ([[[CDVOP sharedObject] getSetting:@"isLoggerEnabled"] boolValue]) {
+        [OpenPeer startLogging];
     }
 
     [[HOPMediaEngine sharedInstance] setEcEnabled:[[CDVOP sharedObject] getSettingAsBool:@"isMediaAECOn"]];
@@ -264,32 +264,8 @@
     return userAgent;
 }
 
-// this function for debugging purpose.
-// TODO: remove this and replace with default logger configuration from JS
 + (void) startLogging {
-    [HOPLogger setLogLevelbyName:moduleApplication level:HOPLoggerLevelTrace];
-    [HOPLogger setLogLevelbyName:moduleServices level:HOPLoggerLevelTrace];
-    [HOPLogger setLogLevelbyName:moduleServicesWire level:HOPLoggerLevelDebug];
-    [HOPLogger setLogLevelbyName:moduleServicesIce level:HOPLoggerLevelTrace];
-    [HOPLogger setLogLevelbyName:moduleServicesTurn level:HOPLoggerLevelTrace];
-    [HOPLogger setLogLevelbyName:moduleServicesRudp level:HOPLoggerLevelDebug];
-    [HOPLogger setLogLevelbyName:moduleServicesHttp level:HOPLoggerLevelDebug];
-    [HOPLogger setLogLevelbyName:moduleServicesMls level:HOPLoggerLevelTrace];
-    [HOPLogger setLogLevelbyName:moduleServicesTcp level:HOPLoggerLevelTrace];
-    [HOPLogger setLogLevelbyName:moduleServicesTransport level:HOPLoggerLevelDebug];
-    [HOPLogger setLogLevelbyName:moduleCore level:HOPLoggerLevelTrace];
-    [HOPLogger setLogLevelbyName:moduleStackMessage level:HOPLoggerLevelTrace];
-    [HOPLogger setLogLevelbyName:moduleStack level:HOPLoggerLevelTrace];
-    [HOPLogger setLogLevelbyName:moduleWebRTC level:HOPLoggerLevelDetail];
-    [HOPLogger setLogLevelbyName:moduleZsLib level:HOPLoggerLevelTrace];
-    [HOPLogger setLogLevelbyName:moduleSDK level:HOPLoggerLevelTrace];
-    [HOPLogger setLogLevelbyName:moduleMedia level:HOPLoggerLevelDetail];
-    [HOPLogger setLogLevelbyName:moduleJavaScript level:HOPLoggerLevelTrace];
-
-    //[Logger startAllSelectedLoggers];
-    [Logger startStdLogger:YES];
-    [Logger startTelnetLogger:YES];
-    [Logger startOutgoingTelnetLogger:YES];
+    [Logger startAllSelectedLoggers];
 }
 
 @end
