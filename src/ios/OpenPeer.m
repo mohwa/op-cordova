@@ -85,6 +85,10 @@
 }
 
 - (void) preSetup {
+    if ([[[CDVOP sharedObject] getSetting:@"isLoggerEnabled"] boolValue]) {
+        [OpenPeer startLogging];
+    }
+
     //Create all delegates required for communication with core
     [self createDelegates];
     
@@ -109,8 +113,6 @@
  * Initializes the open peer stack
  */
 - (void) setup {
-    //Create all delegates required for communication with core
-    //[self createDelegates];
     [self storeDefaultSettings:YES];
 
     NSString* settings = [[CDVOP sharedObject] getAllSettingsJSON];
@@ -120,10 +122,6 @@
     {
         //Init openpeer stack and set created delegates
         [[HOPStack sharedStack] setupWithStackDelegate:self.stackDelegate mediaEngineDelegate:self.mediaEngineDelegate];
-    }
-    
-    if ([[[CDVOP sharedObject] getSetting:@"isLoggerEnabled"] boolValue]) {
-        [OpenPeer startLogging];
     }
 
     [[HOPMediaEngine sharedInstance] setEcEnabled:[[CDVOP sharedObject] getSettingAsBool:@"isMediaAECOn"]];
@@ -139,8 +137,13 @@
 }
 
 - (void) shutdown {
-    [[HOPStack sharedStack] shutdown];
-    
+    @try {
+        [[HOPStack sharedStack] shutdown];
+    }
+    @catch (NSException *exception) {
+        OPLog(HOPLoggerSeverityError, HOPLoggerLevelTrace, @"there was an error shutting down: %@", exception.description);
+    }
+
     self.stackDelegate = nil;
     self.mediaEngineDelegate = nil;
     self.conversationThreadDelegate = nil;

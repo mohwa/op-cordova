@@ -169,7 +169,7 @@ static CDVOP *shared;
         [[HOPSettings sharedSettings] storeAuthorizedApplicationId:authorizedApplicationId];
     }
     
-    // send the authorized application id to client
+    // TODO: figure out where/if we need to send the authorized application id to client
     [[CDVOP sharedObject] setSetting:@"openpeer/calculated/authorizated-application-id" value:[[HOPSettings sharedSettings] getAuthorizedApplicationId]];
     
     // TODO: check that authorization was successful and send error otherwise

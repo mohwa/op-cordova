@@ -98,9 +98,6 @@
         NSString* instanceId = [[HOPSettings sharedSettings] getInstanceId];
         NSString* connectionString = [[deviceId stringByAppendingString:@"-"] stringByAppendingString:instanceId];
         
-        // send the calculated connection string to client
-        [[CDVOP sharedObject] setSetting:@"openpeer/calculated/logger-connection-string" value:connectionString];
-        
         if ([server length] > 0) {
             [HOPLogger installOutgoingTelnetLogger:server colorizeOutput:colorized stringToSendUponConnection:connectionString];
         } else {
@@ -119,6 +116,7 @@
     [self startStdLogger:[[[CDVOP sharedObject] getSetting:@"isStandardLoggerEnabled"] boolValue]];
     [self startTelnetLogger:[[[CDVOP sharedObject] getSetting:@"isTelnetLoggerEnabled"] boolValue]];
     [self startOutgoingTelnetLogger:[[[CDVOP sharedObject] getSetting:@"isOutgoingTelnetLoggerEnabled"] boolValue]];
+    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"selected logger have started");
 }
 
 + (void) start:(BOOL) start logger:(LoggerTypes) type

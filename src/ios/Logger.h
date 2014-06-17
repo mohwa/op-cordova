@@ -34,6 +34,7 @@
 #import "OpenpeerSDK/HOPLogger.h"
 
 #import "AppConsts.h"
+#import "AppLog.h"
 #import "OpenPeer.h"
 #import "CDVOP.h"
 
