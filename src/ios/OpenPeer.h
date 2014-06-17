@@ -97,6 +97,7 @@
 - (void) preSetup;
 - (void) setup;
 - (void) shutdown;
+- (BOOL) isStackReady;
 
 //utility functions
 + (NSString*) getGUIDstring;

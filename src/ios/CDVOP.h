@@ -54,6 +54,7 @@
 // cordova plugin functions
 - (void) authorizeApp:(CDVInvokedUrlCommand*)command;
 - (void) initialize:(CDVInvokedUrlCommand*)command;
+- (void) shutdown:(CDVInvokedUrlCommand*)command;
 - (void) showCatPictures:(CDVInvokedUrlCommand*)command;
 - (void) stopCatPictures:(CDVInvokedUrlCommand*)command;
 - (void) switchCamera:(CDVInvokedUrlCommand*)command;

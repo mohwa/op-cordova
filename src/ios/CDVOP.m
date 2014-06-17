@@ -22,8 +22,11 @@ static CDVOP *shared;
     return self;
 }
 
-// called from js when webview is loaded
+/**
+ *  initialize the SDK
+ */
 - (void) initialize:(CDVInvokedUrlCommand*)command {
+    CDVPluginResult* res;
     [self makeViewTransparent];
     [self initVideoViews];
     
@@ -31,8 +34,20 @@ static CDVOP *shared;
     
     [[OpenPeer sharedOpenPeer] setup];
 
-    CDVPluginResult* res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"success"];
+    if ([[OpenPeer sharedOpenPeer] isStackReady]) {
+        res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"success"];
+    } else {
+        res = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Error initializing the SDK! please check the logs"];
+    }
+    
     [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
+}
+
+/**
+ *  Shutdown the SDK
+ */
+- (void) shutdown:(CDVInvokedUrlCommand*)command {
+    [[OpenPeer sharedOpenPeer] shutdown];
 }
 
 // make the main webview transparent

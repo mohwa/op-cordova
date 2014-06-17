@@ -84,8 +84,7 @@
     [[CDVOP sharedObject] setSetting:@"openpeer/calculated/system" value:[OpenPeer getPlatform]];
 }
 
-- (void) preSetup
-{
+- (void) preSetup {
     //Create all delegates required for communication with core
     [self createDelegates];
     
@@ -109,8 +108,7 @@
 /**
  * Initializes the open peer stack
  */
-- (void) setup
-{
+- (void) setup {
     //Create all delegates required for communication with core
     //[self createDelegates];
     [self storeDefaultSettings:YES];
@@ -133,8 +131,14 @@
     [[HOPMediaEngine sharedInstance] setNsEnabled:[[CDVOP sharedObject] getSettingAsBool:@"isMediaNSOn"]];
 }
 
-- (void) shutdown
-{
+/**
+ *  Return true only if stack is initialized and ready
+ */
+- (BOOL) isStackReady {
+    return [[HOPStack sharedStack] isStackReady];
+}
+
+- (void) shutdown {
     [[HOPStack sharedStack] shutdown];
     
     self.stackDelegate = nil;
