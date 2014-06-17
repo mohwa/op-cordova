@@ -194,7 +194,7 @@ static CDVOP *shared;
             [mediaEngine setCameraType:HOPMediaEngineCameraTypeBack];
         } else {
             // toggle to the other camera
-            HOPMediaEngineCameraTypes currentCameraType = [mediaEngine getCameraType];
+            HOPMediaEngineCameraType currentCameraType = [mediaEngine getCameraType];
             currentCameraType = currentCameraType == HOPMediaEngineCameraTypeFront ? HOPMediaEngineCameraTypeBack : HOPMediaEngineCameraTypeFront;
             [mediaEngine setCameraType:currentCameraType];
         }

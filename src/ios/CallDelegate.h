@@ -40,8 +40,6 @@
 #import "OpenPeer.h"
 
 @interface CallDelegate : NSObject<HOPCallDelegate>
-
-- (NSString*) getCallStateAsString:(HOPCallStates) callState;
-- (void) onCallStateChanged:(HOPCall*) call callState:(HOPCallStates) callState;
-
+- (NSString*) getCallStateAsString:(HOPCallState) callState;
+- (void) onCallStateChanged:(HOPCall*) call callState:(HOPCallState) callState;
 @end

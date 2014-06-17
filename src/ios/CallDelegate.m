@@ -33,7 +33,7 @@
 
 @implementation CallDelegate
 
-- (NSString*) getCallStateAsString:(HOPCallStates) callState
+- (NSString*) getCallStateAsString:(HOPCallState) callState
 {
     NSString *res = nil;
     
@@ -84,7 +84,7 @@
     return res;
 }
 
-- (void) onCallStateChanged:(HOPCall*) call callState:(HOPCallStates) callState
+- (void) onCallStateChanged:(HOPCall*) call callState:(HOPCallState) callState
 {
     OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelDebug, @"Call state: %@", [self getCallStateAsString:[call getState]]);
     

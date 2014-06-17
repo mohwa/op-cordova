@@ -31,6 +31,9 @@
 
 #import <Foundation/Foundation.h>
 #import <OpenpeerSDK/HOPProtocols.h>
+#import <AVFoundation/AVFoundation.h>
+#import <OpenpeerSDK/HOPMediaEngine.h>
+#import "AppLog.h"
 
 @interface MediaEngineDelegate : NSObject<HOPMediaEngineDelegate>
 

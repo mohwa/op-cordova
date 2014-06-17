@@ -33,18 +33,33 @@
 
 @implementation MediaEngineDelegate
 
-- (void) onMediaEngineAudioRouteChanged:(HOPMediaEngineOutputAudioRoutes) audioRoute
-{
-    NSLog(@"Fired audio route changed");
-}
 
 - (void) onMediaEngineFaceDetected
 {
     NSLog(@"Face detected fired");
 }
 
+- (void) onMediaEngineAudioRouteChanged:(HOPMediaEngineOutputAudioRoute) audioRoute
+{
+    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Audio route changed");
+    dispatch_async(dispatch_get_main_queue(), ^{
+    });
+}
+
 - (void) onMediaEngineVideoCaptureRecordStopped
 {
-    NSLog(@"video capture record stopped");
+    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Video capture record has stopped.");
+    dispatch_async(dispatch_get_main_queue(), ^{
+    });
+}
+
+- (void) onMediaEngineAudioSessionInterruptionBegan
+{
+    [[HOPMediaEngine sharedInstance] pauseVoice:YES];
+}
+
+- (void) onMediaEngineAudioSessionInterruptionEnded
+{
+    [[HOPMediaEngine sharedInstance] pauseVoice:NO];
 }
 @end

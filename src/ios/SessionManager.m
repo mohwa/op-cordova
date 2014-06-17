@@ -318,20 +318,16 @@
 {
     if (!inSession.currentCall)
     {
-        //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Making a call for the session <%p>", inSession);
-        
-        // [[MessageManager sharedMessageManager]sendSystemMessageToCheckAvailability:inSession];
-        //Currently we are not supporting group conferences, so only one participant is possible
-        HOPContact* contact = [[[inSession participantsArray] objectAtIndex:0] getCoreContact];
+        OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Placing a call for the session <%p>", inSession);
         
         //Place a audio or video call for chosen contact
         inSession.isRedial = isRedial;
-        inSession.currentCall = [HOPCall placeCall:inSession.conversationThread toContact:contact includeAudio:YES includeVideo:includeVideo];
+        inSession.currentCall = [HOPCall placeCall:inSession.conversationThread includeAudio:YES includeVideo:includeVideo];
         [self setActiveCallSession:inSession callActive:YES];
     }
     else    
     {
-        //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Call is already in a progress");
+        OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"A call is already in a progress for this session <%p>", inSession);
     }
 }
 

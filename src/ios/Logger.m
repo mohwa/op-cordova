@@ -60,7 +60,7 @@
 {
     if (start)
     {
-        [HOPLogger installStdOutLogger:NO];
+        [HOPLogger installStdOutLoggerWithColorizedOutput:NO];
     }
     else
         [HOPLogger uninstallStdOutLogger];
@@ -75,8 +75,11 @@
     {
         NSString* port = [[CDVOP sharedObject] getSetting:@"telnetPortForLogger"];
         BOOL colorized = [[[CDVOP sharedObject] getSetting:@"isLoggerColorized"] boolValue];
-        if ([port length] > 0)
+        if ([port length] > 0) {
             [HOPLogger installTelnetLogger:[port intValue] maxSecondsWaitForSocketToBeAvailable:60 colorizeOutput:colorized];
+        } else {
+            NSLog(@"Could not start the telnet logger, invalid port number %@", port);
+        }
     }
     else
     {
@@ -90,9 +93,19 @@
     {
         NSString* server = [[CDVOP sharedObject] getSetting:@"defaultOutgoingTelnetServer"];
         BOOL colorized = [[[CDVOP sharedObject] getSetting:@"isOutgoingTelnetColorized"] boolValue];
-        NSString* appId = [[CDVOP sharedObject] getSetting:@"openpeer/calculated/authorizated-application-id"];
-        if ([server length] > 0)
-            [HOPLogger installOutgoingTelnetLogger:server colorizeOutput:colorized stringToSendUponConnection:appId];
+        
+        NSString* deviceId = [[HOPSettings sharedSettings] deviceId];
+        NSString* instanceId = [[HOPSettings sharedSettings] getInstanceId];
+        NSString* connectionString = [[deviceId stringByAppendingString:@"-"] stringByAppendingString:instanceId];
+        
+        // send the calculated connection string to client
+        [[CDVOP sharedObject] setSetting:@"openpeer/calculated/logger-connection-string" value:connectionString];
+        
+        if ([server length] > 0) {
+            [HOPLogger installOutgoingTelnetLogger:server colorizeOutput:colorized stringToSendUponConnection:connectionString];
+        } else {
+            NSLog(@"Could not start the outgoing telnet logger, invalid server address: %@", server);
+        }
     }
     else
     {
