@@ -105,16 +105,16 @@
     //Set settigns delegate
     [[HOPSettings sharedSettings] setup];
     [[HOPSettings sharedSettings] applyDefaults];
-    
+
     [self updateDefaultSettingsFromPath:[[NSBundle mainBundle] pathForResource:@"DefaultSettings" ofType:@"plist"] notToUpdateKeys:nil];
+    [self storeDefaultSettings:YES];
 }
 
 /**
  * Initializes the open peer stack
  */
 - (void) setup {
-    [self storeDefaultSettings:YES];
-
+    // get all final JSON settings from JS
     NSString* settings = [[CDVOP sharedObject] getAllSettingsJSON];
     [[HOPSettings sharedSettings] applySettings:settings];
 

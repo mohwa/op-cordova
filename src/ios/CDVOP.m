@@ -30,8 +30,6 @@ static CDVOP *shared;
     [self makeViewTransparent];
     [self initVideoViews];
     
-    [[OpenPeer sharedOpenPeer] preSetup];
-    
     [[OpenPeer sharedOpenPeer] setup];
 
     if ([[OpenPeer sharedOpenPeer] isStackReady]) {
@@ -159,6 +157,9 @@ static CDVOP *shared;
 {
     CDVPluginResult* res = nil;
     NSArray* arguments = command.arguments;
+    
+    // we need to load settings before we can get the authorizes app id
+    [[OpenPeer sharedOpenPeer] preSetup];
     
     NSString* authorizedApplicationId = [[HOPSettings sharedSettings] getAuthorizedApplicationId];
     
