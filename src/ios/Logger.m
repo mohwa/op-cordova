@@ -35,6 +35,7 @@
 
 + (void) setLogLevels
 {
+    //For each system you can choose log level from HOPClientLogLevelNone (turned off) to HOPClientLogLevelInsane (most detail).
     [HOPLogger setLogLevelbyName:moduleApplication level:HOPLoggerLevelTrace];
     [HOPLogger setLogLevelbyName:moduleServices level:HOPLoggerLevelTrace];
     [HOPLogger setLogLevelbyName:moduleServicesWire level:HOPLoggerLevelDebug];
@@ -51,8 +52,12 @@
     [HOPLogger setLogLevelbyName:moduleWebRTC level:HOPLoggerLevelDetail];
     [HOPLogger setLogLevelbyName:moduleZsLib level:HOPLoggerLevelTrace];
     [HOPLogger setLogLevelbyName:moduleSDK level:HOPLoggerLevelTrace];
+    [HOPLogger setLogLevelbyName:moduleZsLibSocket level:HOPLoggerLevelDebug];
+    [HOPLogger setLogLevelbyName:moduleSDK level:HOPLoggerLevelTrace];
     [HOPLogger setLogLevelbyName:moduleMedia level:HOPLoggerLevelDetail];
     [HOPLogger setLogLevelbyName:moduleJavaScript level:HOPLoggerLevelTrace];
+    
+    applicationLogerLevel = HOPLoggerLevelTrace;
 }
 
 
@@ -60,7 +65,7 @@
 {
     if (start)
     {
-        [HOPLogger installStdOutLoggerWithColorizedOutput:NO];
+        [HOPLogger installStdOutLogger];
     }
     else
         [HOPLogger uninstallStdOutLogger];

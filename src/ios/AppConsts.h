@@ -33,48 +33,53 @@
 
 extern NSString* const identityFacebookBaseURI;
 
-extern NSString * const keyOpenPeerUser;
+//Property list keys
+extern NSString * const settingsKeyAppId;
+extern NSString * const settingsKeyAppIdSharedSecret;
+extern NSString * const settingsKeyAppName;
+extern NSString * const settingsKeyAppImageURL;
+extern NSString * const settingsKeyAppURL;
+extern NSString * const settingsKeyAPNS;
+extern NSString * const settingsKeyTelnetLogger;
+extern NSString * const settingsKeyOutgoingTelnetLogger;
+extern NSString * const settingsKeyStdOutLogger;
+extern NSString * const settingsKeyRemoveSettingsAppliedByQRCode;
+extern NSString * const settingsKeyOuterFrameURL;
+extern NSString * const settingsKeyGrantServiceURL;
+extern NSString * const settingsKeyIdentityProviderDomain;
+extern NSString * const settingsKeyIdentityFederateBaseURI;
+extern NSString * const settingsKeyLockBoxServiceDomain;
+//extern NSString * const settingsKeyOutgoingTelnetLoggerServer;
+extern NSString * const settingsKeySettingsDownloadURL;
+extern NSString * const settingsKeySettingsDownloadExpiryTime;
+extern NSString * const settingsKeyQRScannerShownAtStart;
+extern NSString * const settingsKeySplashScreenAllowsQRScannerGesture;
+extern NSString * const settingsKeySettingsVersion;
+extern NSString * const settingsKeyBackgroundingPhaseRichPush;
 
-extern NSString * const settingsKeyDefaultSettingsSnapshot;
-
-//User defaults keys
-extern NSString * const archiveDeviceId;
-extern NSString * const archiveStableUniqueId;
-extern NSString * const archiveIdentityURI;
-extern NSString * const archivePeerURI;
-extern NSString * const archiveFullname;
-extern NSString * const archiveContactId;
-extern NSString * const archiveAccountSalt;
-extern NSString * const archivePasswordNonce;
-extern NSString * const archivePrivatePeerFile;
-extern NSString * const archivePrivatePeerFileSecret;
-extern NSString * const archivePeerFilePassword;
-extern NSString * const archiveAssociatedIdentities;
-extern NSString * const archiveLastProfileUpdateTimestamp;
-extern NSString * const archiveReloginInfo;
-
-extern NSString * const archiveAppId;
-extern NSString * const archiveAppIdSharedSecret;
-extern NSString * const archiveAppName;
-extern NSString * const archiveAppImageURL;
-extern NSString * const archiveAppURL;
-extern NSString * const archiveAPNS;
-extern NSString * const archiveTelnetLogger;
-extern NSString * const archiveOutgoingTelnetLogger;
-extern NSString * const archiveStdOutLogger;
 extern NSString * const archiveEnabled;
 extern NSString * const archiveServer;
 extern NSString * const archiveColorized;
 
-#ifdef APNS_ENABLED
-extern NSString* const archiveMasterAppSecretDev;
-extern NSString* const archiveMasterAppSecret;
-extern NSString* const archiveDevelopmentAppKey;
-extern NSString* const archiveDevelopmentAppSecret;
-extern NSString* const archiveProductionAppKey;
-extern NSString* const archiveProductionAppSecret;
-extern NSString* const archiveAPIPushURL;
-#endif
+extern NSString * const settingsKeyAppliedQRSettings;
+extern NSString * const settingsKeySettingsSnapshot;
+extern NSString * const settingsKeyDefaultSettingsSnapshot;
+extern NSString * const settingsKeyOverwriteExistingSettings;
+extern NSString * const settingsKeyUserAgent;
+
+extern NSString * const settingsKeyMediaAEC;
+extern NSString * const settingsKeyMediaAGC;
+extern NSString * const settingsKeyMediaNS;
+
+//UserAgent Variables
+extern NSString * const userAgentVariableAppName;
+extern NSString * const userAgentVariableAppVersion;
+extern NSString * const userAgentVariableSystemOS;
+extern NSString * const userAgentVariableVersionOS;
+extern NSString * const userAgentVariableDeviceModel;
+extern NSString * const userAgentVariableDeveloperID;
+
+extern NSString * const localNotificationKey;
 
 //Contact Profile xml tags
 extern NSString* const profileXmlTagProfile;
@@ -107,15 +112,9 @@ extern NSString * const notificationRemoteSessionModeChanged;
 //Settings
 extern NSString * const defaultTelnetPort;
 
-extern NSString * const archiveMediaAEC;
-extern NSString * const archiveMediaAGC;
-extern NSString * const archiveMediaNS;
 extern NSString * const archiveRemoteSessionActivationMode;
 extern NSString * const archiveFaceDetectionMode;
 extern NSString * const archiveRedialMode;
-extern NSString * const archiveStdLogger;
-extern NSString * const archiveTelnetLogger;
-extern NSString * const archiveOutgoingTelnetLogger;
 extern NSString * const archiveModulesLogLevels;
 extern NSString * const moduleApplication;
 extern NSString * const moduleSDK;
@@ -134,6 +133,7 @@ extern NSString * const moduleServicesMls;
 extern NSString * const moduleServicesTcp;
 extern NSString * const moduleServicesTransport;
 extern NSString * const moduleZsLib;
+extern NSString * const moduleZsLibSocket;
 extern NSString * const moduleJavaScript;
 
 extern NSString * const archiveLoginSettings;

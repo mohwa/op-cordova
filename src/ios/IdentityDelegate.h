@@ -30,6 +30,20 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <OpenpeerSDK/HOPIdentity.h>
+#import <OpenpeerSDK/HOPAccount.h>
+#import <OpenpeerSDK/HOPHomeUser.h>
+#import <OpenpeerSDK/HOPRolodexContact.h>
+#import <OpenpeerSDK/HOPIdentityContact.h>
+#import <OpenpeerSDK/HOPModelManager.h>
+#import <OpenpeerSDK/HOPIdentityLookup.h>
+#import <OpenpeerSDK/HOPAssociatedIdentity.h>
+#import <pthread.h>
+
+#import "CDVOP.h"
+#import "AppConsts.h"
+#import "OpenPeer.h"
+#import "ContactsManager.h"
 #import "OpenpeerSDK/HOPProtocols.h"
 #import "WebLoginViewController.h"
 #import "Delegates.h"
@@ -38,4 +52,6 @@
 @interface IdentityDelegate : NSObject<HOPIdentityDelegate>
 
 @property (nonatomic, weak) id<LoginEventsDelegate> loginDelegate;
+
+- (void) removeAllWebViewControllers;
 @end

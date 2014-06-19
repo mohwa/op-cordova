@@ -36,10 +36,12 @@
 #import <OpenpeerSDK/HOPRolodexContact.h>
 #import <OpenpeerSDK/HOPMessage.h>
 #import <OpenpeerSDK/HOPModelManager.h>
+#import <OpenpeerSDK/HOPHomeUser+External.h>
 
 #import "SessionManager.h"
 #import "ContactsManager.h"
 #import "MessageManager.h"
+#import "AppConsts.h"
 #import "AppLog.h"
 
 @interface ConversationThreadDelegate : NSObject<HOPConversationThreadDelegate>

@@ -303,6 +303,7 @@
         }
     }
     
+    // TODO: check if this really need to dispatch? Also is this the best place to tell client contacts are loaded?
     dispatch_async(dispatch_get_main_queue(), ^
     {
         if (refreshContacts)
@@ -390,11 +391,12 @@
     return ret;
 }
 
+/* TODO: check if we actually need this
 - (HOPRolodexContact*) getRolodexContactByProfileBundle:(NSString*) profileBundle coreContact:(HOPContact*) coreContact
 {
     HOPRolodexContact* ret = nil;
-    /*
     NSString* name = nil;
+    
     SBJsonParser* parser = [[SBJsonParser alloc] init];
     NSDictionary* bundleDictionary = [parser objectWithString: profileBundle];
     NSDictionary* profileBundleDictionary = [bundleDictionary objectForKey:profileXmlTagProfile];
@@ -479,7 +481,6 @@
         }
 
     }
-     */
     return ret;
 }
 
@@ -500,6 +501,7 @@
     
     return ret;
 }
+*/
 
 - (void) removeAllContacts
 {

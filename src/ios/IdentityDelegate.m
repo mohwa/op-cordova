@@ -30,20 +30,6 @@
  */
 
 #import "IdentityDelegate.h"
-#import <OpenpeerSDK/HOPIdentity.h>
-#import <OpenpeerSDK/HOPAccount.h>
-#import <OpenpeerSDK/HOPHomeUser.h>
-#import <OpenpeerSDK/HOPRolodexContact.h>
-#import <OpenpeerSDK/HOPIdentityContact.h>
-#import <OpenpeerSDK/HOPModelManager.h>
-#import <OpenpeerSDK/HOPIdentityLookup.h>
-#import <OpenpeerSDK/HOPAssociatedIdentity.h>
-
-#import <pthread.h>
-
-#import "CDVOP.h"
-#import "AppConsts.h"
-#import "OpenPeer.h"
 
 @interface IdentityDelegate()
 {
@@ -91,6 +77,7 @@
             ret= [[WebLoginViewController alloc] initWithCoreObject:identity];
             OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> Identity - Created web view: %p \nidentity uri: %@ \nidentity object id:%d",identity, ret,[identity getIdentityURI],[[identity getObjectId] intValue]);
         }
+        ret.view.hidden = YES;
         
         //ret.view.hidden = YES;
         ret.view.backgroundColor = [UIColor greenColor];
@@ -110,7 +97,7 @@
 
 - (void) removeLoginWebViewForIdentity:(HOPIdentity*) identity
 {
-    [self.loginWebViewsDictionary removeObjectForKey:[identity getBaseIdentityURI]];
+    [self.loginWebViewsDictionary removeObjectForKey:[identity getObjectId]];
 }
 
 - (void)identity:(HOPIdentity *)identity stateChanged:(HOPIdentityState)state
@@ -133,11 +120,11 @@
         switch (state)
         {
             case HOPIdentityStatePending:
-                NSLog(@"Hop identity state pending");
+                
                 break;
             
             case HOPIdentityStatePendingAssociation:
-                NSLog(@"Hop idenrity state pending association");
+                
                 break;
                 
             case HOPIdentityStateWaitingAttachmentOfDelegate:
@@ -154,11 +141,11 @@
                     [self.loginDelegate onOpeningLoginPage];
                 }
 
-                //if ([[LoginManager sharedLoginManager] preloadedWebLoginViewController] != webLoginViewController)
-                //{
-                //Open identity login web page
-                [webLoginViewController openLoginUrl:[[CDVOP sharedObject] getSetting:@"outerFrameURL"]];
-                //}
+                if ([[LoginManager sharedLoginManager] preloadedWebLoginViewController] != webLoginViewController)
+                {
+                    //Open identity login web page
+                    [webLoginViewController openLoginUrl:[[CDVOP sharedObject] getSetting:@"outerFrameURL"]];
+                }
             }
                 break;
                 
@@ -186,12 +173,12 @@
                     OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> Identity releases web view visibility mutex. identityURI: %@",identity,[identity getIdentityURI]);
                     pthread_mutex_unlock(&mutexVisibleWebView);
                 }
+                
+                [self removeLoginWebViewForIdentity:identity];
             }
                 break;
                 
             case HOPIdentityStateReady:
-            {
-                NSLog(@"HOPIdentity is in ready state");
                 [self.loginDelegate onIdentityLoginFinished];
                 if ([[LoginManager sharedLoginManager] isLogin] || [[LoginManager sharedLoginManager] isAssociation])
                     [[LoginManager sharedLoginManager] onIdentityAssociationFinished:identity];
@@ -202,8 +189,8 @@
             {
                 HOPIdnState* identityState = [identity getState];
                 if (identityState.lastErrorCode)
-                    //[self.loginDelegate onIdentityLoginError:[NSString stringWithFormat:@"Error: %@",identityState.lastErrorReason]];
-                    NSLog(@"Identity shutting down because of %@", identityState.lastErrorReason);
+                    [self.loginDelegate onIdentityLoginError:identityState.lastErrorReason];
+                [identity destroyCoreObject];
                 [self.loginDelegate onIdentityLoginShutdown];
             }
                 break;
@@ -259,8 +246,9 @@
         if (rolodexContactsObtained)
         {
             //Unmark all received contacts, that were earlier set for deletion 
-            //[rolodexContacts setValue:[NSNumber numberWithBool:NO] forKey:@"readyForDeletion"];
-            //[[ContactsManager sharedContactsManager] identityLookupForContacts:rolodexContacts identityServiceDomain:[identity getIdentityProviderDomain]];
+            [rolodexContacts setValue:[NSNumber numberWithBool:NO] forKey:@"readyForDeletion"];
+            
+            [[ContactsManager sharedContactsManager] identityLookupForContacts:rolodexContacts identityServiceDomain:[identity getIdentityProviderDomain]];
             
             //Check if there are more contacts marked for deletion
             NSArray* contactsToDelete = [[HOPModelManager sharedModelManager] getAllRolodexContactsMarkedForDeletionForHomeUserIdentityURI:[identity getIdentityURI]];
@@ -282,15 +270,19 @@
             //[[HOPModelManager sharedModelManager] saveContext];
         }
         [[HOPModelManager sharedModelManager] saveContext];
-        //[[[ContactsManager sharedContactsManager] setOfIdentitiesWhoseContactsDownloadInProgress] removeObject:[identity getIdentityURI]];
+        [[[ContactsManager sharedContactsManager] setOfIdentitiesWhoseContactsDownloadInProgress] removeObject:[identity getIdentityURI]];
     }
 }
 
 - (void) onNewIdentity:(HOPIdentity*) identity
 {
     OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> Identity: Handling a new identity with the uri:%@", identity,[identity getIdentityURI]);
-    //[[LoginManager sharedLoginManager] attachDelegateForIdentity:identity forceAttach:YES];
-    // TODO: inform client about the new identity
+    [[LoginManager sharedLoginManager] attachDelegateForIdentity:identity forceAttach:YES];
+}
+
+- (void) removeAllWebViewControllers
+{
+    [self.loginWebViewsDictionary removeAllObjects];
 }
 @end
 

@@ -1,6 +1,6 @@
 /*
  
- Copyright (c) 2013, SMB Phone Inc.
+ Copyright (c) 2014, SMB Phone Inc.
  All rights reserved.
  
  Redistribution and use in source and binary forms, with or without
@@ -29,12 +29,13 @@
  
  */
 
-#import "IdentityLookupDelegate.h"
-@implementation IdentityLookupDelegate
+#import <Foundation/Foundation.h>
+#import "OpenpeerSDK/HOPProtocols.h"
 
-- (void) onIdentityLookupCompleted:(HOPIdentityLookup*) lookup
-{
-    [[ContactsManager sharedContactsManager] updateContactsWithDataFromLookup:lookup];
-   
-}
+@class HOPBackgroundingNotifier;
+@class HOPBackgroundingSubscription;
+@interface BackgroundingDelegate : NSObject<HOPBackgroundingCompletionDelegate,HOPBackgroundingDelegate>
+
+@property (strong, nonatomic) HOPBackgroundingNotifier* backgroundingNotifier;
+@property (strong, nonatomic) HOPBackgroundingSubscription* backgroundingSubscription;
 @end
