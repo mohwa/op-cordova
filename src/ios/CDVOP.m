@@ -171,6 +171,7 @@ static CDVOP *shared;
     }
     
     // TODO: figure out where/if we need to send the authorized application id to client
+    // we need to have this in the JSON settings since SDK expects it
     [[CDVOP sharedObject] setSetting:@"openpeer/calculated/authorizated-application-id" value:[[HOPSettings sharedSettings] getAuthorizedApplicationId]];
     
     // TODO: check that authorization was successful and send error otherwise
@@ -267,8 +268,7 @@ static CDVOP *shared;
  * @param command.arguments[0] identityURI of the contact to call
  * @param command.arguments[1] conversation thread id/session id
  */
-- (void) placeCall:(CDVInvokedUrlCommand *)command
-{
+- (void) placeCall:(CDVInvokedUrlCommand *)command {
     CDVPluginResult* res = nil;
     
     //TODO: see if we need sessionId
@@ -288,6 +288,17 @@ static CDVOP *shared;
     res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"success"];
     
     [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
+}
+
+/**
+ *  Tell JS about change in call state
+ *
+ *  @param callState call state as string
+ *  @param sessionId id representing session (as well as conversation)
+ */
+- (void) onCallStateChange:(NSString*)callState sessionId:(NSString*)sessionId {
+    NSString *jsCall = [NSString stringWithFormat:@"OP._onCallStateChange_('%@','%@');", callState, sessionId];
+    [self writeJavascript:jsCall];
 }
 
 // TODO: remove if not needed

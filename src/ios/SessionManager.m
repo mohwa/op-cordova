@@ -181,7 +181,7 @@
         if (ret)
         {
             [self.sessionsDictionary setObject:ret forKey:[inConversationThread getThreadId]];
-            //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Creating session record from conversation thread id: %@", [inConversationThread getThreadId]);
+            OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Creating session record from conversation thread id: %@", [inConversationThread getThreadId]);
             [[HOPModelManager sharedModelManager] addSession:[inConversationThread getThreadId] type:nil date:nil name:nil participants:contactAaray];
         }
     }

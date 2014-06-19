@@ -40,43 +40,43 @@
     switch (callState)
     {
         case HOPCallStateNone:
-            //res = NSLocalizedString(@"none", @"");
+            res = @"none";
             break;
         case HOPCallStatePreparing:
-            res = NSLocalizedString(@"preparing", @"");
+            res = @"preparing";
             break;
         case HOPCallStateIncoming:
-            res = NSLocalizedString(@"incoming", @"");
+            res = @"incoming";
             break;
         case HOPCallStatePlaced:
-            res = NSLocalizedString(@"placed", @"");
+            res = @"placed";
             break;
         case HOPCallStateEarly:
-            res = NSLocalizedString(@"early", @"");
+            res = @"early";
             break;
         case HOPCallStateRinging:
-            res = NSLocalizedString(@"ringing", @"");
+            res = @"ringing";
             break;
         case HOPCallStateRingback:
-            res = NSLocalizedString(@"ringback", @"");
+            res = @"ringback";
             break;
         case HOPCallStateOpen:
-            res = NSLocalizedString(@"open", @"");
+            res = @"open";
             break;
         case HOPCallStateActive:
-            res = NSLocalizedString(@"active", @"");
+            res = @"active";
             break;
         case HOPCallStateInactive:
-            res = NSLocalizedString(@"inactive", @"");
+            res = @"inactive";
             break;
         case HOPCallStateHold:
-            res = NSLocalizedString(@"hold", @"");
+            res = @"hold";
             break;
         case HOPCallStateClosing:
-            res = NSLocalizedString(@"closing", @"");
+            res = @"closing";
             break;
         case HOPCallStateClosed:
-            res = NSLocalizedString(@"closed", @"");
+            res = @"closed";
             break;
         default:
             return nil;
@@ -88,11 +88,16 @@
 {
     OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelDebug, @"Call state: %@", [self getCallStateAsString:[call getState]]);
     
+    
     NSString* sessionId = [[call getConversationThread] getThreadId];
+    NSString* callStateStr = [self getCallStateAsString:callState];
+    
+    
     dispatch_async(dispatch_get_main_queue(), ^{
         
         // TODO: inform client about call state
         //[sessionViewController updateCallState];
+        
         
         switch (callState)
         {

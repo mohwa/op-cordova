@@ -62,6 +62,7 @@
 - (void) sendMessage:(CDVInvokedUrlCommand *)command;
 - (void) placeCall:(CDVInvokedUrlCommand *)command;
 - (void) onMessageReceived:(NSString*)msg callbackId:(NSString*)callbackId;
+- (void) onCallStateChange:(NSString*)callState sessionId:(NSString*)sessionId;
 - (void) makeViewTransparent;
 - (void) initVideoViews;
 
