@@ -142,7 +142,7 @@
 */
 - (Session*) createSessionForConversationThread:(HOPConversationThread*) inConversationThread
 {
-    //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Creating session for conversation thread id: %@", [inConversationThread getThreadId]);
+    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Creating session for conversation thread id: %@", [inConversationThread getThreadId]);
     Session* ret = nil;
     HOPRolodexContact* rolodexContact = nil;
     NSArray* contacts = [inConversationThread getContacts];
@@ -174,7 +174,7 @@
     
     if (rolodexContact)
     {
-        //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelDebug, @"%@ initiating a session with %@", [[rolodexContacts objectAtIndex:0] name], [[[HOPModelManager sharedModelManager] getLastLoggedInHomeUser] getFullName]);
+        OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelDebug, @"%@ initiating a session with %@", [[rolodexContacts objectAtIndex:0] name], [[[HOPModelManager sharedModelManager] getLastLoggedInHomeUser] getFullName]);
         
         ret = [[Session alloc] initWithContacts:rolodexContacts conversationThread:inConversationThread];
         
@@ -182,7 +182,7 @@
         {
             [self.sessionsDictionary setObject:ret forKey:[inConversationThread getThreadId]];
             OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Creating session record from conversation thread id: %@", [inConversationThread getThreadId]);
-            [[HOPModelManager sharedModelManager] addSession:[inConversationThread getThreadId] type:nil date:nil name:nil participants:contactAaray];
+            ret.sessionRecord = [[HOPModelManager sharedModelManager] createSessionRecordForConversationThread:inConversationThread type:nil date:[NSDate date] name:[rolodexContact name] participants:contactAaray];
         }
     }
     return ret;
