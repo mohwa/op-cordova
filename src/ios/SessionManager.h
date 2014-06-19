@@ -30,7 +30,6 @@
  */
 
 #import "ContactsManager.h"
-#import "MainViewController.h"
 #import "MessageManager.h"
 
 #import "Session.h"
@@ -51,12 +50,14 @@
 #import <OpenpeerSDK/HOPContact.h>
 #import <OpenpeerSDK/HOPHomeUser+External.h>
 #import <OpenpeerSDK/HOPRolodexContact+External.h>
+#import <OpenpeerSDK/HOPSessionRecord.h>
 
 @class Session;
 @class HOPConversationThread;
 @class HOPMessage;
 @class HOPContact;
 @class HOPRolodexContact;
+@class HOPSessionRecord;
 
 @interface SessionManager : NSObject
 
@@ -73,6 +74,7 @@
 - (Session*) proceedWithExistingSessionForContact:(HOPContact*) contact newConversationThread:(HOPConversationThread*) inConversationThread;
 - (Session*) getSessionForContact:(HOPRolodexContact*) contact;
 - (Session*) getSessionForSessionId:(NSString*) sessionId;
+- (Session*) getSessionForSessionRecord:(HOPSessionRecord*) sessionRecord;
 
 - (void)setValidSession:(Session *)inSession newSessionId:(NSString *)newSessionId oldSessionId:(NSString *)oldSessionId;
 

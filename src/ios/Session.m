@@ -45,6 +45,7 @@
         self.unreadMessageArray = [[NSMutableArray alloc] init];
         self.sessionIdsHistory = [[NSMutableSet alloc] init];
         self.arrayMergedConversationThreads = [[NSMutableArray alloc] init];
+        self.setOfNotSentMessages =  [[NSMutableSet alloc] init];
         self.conversationThread = inConverationThread;
         [self.sessionIdsHistory addObject:[inConverationThread getThreadId]];
     }
@@ -63,6 +64,7 @@
         self.messageArray = [[NSMutableArray alloc] init];
         self.sessionIdsHistory = [[NSMutableSet alloc] init];
         self.unreadMessageArray = [[NSMutableArray alloc] init];
+        self.setOfNotSentMessages =  [[NSMutableSet alloc] init];
         self.conversationThread = inConverationThread;
         [self.sessionIdsHistory addObject:[inConverationThread getThreadId]];
     }

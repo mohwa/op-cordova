@@ -53,6 +53,7 @@
     return _sharedObject;
 }
 
+// TODO: see if deviceId actually needed to be persistent
 - (NSString*) deviceId
 {
     if (!_deviceId)
@@ -65,23 +66,6 @@
         }
     }
     return _deviceId;
-}
-
-
-/*
- * If default settings have never been persisted (first run of the app) or if reset flag
- * is set to true, this method will store app settings
- */
-- (void) storeDefaultSettings:(BOOL)reset
-{
-    //TODO: reset
-    
-    //[[HOPSettings sharedSettings] applyDefaults]; //todo: only apply if no setting has been persisted before
-    
-    [[CDVOP sharedObject] setSetting:@"openpeer/calculated/user-agent" value:[OpenPeer getUserAgentName]];
-    [[CDVOP sharedObject] setSetting:@"openpeer/calculated/device-id" value:[OpenPeer getGUIDstring]];
-    [[CDVOP sharedObject] setSetting:@"openpeer/calculated/os" value:[OpenPeer getDeviceOs]];
-    [[CDVOP sharedObject] setSetting:@"openpeer/calculated/system" value:[OpenPeer getPlatform]];
 }
 
 - (void) preSetup {
@@ -107,7 +91,12 @@
     [[HOPSettings sharedSettings] applyDefaults];
 
     [self updateDefaultSettingsFromPath:[[NSBundle mainBundle] pathForResource:@"DefaultSettings" ofType:@"plist"] notToUpdateKeys:nil];
-    [self storeDefaultSettings:YES];
+    
+    // send calculated settings to JS
+    [[CDVOP sharedObject] setSetting:@"openpeer/calculated/user-agent" value:[OpenPeer getUserAgentName]];
+    [[CDVOP sharedObject] setSetting:@"openpeer/calculated/device-id" value:[OpenPeer getGUIDstring]];
+    [[CDVOP sharedObject] setSetting:@"openpeer/calculated/os" value:[OpenPeer getDeviceOs]];
+    [[CDVOP sharedObject] setSetting:@"openpeer/calculated/system" value:[OpenPeer getPlatform]];
 }
 
 /**
@@ -151,7 +140,7 @@
     self.accountDelegate = nil;
     self.identityDelegate = nil;
     self.identityLookupDelegate = nil;
-    //self.cacheDelegate = nil;
+    self.backgroundingDelegate = nil;
 }
 /**
  Method used for all delegates creation. Delegates will catch events from the Open Peer SDK and handle them properly.
@@ -166,7 +155,7 @@
     self.identityDelegate = [[IdentityDelegate alloc] init];
     self.identityDelegate.loginDelegate = [CDVOP sharedObject];
     self.identityLookupDelegate = [[IdentityLookupDelegate alloc] init];
-    //self.cacheDelegate = [[CacheDelegate alloc] init];
+    self.backgroundingDelegate = [[BackgroundingDelegate alloc] init];
 }
 
 - (void)updateDefaultSettingsFromPath:(NSString *)filePath notToUpdateKeys:(NSMutableArray *)notToUpdateKeys
