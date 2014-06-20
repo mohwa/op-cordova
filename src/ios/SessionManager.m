@@ -398,23 +398,26 @@
         }
     }
     
-    //TODO: tell client
+    //TODO: check to see if we actually need to tell client here that we are waiting for call
+    // the call state changes may already cover this case for us
     if (session)
     {
-        SessionViewController_iPhone* sessionViewController = [[[[OpenPeer sharedOpenPeer] mainViewController] sessionViewControllersDictionary] objectForKey:[session.conversationThread getThreadId]];
+        // SessionViewController_iPhone* sessionViewController = [[[[OpenPeer sharedOpenPeer] mainViewController] sessionViewControllersDictionary] objectForKey:[session.conversationThread getThreadId]];
         
         //If it is an incomming call, get show session view controller
         /*if (![[call getCaller] isSelf])
         {
             [[[OpenPeer sharedOpenPeer] mainViewController] showSessionViewControllerForSession:session forIncomingCall:YES forIncomingMessage:NO];
         }
-        else*/
+        else */
+        
         if ([[call getCaller] isSelf])
         {
-            if ([call hasVideo])
-                [sessionViewController showWaitingView:YES];
-            else
-                [sessionViewController showCallViewControllerWithVideo:NO];
+            if ([call hasVideo]) {
+                //[sessionViewController showWaitingView:YES];
+            } else {
+                //[sessionViewController showCallViewControllerWithVideo:NO];
+            }
         }
     }
     else
@@ -455,16 +458,15 @@
                 //[[[OpenPeer sharedOpenPeer] mainViewController] showSessionViewControllerForSession:session forIncomingCall:YES forIncomingMessage:NO];
             }
             [call ring];
-        }
-        else
+        } else {
             [call answer];
-        
-        BOOL callFlagIsSet = [self setActiveCallSession:session callActive:YES];
+        }
+        //BOOL callFlagIsSet = [self setActiveCallSession:session callActive:YES];
     }
     else //If callFlagIsSet is NO, hangup incoming call. 
     {
         [call hangup:HOPCallClosedReasonBusy];
-        [[[OpenPeer sharedOpenPeer] mainViewController] showNotification:[NSString stringWithFormat:@"%@ is busy.",[[[session participantsArray] objectAtIndex:0] name]]];
+         // TODO: do we need to tell client that we hunup?
     }
 }
 
@@ -539,7 +541,6 @@
     return ret;
 }
 
-
 /**
  Redials for session.
  @param inSession Session session with failed call which needs to be redialed.
@@ -568,8 +569,8 @@
     
     [[HOPMediaEngine sharedInstance] stopVideoCapture];
     //Get view controller for call session
-    SessionViewController_iPhone* sessionViewController = [[[[OpenPeer sharedOpenPeer] mainViewController] sessionViewControllersDictionary] objectForKey:[[session conversationThread] getThreadId]];
-    
+    //SessionViewController_iPhone* sessionViewController = [[[[OpenPeer sharedOpenPeer] mainViewController] sessionViewControllersDictionary] objectForKey:[[session conversationThread] getThreadId]];
+    /*
     if (sessionViewController)
     {
         //[sessionViewController removeCallViews];
@@ -580,6 +581,7 @@
         //Enable video recording if face detection is on
         //[sessionViewController stopVideoRecording:YES hideRecordButton:![[OpenPeer sharedOpenPeer] isFaceDetectionModeOn]];
     }
+     */
     
     [self setLastEndedCallSession: session];
     //If it is callee side, check the reasons why call is ended, and if it is not ended properly, try to redial
@@ -603,21 +605,13 @@
         {
             HOPRolodexContact* contact = [session.participantsArray objectAtIndex:0];
             NSString* contactName = contact.name;
-            [[[OpenPeer sharedOpenPeer] mainViewController] showNotification:[NSString stringWithFormat:@"%@ is busy.",contactName]];
+            //  [[[OpenPeer sharedOpenPeer] mainViewController] showNotification:[NSString stringWithFormat:@"%@ is busy.",contactName]];
+            // TODO: tell client that contact was busy
          }
     }
     
     session.currentCall = nil;
     [[SessionManager sharedSessionManager] setLastEndedCallSession: session];
-     */
-}
-
-/**
- Handle face detected event
- */
-- (void) onFaceDetected
-{
-    
 }
 
 /**

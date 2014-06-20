@@ -33,17 +33,19 @@
 
 @implementation MediaEngineDelegate
 
-
-- (void) onMediaEngineFaceDetected
-{
-    NSLog(@"Face detected fired");
-}
-
 - (void) onMediaEngineAudioRouteChanged:(HOPMediaEngineOutputAudioRoute) audioRoute
 {
     OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Audio route changed");
     dispatch_async(dispatch_get_main_queue(), ^{
     });
+}
+
+- (void) onMediaEngineFaceDetected
+{
+    dispatch_async(dispatch_get_main_queue(), ^
+   {
+       [[CDVOP sharedObject] onFaceDetected];
+   });
 }
 
 - (void) onMediaEngineVideoCaptureRecordStopped

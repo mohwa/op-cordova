@@ -179,6 +179,7 @@
                 break;
                 
             case HOPIdentityStateReady:
+            {
                 [self.loginDelegate onIdentityLoginFinished];
                 if ([[LoginManager sharedLoginManager] isLogin] || [[LoginManager sharedLoginManager] isAssociation])
                     [[LoginManager sharedLoginManager] onIdentityAssociationFinished:identity];

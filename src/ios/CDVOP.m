@@ -229,6 +229,7 @@ static CDVOP *shared;
 {
     //TODO: update this with a loop when we support multiple peer chat
     NSString* peerURI = command.arguments[0];
+
     //HOPRolodexContact* contact  = [[[HOPModelManager sharedModelManager] getRolodexContactsByPeerURI:peerURI] objectAtIndex:0];
     HOPRolodexContact* contact  = [[HOPModelManager sharedModelManager] getRolodexContactByIdentityURI:peerURI];
     Session* session = [[SessionManager sharedSessionManager] getSessionForContact:contact];
@@ -236,15 +237,12 @@ static CDVOP *shared;
         session = [[SessionManager sharedSessionManager] createSessionForContact:contact];
     }
     
-    session.receiveMsgCallbackId = command.callbackId;
+    // TODO: check to see if we need anything else before we can send/receive messages in thie session
 }
 
 
-- (void) onMessageReceived:(NSString *)msg callbackId:(NSString *)callbackId
-{
-    CDVPluginResult* res = nil;
-    res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:msg];
-    [self.commandDelegate sendPluginResult:res callbackId:callbackId];
+- (void) onMessageReceived:(HOPMessageRecord*)msg forSession:(Session*)forSession {
+    // TODO: send message to client api to fire event
 }
 
 /**
@@ -257,7 +255,10 @@ static CDVOP *shared;
     NSString* msg = command.arguments[0];
     NSString* sessionId = command.arguments[1];
     
-    [[MessageManager sharedMessageManager] sendMessage:msg sessionId:sessionId];
+    // *****************************************************************
+    // TODO: figure out how to send the message (get contact or session)
+    
+    // [[MessageManager sharedMessageManager] sendMessage:msg sessionId:sessionId];
 
     res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"success"];
     [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
@@ -581,6 +582,15 @@ static CDVOP *shared;
 
 - (void) updateSessionViewControllerId:(NSString*) oldSessionId newSesionId:(NSString*) newSesionId {
     //TODO 
+}
+
+/**
+ * Handle face detected event
+ */
+- (void) onFaceDetected
+{
+    // TODO
+    NSLog(@"face detected");
 }
 
 - (UIViewContentMode) getContentMode:(NSString*)mode {

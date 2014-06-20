@@ -53,19 +53,9 @@
     return _sharedObject;
 }
 
-// TODO: see if deviceId actually needed to be persistent
 - (NSString*) deviceId
 {
-    if (!_deviceId)
-    {
-        _deviceId = [[NSUserDefaults standardUserDefaults] objectForKey:keyOpenPeerUser];
-        if ([_deviceId length] == 0)
-        {
-            _deviceId = [OpenPeer getGUIDstring];
-            [[NSUserDefaults standardUserDefaults] setObject:_deviceId forKey:keyOpenPeerUser];
-        }
-    }
-    return _deviceId;
+    return [[HOPSettings sharedSettings] deviceId];
 }
 
 - (void) preSetup {
@@ -94,7 +84,8 @@
     
     // send calculated settings to JS
     [[CDVOP sharedObject] setSetting:@"openpeer/calculated/user-agent" value:[OpenPeer getUserAgentName]];
-    [[CDVOP sharedObject] setSetting:@"openpeer/calculated/device-id" value:[OpenPeer getGUIDstring]];
+    //[[CDVOP sharedObject] setSetting:@"openpeer/calculated/device-id" value:[OpenPeer getGUIDstring]];
+    [[CDVOP sharedObject] setSetting:@"openpeer/calculated/device-id" value:[self deviceId]];
     [[CDVOP sharedObject] setSetting:@"openpeer/calculated/os" value:[OpenPeer getDeviceOs]];
     [[CDVOP sharedObject] setSetting:@"openpeer/calculated/system" value:[OpenPeer getPlatform]];
 }
