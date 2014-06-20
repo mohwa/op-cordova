@@ -87,18 +87,12 @@
 - (void) onCallStateChanged:(HOPCall*) call callState:(HOPCallState) callState
 {
     OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelDebug, @"Call state: %@", [self getCallStateAsString:[call getState]]);
-    
-    
+    [[SessionManager sharedSessionManager] setLatestValidConversationThread:[call getConversationThread]];
     NSString* sessionId = [[call getConversationThread] getThreadId];
     NSString* callStateStr = [self getCallStateAsString:callState];
-    
+    // TODO: inform client about call state
     
     dispatch_async(dispatch_get_main_queue(), ^{
-        
-        // TODO: inform client about call state
-        //[sessionViewController updateCallState];
-        
-        
         switch (callState)
         {
             case HOPCallStatePreparing:
@@ -155,6 +149,7 @@
                 
             case HOPCallStateClosed:                //Receives both parties
                 // TODO: tell client that call ended
+                [[SessionManager sharedSessionManager] onCallEnded:call];
                 break;
                 
             case HOPCallStateNone:

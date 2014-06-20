@@ -61,10 +61,12 @@
 - (void) prepareChat:(CDVInvokedUrlCommand*)command;
 - (void) sendMessage:(CDVInvokedUrlCommand *)command;
 - (void) placeCall:(CDVInvokedUrlCommand *)command;
-- (void) onMessageReceived:(NSString*)msg callbackId:(NSString*)callbackId;
+
+- (void) onMessageReceived:(HOPMessageRecord*)msg forSession:(Session*)forSession;
 - (void) onCallStateChange:(NSString*)callState sessionId:(NSString*)sessionId;
 - (void) makeViewTransparent;
 - (void) initVideoViews;
+- (void) onFaceDetected;
 
 // helpers and other internal functions
 - (NSString*) getSetting:(NSString*)setting;

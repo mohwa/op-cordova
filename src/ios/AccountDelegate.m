@@ -32,9 +32,14 @@
 #import "UIKit/UIKit.h"
 #import "AccountDelegate.h"
 #import "OpenpeerSDK/HOPAccount.h"
+#import "LoginManager.h"
 #import "OpenPeer.h"
+#import "AppConsts.h"
+#import "MainViewController.h"
 #import "WebLoginViewController.h"
 #import "OpenpeerSDK/HOPLogger.h"
+#import "OpenpeerSDK/HOPCache.h"
+#import "MessageManager.h"
 #import "CDVOP.h"
 
 @interface AccountDelegate()
@@ -148,7 +153,6 @@
         NSArray* associatedIdentities = [account getAssociatedIdentities];
         for (HOPIdentity* identity in associatedIdentities)
         {
-            NSLog(@"account associated identities changes");
             [[LoginManager sharedLoginManager] attachDelegateForIdentity:identity forceAttach:NO];
         }
     });
@@ -157,7 +161,7 @@
 - (void)onAccountPendingMessageForInnerBrowserWindowFrame:(HOPAccount*) account
 {
     OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Account: pending message for inner browser window frame.");
-    NSLog(@"Account: pending message for inner browser window frame.");
+  
     dispatch_async(dispatch_get_main_queue(), ^
     {
         WebLoginViewController* webLoginViewController = [self webLoginViewController];

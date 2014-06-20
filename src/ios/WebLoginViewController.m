@@ -30,11 +30,6 @@
  */
 
 #import "WebLoginViewController.h"
-#import "OpenPeer.h"
-#import <OpenpeerSDK/HOPIdentity.h>
-#import <OpenpeerSDK/HOPAccount.h>
-#import "CDVOP.h"
-
 
 @interface WebLoginViewController()
 @property (nonatomic) BOOL outerFrameInitialised;
@@ -79,12 +74,14 @@
 
 - (void) openLoginUrl:(NSString*) url
 {
+    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> WebLoginViewController - web request initiated by sample app. URL: %@",self,url);
     self.outerFrameInitialised = NO;
     [self.loginWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:url]]];
 }
 
 - (void) passMessageToJS:(NSString*) message
 {
+    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> WebLoginViewController \n\n Message to JS: \n %@ \n\n",self,message);
     [self.loginWebView stringByEvaluatingJavaScriptFromString:message];
 }
 
@@ -92,12 +89,14 @@
 {
     NSString *requestString = [[request URL] absoluteString];
     
-    /*
     if ([self.coreObject isKindOfClass:[HOPIdentity class]])
-        //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> WebLoginViewController\n Identity web request for URI: %@", self,[((HOPIdentity*) self.coreObject) getIdentityURI]);
+    {
+        OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> WebLoginViewController\n Identity web request for URI: %@", self,[((HOPIdentity*) self.coreObject) getIdentityURI]);
+    }
     else
-        //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> WebLoginViewController\n Account web request: %@", self,requestString);
-     */
+    {
+        OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> WebLoginViewController\n Account web request: %@", self,requestString);
+    }
     
     //Check if request contains JSON message for core
     if ([requestString hasPrefix:@"https://datapass.hookflash.me/?method="] || [requestString hasPrefix:@"http://datapass.hookflash.me/?method="])
@@ -117,7 +116,6 @@
                 [self performSelector:NSSelectorFromString(functionNameSelector) withObject:params];
         }
         return NO;
-         
     }
 
     return YES;
@@ -133,7 +131,6 @@
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView
 {
-    //TODO: Access settings from here
     NSString *requestString = [[[webView request] URL] absoluteString];
     NSString *namespaceGrantServiceURL = [[CDVOP sharedObject] getSetting:@"namespaceGrantServiceURL"];
 

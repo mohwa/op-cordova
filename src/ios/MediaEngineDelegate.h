@@ -34,6 +34,7 @@
 #import <AVFoundation/AVFoundation.h>
 #import <OpenpeerSDK/HOPMediaEngine.h>
 #import "AppLog.h"
+#import "CDVOP.h"
 
 @interface MediaEngineDelegate : NSObject<HOPMediaEngineDelegate>
 

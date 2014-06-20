@@ -31,11 +31,6 @@
 
 #import "ConversationThreadDelegate.h"
 
-#ifdef APNS_ENABLED
-#import "APNSManager.h"
-#import <OpenpeerSDK/HOPModelManager.h>
-#endif
-
 @implementation ConversationThreadDelegate
 
 - (void) onConversationThreadNew:(HOPConversationThread*) conversationThread
@@ -82,55 +77,23 @@
 {
     OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Handling a new message with id %@ for conversation thread.",messageID);
     dispatch_async(dispatch_get_main_queue(), ^{
+        [[SessionManager sharedSessionManager] setLatestValidConversationThread:conversationThread];
         HOPMessage* message = [conversationThread getMessageForID:messageID];
         if (message)
         {
-            NSString* sessionId = [conversationThread getThreadId];
-            //Session* session = [[SessionManager sharedSessionManager] getSessionForSessionId:sessionId];
-            [[MessageManager sharedMessageManager] onMessageReceived:message forSessionId:sessionId];
+            [[MessageManager sharedMessageManager] onMessageReceived:message forSessionId:[conversationThread getThreadId]];
         }
     });
 }
 
-- (void) onConversationThreadMessageDeliveryStateChanged:(HOPConversationThread*) conversationThread messageID:(NSString*) messageID messageDeliveryState:(HOPConversationThreadMessageDeliveryState) messageDeliveryState
+- (void) onConversationThreadMessageDeliveryStateChanged:(HOPConversationThread*) conversationThread messageID:(NSString*) messageID messageDeliveryStates:(HOPConversationThreadMessageDeliveryState) messageDeliveryStates
 {
-    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Conversation thread message with id %@ delivery state has changed to: %@",messageID, [HOPConversationThread stringForMessageDeliveryState:messageDeliveryState]);
+    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Conversation thread %@ message with id %@ delivery state has changed to: %@",[conversationThread getThreadId],messageID, [HOPConversationThread stringForMessageDeliveryState:messageDeliveryStates]);
 }
 
-- (void) onConversationThreadPushMessage:(HOPConversationThread*) conversationThread messageID:(NSString*) messageID contact:(HOPContact*) contact
+- (void) onConversationThreadPushMessage:(HOPConversationThread*) conversationThread messageID:(NSString*) messageID contact:(HOPContact*) coreContact
 {
-#ifdef APNS_ENABLED
-    NSArray* contacts = [conversationThread getContacts];
-    if ([contacts count] > 0)
-    {
-        BOOL missedCall = NO;
-        HOPMessage* message = [conversationThread getMessageForID:messageID];
-        HOPContact* coreContact = [contacts objectAtIndex:0];
-        if (coreContact)
-        {
-            HOPRolodexContact* contact  = [[[HOPModelManager sharedModelManager] getRolodexContactsByPeerURI:[coreContact getPeerURI]] objectAtIndex:0];
-            if (contact)
-            {
-                /*
-                 TODO: figure out if we will need to use APNS in this way
-                 
-                NSString* messageText = nil;
-            
-                if ([[MessageManager sharedMessageManager] getTypeForSystemMessage:message] == SystemMessage_CheckAvailability)
-                {
-                    messageText  = [NSString stringWithFormat:@"%@ \n %@",[contact name],@"Missed call"];
-                    missedCall = YES;
-                }
-                else
-                {
-                    messageText  = [NSString stringWithFormat:@"%@ \n %@",[contact name],message.text];
-                }
-                [[APNSManager sharedAPNSManager] sendPushNotificationForContact:coreContact message:messageText missedCall:missedCall];
-                 */
-            }
-        }
-    }
-#endif
-
+    // TODO: check if this can be removed, if we are not going to implement in this way
+    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Conversation thread push message requested but not implemented yet");
 }
 @end

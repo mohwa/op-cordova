@@ -29,7 +29,13 @@
  
  */
 
+
+#import "LoginManager.h"
+#import "OpenPeer.h"
 #import <UIKit/UIKit.h>
+#import <OpenpeerSDK/HOPIdentity.h>
+#import <OpenpeerSDK/HOPAccount.h>
+#import "CDVOP.h"
 
 @interface WebLoginViewController : UIViewController
 

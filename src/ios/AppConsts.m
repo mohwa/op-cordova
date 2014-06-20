@@ -33,49 +33,51 @@
 
 NSString* const identityFacebookBaseURI = @"identity://facebook.com/";
 
-NSString * const keyOpenPeerUser = @"keyOpenPeerUser";
 
 NSString * const settingsKeyDefaultSettingsSnapshot = @"defaultSettingsSnapshot";
+NSString * const settingsKeyOverwriteExistingSettings = @"applicationOverwriteSettings";
+NSString * const settingsKeyUserAgent = @"userAgent";
 
-//User defaults keys
+NSString * const settingsKeyMediaAEC = @"archiveMediaAEC";
+NSString * const settingsKeyMediaAGC = @"archiveMediaAGC";
+NSString * const settingsKeyMediaNS = @"archiveMediaNS";
 
-NSString * const archiveDeviceId = @"archiveDeviceId";
-NSString * const archiveStableUniqueId = @"archiveStableUniqueId";
-NSString * const archiveIdentityURI = @"archiveIdentityURI";
-NSString * const archivePeerURI = @"archivePeerURI";
-NSString * const archiveFullname = @"archiveFullname";
-NSString * const archiveContactId = @"archiveContactId";
-NSString * const archiveAccountSalt = @"archiveAccountSalt";
-NSString * const archivePasswordNonce = @"archivePasswordNonce";
-NSString * const archivePrivatePeerFile = @"archivePrivatePeerFile";
-NSString * const archivePrivatePeerFileSecret = @"archivePrivatePeerFileSecret";
-NSString * const archivePeerFilePassword = @"archivePeerFilePassword";
-NSString * const archiveAssociatedIdentities = @"archiveAssociatedIdentities";
-NSString * const archiveLastProfileUpdateTimestamp = @"archiveLastProfileUpdateTimestamp";
-NSString * const archiveReloginInfo = @"archiveReloginInfo";
+//UserAgent Variables
+NSString * const userAgentVariableAppName = @"appName";
+NSString * const userAgentVariableAppVersion = @"appVersion";
+NSString * const userAgentVariableSystemOS = @"systemOs";
+NSString * const userAgentVariableVersionOS = @"versionOs";
+NSString * const userAgentVariableDeviceModel = @"deviceModel";
+NSString * const userAgentVariableDeveloperID = @"developerID";
 
-NSString * const archiveAppId = @"applicationId";
-NSString * const archiveAppIdSharedSecret = @"applicationIdSharedSecret";
-NSString * const archiveAppName = @"applicationName";
-NSString * const archiveAppImageURL = @"applicationImageURL";
-NSString * const archiveAppURL = @"applicationURL";
-NSString * const archiveAPNS = @"APNS-UrbanAirShip";
-NSString * const archiveTelnetLogger = @"archiveTelnetLogger";
-NSString * const archiveOutgoingTelnetLogger = @"archiveOutgoingTelnetLogger";
-NSString * const archiveStdOutLogger = @"archiveStdOutLogger";
+NSString * const settingsKeyAppId = @"applicationId";
+NSString * const settingsKeyAppIdSharedSecret = @"applicationIdSharedSecret";
+NSString * const settingsKeyAppName = @"applicationName";
+NSString * const settingsKeyAppImageURL = @"applicationImageURL";
+NSString * const settingsKeyAppURL = @"applicationURL";
+NSString * const settingsKeyAPNS = @"APNS-UrbanAirShip";
+NSString * const settingsKeyTelnetLogger = @"localTelnetLoggerPort";
+NSString * const settingsKeyOutgoingTelnetLogger = @"defaultOutgoingTelnetServer";
+NSString * const settingsKeyStdOutLogger = @"archiveStdOutLogger";
+NSString * const settingsKeyRemoveSettingsAppliedByQRCode = @"applicationRemoveSettingsAppliedByQRCode";
+NSString * const settingsKeyOuterFrameURL = @"outerFrameURL";
+NSString * const settingsKeyGrantServiceURL = @"namespaceGrantServiceURL";
+NSString * const settingsKeyIdentityProviderDomain = @"identityProviderDomain";
+NSString * const settingsKeyIdentityFederateBaseURI = @"identityFederateBaseURI";
+NSString * const settingsKeyLockBoxServiceDomain = @"lockBoxServiceDomain";
+//NSString * const settingsKeyOutgoingTelnetLoggerServer = @"defaultOutgoingTelnetServer";
+NSString * const settingsKeySettingsDownloadURL = @"applicationSettingsDownloadURL";
+NSString * const settingsKeySettingsDownloadExpiryTime = @"applicationSettingsDownloadExpiryTime";
+NSString * const settingsKeyQRScannerShownAtStart = @"applicationQRScannerShownAtStart";
+NSString * const settingsKeySplashScreenAllowsQRScannerGesture = @"applicationSplashScreenAllowsQRScannerGesture";
+NSString * const settingsKeySettingsVersion = @"applicationSettingsVersion";
+NSString * const settingsKeyBackgroundingPhaseRichPush = @"applicationSettingsBackgroundingPhaseRichPush";
+
 NSString * const archiveEnabled = @"enabled";
 NSString * const archiveServer = @"Server";
 NSString * const archiveColorized = @"colorized";
 
-#ifdef APNS_ENABLED
-NSString* const archiveMasterAppSecretDev = @"masterAppSecretDev";
-NSString* const archiveMasterAppSecret = @"masterAppSecret";
-NSString* const archiveDevelopmentAppKey = @"developmentAppKey";
-NSString* const archiveDevelopmentAppSecret = @"developmentAppSecret";
-NSString* const archiveProductionAppKey = @"productionAppKey";
-NSString* const archiveProductionAppSecret = @"productionAppSecret";
-NSString* const archiveAPIPushURL = @"apiPushURL";
-#endif
+NSString * const localNotificationKey = @"localNotification";
 
 //Contact Profile xml tags
 NSString* const profileXmlTagProfile = @"profile";
@@ -105,10 +107,6 @@ NSString * const notificationRemoteSessionModeChanged = @"notificationRemoteSess
 
 NSString * const defaultTelnetPort = @"59999";
 
-NSString * const archiveMediaAEC = @"archiveMediaAEC";
-NSString * const archiveMediaAGC = @"archiveMediaAGC";
-NSString * const archiveMediaNS = @"archiveMediaNS";
-
 NSString * const archiveRemoteSessionActivationMode = @"archiveRemoteSessionActivationMode";
 NSString * const archiveFaceDetectionMode = @"archiveFaceDetectionMode";
 NSString * const archiveRedialMode = @"archiveRedialMode";
@@ -132,7 +130,5 @@ NSString * const moduleServicesMls = @"openpeer_services_mls";
 NSString * const moduleServicesTcp = @"openpeer_services_tcp_messaging";
 NSString * const moduleServicesTransport = @"openpeer_services_transport_stream";
 NSString * const moduleZsLib = @"zsLib";
+NSString * const moduleZsLibSocket = @"zsLib_socket";
 NSString * const moduleJavaScript = @"openpeer_javascript";
-
-//login settings
-NSString * const archiveLoginSettings = @"archiveLoginSettings";

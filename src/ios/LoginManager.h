@@ -30,8 +30,10 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <OpenpeerSDK/HOPTypes.h>
 #import "OpenPeer.h"
 #import "AppLog.h"
+#import "AppConsts.h"
 #import "WebLoginViewController.h"
 #import "StackDelegate.h"
 #import "IdentityDelegate.h"
@@ -40,6 +42,7 @@
 //Managers
 #import "ContactsManager.h"
 #import "SessionManager.h"
+#import "MessageManager.h"
 
 //SDK
 #import <OpenPeerSDK/HOPAccount.h>
@@ -50,6 +53,14 @@
 #import <OpenpeerSDK/HOPAssociatedIdentity.h>
 #import <OpenpeerSDK/HOPIdentityContact.h>
 #import <OpenpeerSDK/HOPRolodexContact.h>
+#import <OpenpeerSDK/HOPStack.h>
+#import <OpenpeerSDK/HOPBackgrounding.h>
+
+//Delegates
+#import "StackDelegate.h"
+#import "IdentityDelegate.h"
+#import "AccountDelegate.h"
+#import "BackgroundingDelegate.h"
 
 @class WebLoginViewController;
 @class HOPIdentity;
@@ -59,7 +70,10 @@
 
 @property (nonatomic, strong) WebLoginViewController *preloadedWebLoginViewController;
 @property (nonatomic) BOOL isLogin;
+@property (nonatomic) BOOL isRelogin;
+@property (nonatomic) BOOL isLoggedin;
 @property (nonatomic) BOOL isAssociation;
+@property (nonatomic) BOOL isRecovering;
 
 + (id) sharedLoginManager;
 
@@ -80,4 +94,7 @@
 - (BOOL) isAssociatedIdentity:(NSString*) inBaseIdentityURI;
 
 - (void) preloadLoginWebPage;
+- (void)clearIdentities;
+
+- (BOOL) isUserFullyLoggedIn;
 @end

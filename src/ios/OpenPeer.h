@@ -44,6 +44,12 @@
 #import "OpenpeerSDK/HOPCache.h"
 #import "OpenpeerSDK/HOPModelManager.h"
 #import "OpenpeerSDK/HOPSettings.h"
+#import "OpenpeerSDK/HOPAccount.h"
+#import "OpenpeerSDK/HOPBackgrounding.h"
+
+//Managers
+#import "LoginManager.h"
+#import "SessionManager.h"
 
 //Delegates
 #import "StackDelegate.h"
@@ -54,6 +60,7 @@
 #import "AccountDelegate.h"
 #import "IdentityDelegate.h"
 #import "IdentityLookupDelegate.h"
+#import "BackgroundingDelegate.h"
 
 @class CallDelegate;
 @class StackDelegate;
@@ -64,6 +71,7 @@
 @class IdentityDelegate;
 @class IdentityLookupDelegate;
 @class CacheDelegate;
+@class BackgroundingDelegate;
 
 
 @interface OpenPeer : NSObject
@@ -77,6 +85,7 @@
 @property (nonatomic,strong) IdentityDelegate *identityDelegate;
 @property (nonatomic,strong) IdentityLookupDelegate *identityLookupDelegate;
 @property (nonatomic,strong) CacheDelegate *cacheDelegate;
+@property (nonatomic,strong) BackgroundingDelegate *backgroundingDelegate;
 
 @property (nonatomic) BOOL isRemoteSessionActivationModeOn;
 @property (nonatomic) BOOL isFaceDetectionModeOn;
@@ -90,6 +99,8 @@
 
 @property (nonatomic, strong) NSString* deviceId;
 @property (nonatomic, strong) NSString* deviceToken;
+@property UIBackgroundTaskIdentifier backgroundingTaskId;
+
 + (id) sharedOpenPeer;
 
 - (void) storeDefaultSettings:(BOOL)reset;
@@ -98,6 +109,9 @@
 - (void) setup;
 - (void) shutdown;
 - (BOOL) isStackReady;
+- (void) finishPreSetup;
+- (void) shutdownCleanup;
+- (void) prepareAppForBackground;
 
 //utility functions
 + (NSString*) getGUIDstring;

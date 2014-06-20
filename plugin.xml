@@ -59,6 +59,8 @@
       <source-file src="src/ios/AppConsts.m" />
       <header-file src="src/ios/AppLog.h" />
       <source-file src="src/ios/AppLog.m" />
+      <source-file src="src/ios/BackgroundingDelegate.m" />
+      <header-file src="src/ios/BackgroundingDelegate.h" />
       <header-file src="src/ios/CacheDelegate.h" />
       <source-file src="src/ios/CacheDelegate.m" />
       <header-file src="src/ios/CallDelegate.h" />
