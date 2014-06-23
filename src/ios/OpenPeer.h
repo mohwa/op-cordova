@@ -110,7 +110,6 @@
 - (void) shutdown;
 - (BOOL) isStackReady;
 - (void) finishPreSetup;
-- (void) shutdownCleanup;
 - (void) prepareAppForBackground;
 
 //utility functions

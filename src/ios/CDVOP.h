@@ -63,7 +63,7 @@
 - (void) placeCall:(CDVInvokedUrlCommand *)command;
 
 - (void) onMessageReceived:(HOPMessageRecord*)msg forSession:(Session*)forSession;
-- (void) onCallStateChange:(NSString*)callState sessionId:(NSString*)sessionId;
+- (void) onCallStateChange:(NSString*)callState eventData:(NSString*)eventData;
 - (void) makeViewTransparent;
 - (void) initVideoViews;
 - (void) onFaceDetected;

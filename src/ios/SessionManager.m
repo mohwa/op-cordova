@@ -478,6 +478,8 @@
         Session* session = [[[SessionManager sharedSessionManager] sessionsDictionary] objectForKey:sessionId];
         if (session)
         {
+            NSString* eventData = [NSString stringWithFormat:@"{'sessionId':'%@'}", sessionId];
+            [[CDVOP sharedObject] onCallStateChange:@"call-ringing" eventData:eventData];
             //[[[OpenPeer sharedOpenPeer] mainViewController] showIncominCallForSession:session];
             //[[SoundManager sharedSoundsManager] playRingingSound];
         }
@@ -653,7 +655,6 @@
     return ret;
 }
 
-
 - (void) recreateExistingSessions
 {
     OPLog(HOPLoggerSeverityError, HOPLoggerLevelTrace, @"Recreate existing sessions");
@@ -702,7 +703,6 @@
         }
     }
 }
-
 
 - (void) stopAnyActiveCall
 {

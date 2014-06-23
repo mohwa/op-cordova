@@ -118,6 +118,9 @@
 
 - (void) shutdown {
     @try {
+        [[SessionManager sharedSessionManager] stopAnyActiveCall];
+        [[LoginManager sharedLoginManager] clearIdentities];
+        [[HOPAccount sharedAccount] shutdown];
         [[HOPStack sharedStack] shutdown];
     }
     @catch (NSException *exception) {
@@ -133,6 +136,28 @@
     self.identityLookupDelegate = nil;
     self.backgroundingDelegate = nil;
 }
+
+- (void) prepareAppForBackground
+{
+    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelInsane, @"Preparing app for the background");
+    UIBackgroundTaskIdentifier bgTask = UIBackgroundTaskInvalid;
+    
+    bgTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^
+              {
+                  [[HOPBackgrounding sharedBackgrounding]notifyGoingToBackgroundNow];
+                  
+                  [[UIApplication sharedApplication] endBackgroundTask:bgTask];
+              }];
+    
+    [[OpenPeer sharedOpenPeer] setBackgroundingTaskId:bgTask];
+    
+    // Start the long-running task and return immediately.
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^
+                   {
+                       [[HOPBackgrounding sharedBackgrounding] notifyGoingToBackground:[[OpenPeer sharedOpenPeer] backgroundingDelegate]];
+                   });
+}
+
 /**
  Method used for all delegates creation. Delegates will catch events from the Open Peer SDK and handle them properly.
  */

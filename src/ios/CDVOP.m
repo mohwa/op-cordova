@@ -292,13 +292,15 @@ static CDVOP *shared;
 }
 
 /**
- *  Tell JS about change in call state
+ * Tell JS about change in call state
  *
- *  @param callState call state as string
- *  @param sessionId id representing session (as well as conversation)
+ * @param callState call state as string
+ * @param eventData json object containing additional information such as threadId
+ * Supported call states are: ['call-preparing', 'call-incoming', 'call-ringing', 'call-ringback'
+ * 'call-open', 'call-onhold', 'call-closing', 'call-closed']
  */
-- (void) onCallStateChange:(NSString*)callState sessionId:(NSString*)sessionId {
-    NSString *jsCall = [NSString stringWithFormat:@"OP._onCallStateChange_('%@','%@');", callState, sessionId];
+- (void) onCallStateChange:(NSString*)callState eventData:(NSString*)eventData {
+    NSString *jsCall = [NSString stringWithFormat:@"OP._onCallStateChange_('%@',%@);", callState, eventData];
     [self writeJavascript:jsCall];
 }
 

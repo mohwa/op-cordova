@@ -101,10 +101,11 @@
                 break;
                 
             case HOPCallStateIncoming:              //Receives just callee
-                //TODO: tell client about incomming call
+                [[SessionManager sharedSessionManager] onCallIncoming:call];
                 break;
                 
             case HOPCallStatePlaced:                //Receives just calller
+                
                 break;
                 
             case HOPCallStateEarly:                 //Currently is not in use
@@ -112,7 +113,7 @@
                 
             case HOPCallStateRinging:               //Receives just callee side. Now should play ringing sound
                 // TODO
-                //[[SoundManager sharedSoundsManager] playRingingSound];
+                [[SessionManager sharedSessionManager] onCallRinging:call];
                 break;
                 
             case HOPCallStateRingback:              //Receives just caller side
@@ -120,25 +121,30 @@
                 //[[SoundManager sharedSoundsManager] playCallingSound];
                 break;
                 
-            case HOPCallStateOpen:                  //Receives both parties. Call is established
+            case HOPCallStateOpen:                  // Received by both parties. Call is established
                 /* TODO
                 [[SessionManager sharedSessionManager] onCallOpened:call];
                 [[SoundManager sharedSoundsManager] stopCallingSound];
-                [[SoundManager sharedSoundsManager] stopRingingSound];
-                [sessionViewController startTimer];
+                 [[SoundManager sharedSoundsManager] stopRingingSound];
                  */
+                [[SessionManager sharedSessionManager] onCallOpened:call];
+                // TODO start Timer
                 break;
                 
-            case HOPCallStateActive:                //Currently not in use
+            case HOPCallStateActive:                // Currently not in use
                 break;
                 
-            case HOPCallStateInactive:              //Currently not in use
+            case HOPCallStateInactive:              // Currently not in use
                 break;
                 
-            case HOPCallStateHold:                  //Receives both parties
+            case HOPCallStateHold:                  // Received by both parties
                 break;
                 
-            case HOPCallStateClosing:               //Receives both parties
+            case HOPCallStateClosing:               // Received by both parties
+                if ([[OpenPeer sharedOpenPeer] appEnteredBackground])
+                    [[OpenPeer sharedOpenPeer]prepareAppForBackground];
+                
+                [[SessionManager sharedSessionManager] onCallClosing:call];
                 /*
                 [[SessionManager sharedSessionManager] onCallClosing:call];
                 [[SoundManager sharedSoundsManager] stopCallingSound];
@@ -147,7 +153,7 @@
                  */
                 break;
                 
-            case HOPCallStateClosed:                //Receives both parties
+            case HOPCallStateClosed:                // Received by both parties
                 // TODO: tell client that call ended
                 [[SessionManager sharedSessionManager] onCallEnded:call];
                 break;
