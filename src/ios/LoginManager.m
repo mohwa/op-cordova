@@ -121,7 +121,7 @@
 /**
  Logout from the current account. Will also shutdown the SDK
  */
-- (void) logout
+- (void) logout:(NSString*) identityURI
 {
     OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace,@"Logout started");
     

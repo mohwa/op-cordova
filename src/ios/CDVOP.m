@@ -292,15 +292,29 @@ static CDVOP *shared;
 }
 
 /**
+ * hangup current call
+ * TODO: see if we need to pass call closing reason from client side
+ */
+- (void) hangupCall:(CDVInvokedUrlCommand *)command {
+    CDVPluginResult* res = nil;
+    
+    //TODO get parameters from client
+    [[SessionManager sharedSessionManager] hangup:HOPCallClosedReasonUser];
+    
+    res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"success"];
+    
+    [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
+}
+
+/**
  * Tell JS about change in call state
  *
- * @param callState call state as string
- * @param eventData json object containing additional information such as threadId
- * Supported call states are: ['call-preparing', 'call-incoming', 'call-ringing', 'call-ringback'
+ * @param eventData json object containing additional information including callState and threadId
+ * eventData.callState can be one of: ['call-preparing', 'call-incoming', 'call-ringing', 'call-ringback'
  * 'call-open', 'call-onhold', 'call-closing', 'call-closed']
  */
-- (void) onCallStateChange:(NSString*)callState eventData:(NSString*)eventData {
-    NSString *jsCall = [NSString stringWithFormat:@"OP._onCallStateChange_('%@',%@);", callState, eventData];
+- (void) onCallStateChange:(NSString*)eventData {
+    NSString *jsCall = [NSString stringWithFormat:@"__CDVOP_MESSAGE_HANDLER('callStateChange', %@);", eventData];
     [self writeJavascript:jsCall];
 }
 
@@ -391,7 +405,7 @@ static CDVOP *shared;
  */
 - (NSString*) getSetting:(NSString*)setting
 {
-    NSString *jsCall = [NSString stringWithFormat:@"OP.settings['%@'];", setting];
+    NSString *jsCall = [NSString stringWithFormat:@"__CDVOP_GET_INSTANCE._settings['%@'];", setting];
     return [self writeJavascript:jsCall];
 }
 
@@ -399,7 +413,7 @@ static CDVOP *shared;
  * set setting[key] to value
  */
 - (void) setSetting:(NSString*)key value:(NSString*)value {
-    NSString *jsCall = [NSString stringWithFormat:@"OP.settings['%@'] = '%@';", key, value];
+    NSString *jsCall = [NSString stringWithFormat:@"__CDVOP_GET_INSTANCE._settings['%@'] = '%@';", key, value];
     [self writeJavascript:jsCall];
 }
 
@@ -413,7 +427,7 @@ static CDVOP *shared;
 
 - (NSString*) getAllSettingsJSON
 {
-    NSString *settings = [self writeJavascript:@"JSON.stringify(OP.settings);"];
+    NSString *settings = [self writeJavascript:@"JSON.stringify(__CDVOP_GET_INSTANCE._settings);"];
     return [NSString stringWithFormat:@"{\"root\":%@}", settings];
 }
 
