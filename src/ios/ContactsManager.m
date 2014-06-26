@@ -202,15 +202,15 @@
     if (identityLookup)
         [self.identityLookupsArray addObject:identityLookup];
 }
+
 /**
- Initiates contacts loading procedure.
+ * Initiates contacts loading procedure. Once done [CDVOP onContactsLoaded] will be fired
  */
 - (void) loadContacts
 {
-    //BOOL downloadedEnded = NO;
     OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelDebug, @"Init loading contacts");
     
-    //For the first login and association it should be performed contacts download on just associated identity
+    // For the first login and association, downloading contacts for the newly associated identity
     NSArray* associatedIdentities = [[HOPAccount sharedAccount] getAssociatedIdentities];
     
     for (HOPIdentity* identity in associatedIdentities)
@@ -232,12 +232,6 @@
             {
                 HOPHomeUser* homeUser = [[HOPModelManager sharedModelManager] getLastLoggedInHomeUser];
                 HOPAssociatedIdentity* associatedIdentity = [[HOPModelManager sharedModelManager] getAssociatedIdentityBaseIdentityURI:[identity getBaseIdentityURI] homeUserStableId:homeUser.stableId];
-            
-                if ([[LoginManager sharedLoginManager] isLogin] || [[LoginManager sharedLoginManager] isAssociation])
-                {
-                    [[CDVOP sharedObject] onContactsLoadingStarted];
-                }
-                
                 [identity startRolodexDownload:associatedIdentity.downloadedVersion];
                 OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelDebug, @"Start rolodex contacts download - identity URI: - Version: %@",[identity getIdentityURI], associatedIdentity.downloadedVersion);
             }
@@ -286,7 +280,7 @@
 }
 
 /**
- Handles response received from lookup server. 
+ * Handles response received from lookup server.
  */
 -(void)updateContactsWithDataFromLookup:(HOPIdentityLookup *)identityLookup
 {
@@ -303,12 +297,11 @@
         }
     }
     
-    // TODO: check if this really need to dispatch? Also is this the best place to tell client contacts are loaded?
     dispatch_async(dispatch_get_main_queue(), ^
     {
         if (refreshContacts)
         {
-            [[CDVOP sharedObject] onContactsLoaded];
+            [[CDVOP sharedObject] onContactsLoaded:[self getContactsList:self.avatarWidth onlyOPContacts:self.onlyOPContacts]];
         }
      });
     
@@ -483,6 +476,45 @@
     }
     return ret;
 }
+*/
+
+/**
+ * Get a list of all contacts for currently logged in user
+ * @precondition: loading contacts has already finished
+ */
+- (NSMutableDictionary*) getContactsList:(NSNumber*) avatarWidth onlyOPContacts:(BOOL) onlyOPContacts {
+    NSMutableDictionary* ret = [[NSMutableDictionary alloc] init];
+    HOPModelManager* modelManager = [HOPModelManager sharedModelManager];
+    NSArray* rolodexContacts;
+    NSArray* associatedIdentites = [[HOPAccount sharedAccount] getAssociatedIdentities];
+    
+    // TODO: modify this code when we want to support more that one identity
+    // *** Should we iterate and aggregate contacts from each identity? ***
+    HOPIdentity* identity = [associatedIdentites objectAtIndex:0];
+    NSString* identityURI = [identity getIdentityURI];
+    NSString* identityDomain = [identity getIdentityProviderDomain];
+
+    if (onlyOPContacts) {
+        rolodexContacts = [modelManager getRolodexContactsForHomeUserIdentityURI:identityURI openPeerContacts:YES];
+    } else {
+        rolodexContacts = [modelManager getAllRolodexContactForHomeUserIdentityURI:identityURI];
+    }
+
+    [[ContactsManager sharedContactsManager] identityLookupForContacts:rolodexContacts identityServiceDomain:identityDomain];
+    
+    for (HOPRolodexContact* contact in rolodexContacts) {
+
+        // TODO: fix this when avatar path can be obtained by size
+        HOPAvatar* hopAvatar = [contact getAvatarForWidth:self.avatarWidth height:avatarWidth];
+
+        NSString* isRegistered = ([contact identityContact] != nil) ? @"YES" : @"NO";
+        
+        NSDictionary* cDict = [[NSDictionary alloc] initWithObjectsAndKeys:contact.name, @"name", hopAvatar.url, @"avatarUrl", isRegistered, @"isRegistered", nil];
+        [ret setObject:cDict forKey:contact.identityURI];
+    }
+    
+    return ret;
+}
 
 - (NSArray*) getIdentityContactsForHomeUser
 {
@@ -501,7 +533,6 @@
     
     return ret;
 }
-*/
 
 - (void) removeAllContacts
 {

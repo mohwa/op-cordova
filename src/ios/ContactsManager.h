@@ -63,11 +63,18 @@
 @property (strong) NSMutableArray *identityLookupsArray;
 @property (strong) NSMutableSet *setOfIdentitiesWhoseContactsDownloadInProgress;
 
+// User preferences when requesting the download of contact
+@property NSNumber* avatarWidth;
+@property BOOL onlyOPContacts;
+
+//BOOL onlyOPContacts = [command.arguments[1] boolValue];
 + (id) sharedContactsManager;
 
 - (void) loadAddressBookContacts;
 
 - (void) loadContacts;
+- (NSMutableDictionary*) getContactsList:(NSNumber*) avatarWidth onlyOPContacts:(BOOL) onlyOPContacts;
+- (NSDictionary*) getContactsList;
 - (void) refreshExisitngContacts;
 - (void) refreshRolodexContacts;
 - (void) identityLookupForContacts:(NSArray *)contacts identityServiceDomain:(NSString*) identityServiceDomain;

@@ -105,17 +105,19 @@
 
 - (void) clearIdentities
 {
-    NSArray* associatedIdentities = [[HOPAccount sharedAccount] getAssociatedIdentities];
-    for (HOPIdentity* identity in associatedIdentities)
-    {
-        [identity cancel];
+    if ([[HOPAccount sharedAccount] getState].state == HOPAccountStateReady) {
+        NSArray* associatedIdentities = [[HOPAccount sharedAccount] getAssociatedIdentities];
+        for (HOPIdentity* identity in associatedIdentities)
+        {
+            [identity cancel];
+        }
+        
+        for (HOPIdentity* identity in self.associatingIdentitiesDictionary)
+        {
+            [identity cancel];
+        }
+        [self.associatingIdentitiesDictionary removeAllObjects];
     }
-    
-    for (HOPIdentity* identity in self.associatingIdentitiesDictionary)
-    {
-        [identity cancel];
-    }
-    [self.associatingIdentitiesDictionary removeAllObjects];
 }
 
 /**
@@ -393,7 +395,8 @@
 - (void) onUserLogOut
 {
     OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace,@"Logout finished");
-    [[OpenPeer sharedOpenPeer] finishPreSetup];
+    // TODO: see if we need to call finishPreSetup
+    // [[OpenPeer sharedOpenPeer] finishPreSetup];
 }
 
 /**

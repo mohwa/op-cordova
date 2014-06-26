@@ -27,7 +27,7 @@
 #import <OpenpeerSDK/HOPRolodexContact.h>
 
 
-//OP delegates
+//OP delegates and helper classes
 #import "OpenPeer.h"
 #import "Delegates.h"
 #import "AppLog.h"
@@ -35,6 +35,7 @@
 #import "ContactsManager.h"
 #import "SessionManager.h"
 #import "WebLoginViewController.h"
+#import "Settings.h"
 
 @class Session;
 @class LoginViewController;
@@ -58,8 +59,9 @@
 - (void) showCatPictures:(CDVInvokedUrlCommand*)command;
 - (void) stopCatPictures:(CDVInvokedUrlCommand*)command;
 - (void) switchCamera:(CDVInvokedUrlCommand*)command;
-- (void) prepareChat:(CDVInvokedUrlCommand*)command;
-- (void) sendMessage:(CDVInvokedUrlCommand *)command;
+- (void) testEvent:(CDVInvokedUrlCommand*)command;
+- (void) sendMessageToPeer:(CDVInvokedUrlCommand*)command;
+- (void) sendMessageToSession:(CDVInvokedUrlCommand *)command;
 - (void) placeCall:(CDVInvokedUrlCommand *)command;
 - (void) hangupCall:(CDVInvokedUrlCommand *)command;
 
@@ -75,6 +77,7 @@
 - (BOOL) getSettingAsBool:(NSString*)setting;
 - (NSString*) getAllSettingsJSON;
 - (UIViewContentMode) getContentMode:(NSString*)mode;
+- (void)fireEventWithData:(NSString*)event data:(NSString*)data;
 
 //login relate methods
 - (void) onStartLoginWithidentityURI;
@@ -96,9 +99,7 @@
 
 // contacts
 - (void) getListOfContacts:(CDVInvokedUrlCommand*)command;
-- (void) onContactsLoadingStarted;
-- (void) onContactsLoaded;
-- (NSDictionary*) prepareContactsList:(NSNumber*) avatarWidth onlyOPContacts:(BOOL) onlyOPContacts;
+- (void) onContactsLoaded:(NSDictionary*)contacts;
 
 // session
 - (void) updateSessionViewControllerId:(NSString*) oldSessionId newSesionId:(NSString*) newSesionId;

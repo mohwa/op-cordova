@@ -2,6 +2,7 @@
 
 @interface CDVOP ()
 @property NSString* loginCallbackId;
+@property NSString* contactsCallbackId;
 @property HOPCall* currentCall;
 @end
 
@@ -222,13 +223,31 @@ static CDVOP *shared;
 }
 
 /**
- * @param command.arguments list of peers to include in chat session
+ * Echo back an event to the JS side (for testing)
+ *
+ * @param command.arguments[0] event
+ * @param command.arguments[1] data
+ */
+- (void) testEvent:(CDVInvokedUrlCommand*)command
+{
+    CDVPluginResult* res = nil;
+    NSString* event = command.arguments[0];
+    NSString* data = command.arguments[1];
+    [self fireEventWithData:event data:data];
+    res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"success"];
+    [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
+}
+
+/**
+ * @param command.arguments[0] the message to send
+ * @param command.arguments[1] peerURI
  * Currently only one peer is expected, so first item will be used only
  */
-- (void) prepareChat:(CDVInvokedUrlCommand *)command
+- (void) sendMessageToPeer:(CDVInvokedUrlCommand *)command
 {
     //TODO: update this with a loop when we support multiple peer chat
-    NSString* peerURI = command.arguments[0];
+    NSString* msg = command.arguments[0];
+    NSString* peerURI = command.arguments[1];
 
     //HOPRolodexContact* contact  = [[[HOPModelManager sharedModelManager] getRolodexContactsByPeerURI:peerURI] objectAtIndex:0];
     HOPRolodexContact* contact  = [[HOPModelManager sharedModelManager] getRolodexContactByIdentityURI:peerURI];
@@ -236,32 +255,37 @@ static CDVOP *shared;
     if (session == nil) {
         session = [[SessionManager sharedSessionManager] createSessionForContact:contact];
     }
-    
-    // TODO: check to see if we need anything else before we can send/receive messages in thie session
-}
-
-
-- (void) onMessageReceived:(HOPMessageRecord*)msg forSession:(Session*)forSession {
-    // TODO: send message to client api to fire event
+    [[MessageManager sharedMessageManager] sendMessage:msg forSession:session];
 }
 
 /**
  *  @param command.arguments[0] the message to send
- *  @param command.arguments[1] conversation thread id
+ *  @param command.arguments[1] sessionId
  */
-- (void) sendMessage:(CDVInvokedUrlCommand *)command
+- (void) sendMessageToSession:(CDVInvokedUrlCommand *)command
 {
     CDVPluginResult* res = nil;
     NSString* msg = command.arguments[0];
     NSString* sessionId = command.arguments[1];
     
-    // *****************************************************************
-    // TODO: figure out how to send the message (get contact or session)
+    Session* session = [[SessionManager sharedSessionManager] getSessionForSessionId:sessionId];
+    if (session == nil) {
+        res = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"session not found"];
+    } else {
+        [[MessageManager sharedMessageManager] sendMessage:msg forSession:session];
+        res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"success"];
+    }
     
-    // [[MessageManager sharedMessageManager] sendMessage:msg sessionId:sessionId];
-
-    res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"success"];
     [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
+}
+
+/**
+ *  Tell JS that a new message has been received
+ *  @param msg        HOPMessageRecord
+ *  @param forSession Session that this message belongs to
+ */
+- (void) onMessageReceived:(HOPMessageRecord*)msg forSession:(Session*)forSession {
+    // TODO: send message to client api to fire event
 }
 
 /**
@@ -307,30 +331,42 @@ static CDVOP *shared;
 }
 
 /**
+ *  Fire and event on JS side and pass along the data
+ *
+ *  @param event NSString* name of event to fire on JS side
+ *  @param data  NSString* JSON data to pass along with event
+ */
+- (void) fireEventWithData:(NSString *)event data:(NSString *)data
+{
+    NSString *jsCall = [NSString stringWithFormat:@"__CDVOP_MESSAGE_HANDLER('%@', %@);", event, data];
+    [self writeJavascript:jsCall];
+}
+
+/**
  * Tell JS about change in call state
  *
- * @param eventData json object containing additional information including callState and threadId
+ * @param eventData json object containing additional information including callState and sessionId
  * eventData.callState can be one of: ['call-preparing', 'call-incoming', 'call-ringing', 'call-ringback'
  * 'call-open', 'call-onhold', 'call-closing', 'call-closed']
  */
 - (void) onCallStateChange:(NSString*)eventData {
-    NSString *jsCall = [NSString stringWithFormat:@"__CDVOP_MESSAGE_HANDLER('callStateChange', %@);", eventData];
-    [self writeJavascript:jsCall];
+    [self fireEventWithData:@"callStateChange" data:eventData];
 }
 
-// TODO: remove if not needed
-- (void)getAccountState:(CDVInvokedUrlCommand*)command
+/**
+ *  Give account state to JS side upon request
+ */
+- (void) getAccountState:(CDVInvokedUrlCommand*)command
 {
     CDVPluginResult* res = nil;
     NSString* state;
-
     if([[HOPAccount sharedAccount] isCoreAccountCreated]) {
         state = [HOPAccount stringForAccountState:[[HOPAccount sharedAccount] getState].state];
     } else {
         state = @"NotCreated";
     }
     res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:state];
-    
+
     [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
 }
 
@@ -340,43 +376,47 @@ static CDVOP *shared;
 - (void) startLoginProcess:(CDVInvokedUrlCommand*)command
 {
     self.loginCallbackId = command.callbackId;
-    //[self.commandDelegate runInBackground:^{
+    [self.commandDelegate runInBackground:^{
         NSLog(@"Starting the login process");
         [[LoginManager sharedLoginManager] login];
-    //}];
+    }];
 }
 
 /**
- *  sends list of contacts to JS if user is logged in
+ *  initiate loading of contacts if user is logged in. Contacts will be sent to user when ready via onContactsLoaded method
  *
  *  @param command.arguments[0] BOOL refresh to load latest contacts from server. If true will also rolodex to reload contacts
  */
 - (void) getListOfContacts:(CDVInvokedUrlCommand*)command
 {
-    CDVPluginResult* res = nil;
-    NSNumber* avatarWidth = [NSNumber numberWithDouble:[command.arguments[0] doubleValue]];
-    BOOL onlyOPContacts = [command.arguments[1] boolValue];
+    ContactsManager* contactsManager = [ContactsManager sharedContactsManager];
+    contactsManager.avatarWidth = [NSNumber numberWithDouble:[command.arguments[0] doubleValue]];
+    contactsManager.onlyOPContacts = [command.arguments[1] boolValue];
+
     BOOL refresh = [command.arguments[2] boolValue];
-    
-    if (refresh) {
-        // TODO: check why refresh does not pull new contacts from facebook
-        [[ContactsManager sharedContactsManager] refreshRolodexContacts];
-        //[[ContactsManager sharedContactsManager] refreshExisitngContacts];
-    }
-    
-    NSDictionary* contacts = [self prepareContactsList:avatarWidth onlyOPContacts:onlyOPContacts];
+    self.contactsCallbackId = command.callbackId;
+    [self.commandDelegate runInBackground:^{
+        NSLog(@"Starting to load contacts");
+        if (refresh) {
+            // TODO: check why refresh does not pull new contacts from facebook
+            [[ContactsManager sharedContactsManager] refreshRolodexContacts];
+            // TODO: do we need also to refresh existing contacts here?
+            //[[ContactsManager sharedContactsManager] refreshExisitngContacts];
+        }
+        [contactsManager loadContacts];
+    }];
+}
+
+/**
+ *  Pass along the contactsList, when it is ready, as a giant array to JS side
+ *
+ *  @param contacts array of contacts
+ */
+- (void) onContactsLoaded:(NSDictionary*)contacts {
+    NSLog(@"Passing along the contacts list");
+    CDVPluginResult* res = nil;
     res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:contacts];
-    
-    [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
-}
-
-- (void) onContactsLoadingStarted {
-    //TODO: tell client
-    NSLog(@"loading contacts started");
-}
-
-- (void) onContactsLoaded {
-    //TODO: autoload contact list
+    [self.commandDelegate sendPluginResult:res callbackId:self.contactsCallbackId];
 }
 
 - (void)logout:(CDVInvokedUrlCommand*)command
@@ -405,7 +445,7 @@ static CDVOP *shared;
  */
 - (NSString*) getSetting:(NSString*)setting
 {
-    NSString *jsCall = [NSString stringWithFormat:@"__CDVOP_GET_INSTANCE._settings['%@'];", setting];
+    NSString *jsCall = [NSString stringWithFormat:@"__CDVOP_GET_INSTANCE().getSettingForKey('%@');", setting];
     return [self writeJavascript:jsCall];
 }
 
@@ -413,7 +453,7 @@ static CDVOP *shared;
  * set setting[key] to value
  */
 - (void) setSetting:(NSString*)key value:(NSString*)value {
-    NSString *jsCall = [NSString stringWithFormat:@"__CDVOP_GET_INSTANCE._settings['%@'] = '%@';", key, value];
+    NSString *jsCall = [NSString stringWithFormat:@"__CDVOP_GET_INSTANCE()._settings['%@'] = '%@';", key, value];
     [self writeJavascript:jsCall];
 }
 
@@ -425,9 +465,14 @@ static CDVOP *shared;
     return [str boolValue];
 }
 
+/**
+ *  Get all current settings from JS side
+ *
+ *  @return NSString* JSON object with "root" element as expected by core
+ */
 - (NSString*) getAllSettingsJSON
 {
-    NSString *settings = [self writeJavascript:@"JSON.stringify(__CDVOP_GET_INSTANCE._settings);"];
+    NSString *settings = [self writeJavascript:@"JSON.stringify(__CDVOP_GET_INSTANCE().getAllSettings());"];
     return [NSString stringWithFormat:@"{\"root\":%@}", settings];
 }
 
@@ -523,57 +568,12 @@ static CDVOP *shared;
     //HOPAssociatedIdentity *hopId = [associatedIdentities ]
     //HOPRolodexContact *homeUserProfile = [identity]
     //HOPIdentityContact* homeIdentityContact = [identity getSelfIdentityContact];
-    HOPModelManager* modelManager = [HOPModelManager sharedModelManager];
+    //HOPModelManager* modelManager = [HOPModelManager sharedModelManager];
     
-    //TODO: get home user info
-    
+    //TODO: get more home user info
     NSDictionary* message = [[NSDictionary alloc] initWithObjectsAndKeys:identityURI, @"uri", [homeUser getFullName], @"name", nil];
     res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:message];
     [self.commandDelegate sendPluginResult:res callbackId:self.loginCallbackId];
-}
-
-/**
- *  create and return a list of all contacts for currently logged in user
- *
- *  @return NSDictionary of contacts
- */
-- (NSDictionary*) prepareContactsList:(NSNumber*) avatarWidth onlyOPContacts:(BOOL) onlyOPContacts {
-    NSMutableDictionary* ret = [[NSMutableDictionary alloc] init];
-    
-    NSArray* associatedIdentites = [[HOPAccount sharedAccount] getAssociatedIdentities];
-    
-    // TODO: check to see what would be right index and get more info about user identity.
-    // Should we iterate and aggregate contacts from each identity?
-    HOPIdentity* identity = [associatedIdentites objectAtIndex:0];
-    
-    NSString* identityURI = [identity getIdentityURI];
-    HOPModelManager* modelManager = [HOPModelManager sharedModelManager];
-    NSString* identityDomain = [identity getIdentityProviderDomain];
-    
-    [[ContactsManager sharedContactsManager] loadContacts];
-    //[[ContactsManager sharedContactsManager] saveContext];
-    
-    NSArray* rolodexContacts;
-    if (onlyOPContacts) {
-        rolodexContacts = [modelManager getRolodexContactsForHomeUserIdentityURI:identityURI openPeerContacts:YES];
-    } else {
-        rolodexContacts = [modelManager getAllRolodexContactForHomeUserIdentityURI:identityURI];
-    }
-    
-    [[ContactsManager sharedContactsManager] identityLookupForContacts:rolodexContacts identityServiceDomain:identityDomain];
-    
-    for (HOPRolodexContact* contact in rolodexContacts) {
-
-        // TODO: fix this when avatar path can be obtained by size
-        HOPAvatar* hopAvatar = [contact getAvatarForWidth:avatarWidth height:avatarWidth];
-        
-        NSString* isRegistered = ([contact identityContact] != nil) ? @"YES" : @"NO";
-
-        NSDictionary* cDict = [[NSDictionary alloc] initWithObjectsAndKeys:contact.name, @"name", hopAvatar.url, @"avatarUrl", isRegistered, @"isRegistered", nil];
-        [ret setObject:cDict forKey:contact.identityURI];
-    }
-    
-    return ret;
 }
 
 - (void) onLoginFinished {
@@ -607,6 +607,17 @@ static CDVOP *shared;
 {
     // TODO
     NSLog(@"face detected");
+}
+
+- (void) updateSettingObjectFromJS
+{
+    Settings* settings = [Settings sharedSettings];
+    setting.outerFrameURL = [self getSetting:'outerFrameURL'];
+    setting.namespaceGrantServiceURL = [self getSetting:'namespaceGrantServiceURL'];
+    setting.identityProviderDomain = [self getSetting:'identityProviderDomain'];
+    setting.identityFederateBaseURI = [self getSetting:'identityFederateBaseURI'];
+    setting.lockBoxServiceDomain = [self getSetting:'lockBoxServiceDomain'];
+    setting.defaultOutgoingTelnetServe = [self getSetting:'defaultOutgoingTelnetServe'];
 }
 
 - (UIViewContentMode) getContentMode:(NSString*)mode {

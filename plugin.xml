@@ -90,6 +90,8 @@
       <source-file src="src/ios/Session.m" />
       <header-file src="src/ios/SessionManager.h" />
       <source-file src="src/ios/SessionManager.m" />
+      <header-file src="src/ios/Settings.h" />
+      <source-file src="src/ios/Settings.m" />
       <header-file src="src/ios/StackDelegate.h" />
       <source-file src="src/ios/StackDelegate.m" />
       <header-file src="src/ios/WebLoginViewController.h" />
