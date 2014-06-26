@@ -258,8 +258,8 @@
             if ([contactsToDelete count] > 0)
                 [identity startTimerForContactsDeletion];
             
-            // TODO: inform client that contacts are loaded
-            //[[[[OpenPeer sharedOpenPeer] mainViewController] contactsTableViewController] onContactsLoaded];
+            // Send list of contacts to JS client
+            [[CDVOP sharedObject] onContactsLoaded:[[ContactsManager sharedContactsManager] getContactsDictionaryForJS:identity]];
         }
         else if (flushAllRolodexContacts)
         {

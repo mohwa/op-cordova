@@ -82,7 +82,7 @@
                 break;
                 
             case HOPAccountWaitingForBrowserWindowToBeLoaded:
-                [self.webLoginViewController openLoginUrl:[[CDVOP sharedObject] getSetting:@"namespaceGrantServiceURL"]];
+                [self.webLoginViewController openLoginUrl:[[Settings sharedSettings] namespaceGrantServiceURL]];
                 break;
                 
             case HOPAccountWaitingForBrowserWindowToBeMadeVisible:

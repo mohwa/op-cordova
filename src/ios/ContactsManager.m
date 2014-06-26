@@ -78,8 +78,8 @@
 {
     NSMutableArray* contactsForIdentityLookup = [[NSMutableArray alloc] init];
     ABAddressBookRef addressBook = NULL;
-    NSString* idFedBaseURI = [[CDVOP sharedObject] getSetting:@"identityFederateBaseURI"];
-    NSString* idProviderDomain = [[CDVOP sharedObject] getSetting:@"identityProviderDomain"];
+    NSString* idFedBaseURI = [[Settings sharedSettings] identityFederateBaseURI];
+    NSString* idProviderDomain = [[Settings sharedSettings] identityProviderDomain];
     
     __block BOOL accessGranted = NO;
     
@@ -221,7 +221,7 @@
             if (![identity isDelegateAttached])
                 [[LoginManager sharedLoginManager] attachDelegateForIdentity:identity forceAttach:NO];
             
-            if ([[identity getBaseIdentityURI] isEqualToString:[[CDVOP sharedObject] getSetting:@"identityFederateBaseURI"]])
+            if ([[identity getBaseIdentityURI] isEqualToString:[[Settings sharedSettings] identityFederateBaseURI]])
             {
                 dispatch_queue_t taskQ = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
                 dispatch_async(taskQ, ^{
@@ -297,6 +297,7 @@
         }
     }
     
+    /*
     dispatch_async(dispatch_get_main_queue(), ^
     {
         if (refreshContacts)
@@ -304,7 +305,7 @@
             [[CDVOP sharedObject] onContactsLoaded:[self getContactsList:self.avatarWidth onlyOPContacts:self.onlyOPContacts]];
         }
      });
-    
+    */
     [self.identityLookupsArray removeObject:identityLookup];
 }
 
@@ -479,22 +480,20 @@
 */
 
 /**
- * Get a list of all contacts for currently logged in user
+ * Get a list of all contacts for currently logged in user, in a dictionary ready to pass to JS
+ * @param identity the identity to get the contacts for
  * @precondition: loading contacts has already finished
+ * @precondition avatarWidth and onlyOPContacts preferences are set
  */
-- (NSMutableDictionary*) getContactsList:(NSNumber*) avatarWidth onlyOPContacts:(BOOL) onlyOPContacts {
+- (NSMutableDictionary*) getContactsDictionaryForJS:(HOPIdentity*) identity {
     NSMutableDictionary* ret = [[NSMutableDictionary alloc] init];
     HOPModelManager* modelManager = [HOPModelManager sharedModelManager];
     NSArray* rolodexContacts;
-    NSArray* associatedIdentites = [[HOPAccount sharedAccount] getAssociatedIdentities];
-    
-    // TODO: modify this code when we want to support more that one identity
-    // *** Should we iterate and aggregate contacts from each identity? ***
-    HOPIdentity* identity = [associatedIdentites objectAtIndex:0];
+
     NSString* identityURI = [identity getIdentityURI];
     NSString* identityDomain = [identity getIdentityProviderDomain];
 
-    if (onlyOPContacts) {
+    if (self.onlyOPContacts) {
         rolodexContacts = [modelManager getRolodexContactsForHomeUserIdentityURI:identityURI openPeerContacts:YES];
     } else {
         rolodexContacts = [modelManager getAllRolodexContactForHomeUserIdentityURI:identityURI];
@@ -505,9 +504,9 @@
     for (HOPRolodexContact* contact in rolodexContacts) {
 
         // TODO: fix this when avatar path can be obtained by size
-        HOPAvatar* hopAvatar = [contact getAvatarForWidth:self.avatarWidth height:avatarWidth];
+        HOPAvatar* hopAvatar = [contact getAvatarForWidth:self.avatarWidth height:self.avatarWidth];
 
-        NSString* isRegistered = ([contact identityContact] != nil) ? @"YES" : @"NO";
+        NSString* isRegistered = ([contact identityContact] != nil) ? @"true" : @"false";
         
         NSDictionary* cDict = [[NSDictionary alloc] initWithObjectsAndKeys:contact.name, @"name", hopAvatar.url, @"avatarUrl", isRegistered, @"isRegistered", nil];
         [ret setObject:cDict forKey:contact.identityURI];

@@ -376,6 +376,7 @@ static CDVOP *shared;
 - (void) startLoginProcess:(CDVInvokedUrlCommand*)command
 {
     self.loginCallbackId = command.callbackId;
+    [self updateLoggingSettingsObjectFromJS];
     [self.commandDelegate runInBackground:^{
         NSLog(@"Starting the login process");
         [[LoginManager sharedLoginManager] login];
@@ -609,15 +610,16 @@ static CDVOP *shared;
     NSLog(@"face detected");
 }
 
-- (void) updateSettingObjectFromJS
+- (void) updateLoggingSettingsObjectFromJS
 {
     Settings* settings = [Settings sharedSettings];
-    setting.outerFrameURL = [self getSetting:'outerFrameURL'];
-    setting.namespaceGrantServiceURL = [self getSetting:'namespaceGrantServiceURL'];
-    setting.identityProviderDomain = [self getSetting:'identityProviderDomain'];
-    setting.identityFederateBaseURI = [self getSetting:'identityFederateBaseURI'];
-    setting.lockBoxServiceDomain = [self getSetting:'lockBoxServiceDomain'];
-    setting.defaultOutgoingTelnetServe = [self getSetting:'defaultOutgoingTelnetServe'];
+    settings.outerFrameURL = [self getSetting:@"outerFrameURL"];
+    settings.namespaceGrantServiceURL = [self getSetting:@"namespaceGrantServiceURL"];
+    settings.identityProviderDomain = [self getSetting:@"identityProviderDomain"];
+    settings.identityFederateBaseURI = [self getSetting:@"identityFederateBaseURI"];
+    settings.lockBoxServiceDomain = [self getSetting:@"lockBoxServiceDomain"];
+    settings.defaultOutgoingTelnetServer = [self getSetting:@"defaultOutgoingTelnetServer"];
+    settings.redirectAfterLoginCompleteURL = [self getSetting:@"redirectAfterLoginCompleteURL"];
 }
 
 - (UIViewContentMode) getContentMode:(NSString*)mode {

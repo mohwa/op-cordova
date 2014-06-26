@@ -34,6 +34,7 @@
 #import "OpenPeer.h"
 #import "AppLog.h"
 #import "AppConsts.h"
+#import "Settings.h"
 #import "WebLoginViewController.h"
 #import "StackDelegate.h"
 #import "IdentityDelegate.h"

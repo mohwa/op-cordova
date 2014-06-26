@@ -132,11 +132,11 @@
 - (void)webViewDidFinishLoad:(UIWebView *)webView
 {
     NSString *requestString = [[[webView request] URL] absoluteString];
-    NSString *namespaceGrantServiceURL = [[CDVOP sharedObject] getSetting:@"namespaceGrantServiceURL"];
+    NSString *namespaceGrantServiceURL = [[Settings sharedSettings] namespaceGrantServiceURL];
 
-    if (!self.outerFrameInitialised && [requestString isEqualToString:[[CDVOP sharedObject] getSetting:@"outerFrameURL"]])
+    if (!self.outerFrameInitialised && [requestString isEqualToString:[[Settings sharedSettings] outerFrameURL]])
     {
-        OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> WebLoginViewController\nFINISH LOADING - outerFrameURL: %@", self,[[CDVOP sharedObject] getSetting:@"outerFrameURL"]);
+        OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"<%p> WebLoginViewController\nFINISH LOADING - outerFrameURL: %@", self,[[Settings sharedSettings] outerFrameURL]);
         self.outerFrameInitialised = YES;
         [self onOuterFrameLoaded];
     }

@@ -73,8 +73,7 @@
 - (void) loadAddressBookContacts;
 
 - (void) loadContacts;
-- (NSMutableDictionary*) getContactsList:(NSNumber*) avatarWidth onlyOPContacts:(BOOL) onlyOPContacts;
-- (NSDictionary*) getContactsList;
+- (NSMutableDictionary*) getContactsDictionaryForJS:(HOPIdentity*) identity;
 - (void) refreshExisitngContacts;
 - (void) refreshRolodexContacts;
 - (void) identityLookupForContacts:(NSArray *)contacts identityServiceDomain:(NSString*) identityServiceDomain;

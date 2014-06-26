@@ -51,6 +51,7 @@
 @property (strong, nonatomic) NSString *deviceId;
 @property (strong, nonatomic) NSString *instanceId;
 */
+@interface Settings : NSObject
 
 @property (strong, nonatomic) NSString* outerFrameURL;
 @property (strong, nonatomic) NSString* namespaceGrantServiceURL;
@@ -58,6 +59,7 @@
 @property (strong, nonatomic) NSString* identityFederateBaseURI;
 @property (strong, nonatomic) NSString* lockBoxServiceDomain;
 @property (strong, nonatomic) NSString* defaultOutgoingTelnetServer;
+@property (strong, nonatomic) NSString* redirectAfterLoginCompleteURL;
 
 + (id) sharedSettings;
 - (id) init __attribute__((unavailable("HOPAccount is singleton class.")));

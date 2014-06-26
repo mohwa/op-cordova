@@ -99,7 +99,7 @@
 - (BOOL) checkIfReloginInfoIsValid
 {
     HOPHomeUser* homeUser = [[HOPModelManager sharedModelManager] getLastLoggedInHomeUser];
-    NSString* domain = [[CDVOP sharedObject] getSetting:@"identityProviderDomain"];
+    NSString* domain = [[Settings sharedSettings] identityProviderDomain];
     return [homeUser.reloginInfo rangeOfString:domain].location != NSNotFound;
 }
 
@@ -153,8 +153,8 @@
 }
 
 - (void) startAccount {
-    NSString* outerFrameURL = [[CDVOP sharedObject] getSetting:@"outerFrameURL"];
-    NSString* identityProviderDomain = [[CDVOP sharedObject] getSetting:@"identityProviderDomain"];
+    NSString* outerFrameURL = [[Settings sharedSettings] outerFrameURL];
+    NSString* identityProviderDomain = [[Settings sharedSettings] identityProviderDomain];
     
     [[HOPAccount sharedAccount] loginWithAccountDelegate:(id<HOPAccountDelegate>)[[OpenPeer sharedOpenPeer] accountDelegate] conversationThreadDelegate:(id<HOPConversationThreadDelegate>) [[OpenPeer sharedOpenPeer] conversationThreadDelegate] callDelegate:(id<HOPCallDelegate>) [[OpenPeer sharedOpenPeer] callDelegate]  namespaceGrantOuterFrameURLUponReload:outerFrameURL lockboxServiceDomain:identityProviderDomain forceCreateNewLockboxAccount:NO];
 }
@@ -169,7 +169,7 @@
 
 - (void) startLogin
 {
-    [self startLoginUsingIdentityURI:[[CDVOP sharedObject] getSetting:@"identityFederateBaseURI"]];
+    [self startLoginUsingIdentityURI:[[Settings sharedSettings] identityFederateBaseURI]];
     self.isLogin = YES;
 }
 
@@ -185,8 +185,8 @@
         NSLog(@"Identity login started for uri: %@", identityURI);
         
         [[CDVOP sharedObject] onStartLoginWithidentityURI];
-        NSString* redirectAfterLoginCompleteURL = [[CDVOP sharedObject] getSetting:@"redirectAfterLoginCompleteURL"];
-        NSString* identityProviderDomain = [[CDVOP sharedObject] getSetting:@"identityProviderDomain"];
+        NSString* redirectAfterLoginCompleteURL = [[Settings sharedSettings] redirectAfterLoginCompleteURL];
+        NSString* identityProviderDomain = [[Settings sharedSettings] identityProviderDomain];
 
         if (![[HOPAccount sharedAccount] isCoreAccountCreated] || [[HOPAccount sharedAccount] getState].state == HOPAccountStateShutdown) {
             [self startAccount];
@@ -212,7 +212,7 @@
 {
     BOOL reloginStarted = NO;
     self.isRelogin = YES;
-    NSString* outerFrameURL = [[CDVOP sharedObject] getSetting:@"outerFrameURL"];
+    NSString* outerFrameURL = [[Settings sharedSettings] outerFrameURL];
     //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelDebug, @"Relogin started");
     NSLog(@"Relogin started");
     [[CDVOP sharedObject] onRelogin];
@@ -231,7 +231,7 @@
 
 - (void) preloadLoginWebPage
 {
-    NSString* outerFrameURL = [[CDVOP sharedObject] getSetting:@"outerFrameURL"];
+    NSString* outerFrameURL = [[Settings sharedSettings] outerFrameURL];
     if (!self.preloadedWebLoginViewController)
     {
         self.preloadedWebLoginViewController = [[WebLoginViewController alloc] init];
@@ -293,7 +293,7 @@
         OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelDebug, @"Attaching delegate for identity with URI: %@", [identity getIdentityURI]);
         //Create core data record if it is not already in the db    
         [self onIdentityAssociationFinished:identity];
-        NSString* redirectAfterLoginCompleteURL = [[CDVOP sharedObject]  getSetting:@"redirectAfterLoginCompleteURL"];
+        NSString* redirectAfterLoginCompleteURL = [[Settings sharedSettings] redirectAfterLoginCompleteURL];
         [identity attachDelegate:(id<HOPIdentityDelegate>)[[OpenPeer sharedOpenPeer] identityDelegate]  redirectionURL:redirectAfterLoginCompleteURL];
     }
 }
@@ -317,7 +317,7 @@
             {
                 if (![identity isDelegateAttached])
                 {
-                    NSString* redirectAfterLoginCompleteURL = [[CDVOP sharedObject] getSetting:@"redirectAfterLoginCompleteURL"];
+                    NSString* redirectAfterLoginCompleteURL = [[Settings sharedSettings] redirectAfterLoginCompleteURL];
                     [identity attachDelegate:(id<HOPIdentityDelegate>)[[OpenPeer sharedOpenPeer] identityDelegate]  redirectionURL:redirectAfterLoginCompleteURL];
                 }
             }
@@ -339,7 +339,7 @@
                 }
             }
             
-            [[CDVOP sharedObject] onLoginFinished];
+            [[Settings sharedSettings] onLoginFinished];
             //TODO Start loading contacts.
             // TESTING
             for (HOPIdentity* identity in associatedIdentites)
