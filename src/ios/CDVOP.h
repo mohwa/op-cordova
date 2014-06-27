@@ -64,6 +64,7 @@
 - (void) sendMessageToSession:(CDVInvokedUrlCommand *)command;
 - (void) placeCall:(CDVInvokedUrlCommand *)command;
 - (void) hangupCall:(CDVInvokedUrlCommand *)command;
+- (void) answerCall:(CDVInvokedUrlCommand *)command;
 
 - (void) onMessageReceived:(HOPMessageRecord*)msg forSession:(Session*)forSession;
 - (void) onCallStateChange:(NSString*)eventData;

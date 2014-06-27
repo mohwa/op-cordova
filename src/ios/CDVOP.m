@@ -321,12 +321,30 @@ static CDVOP *shared;
  */
 - (void) hangupCall:(CDVInvokedUrlCommand *)command {
     CDVPluginResult* res = nil;
+    NSString* sessionId = command.arguments[0];
+    SessionManager* sessionManager = [SessionManager sharedSessionManager];
     
     //TODO get parameters from client
-    [[SessionManager sharedSessionManager] hangup:HOPCallClosedReasonUser];
+    [sessionManager endCallForSession:[sessionManager getSessionForSessionId:sessionId]];
     
     res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"success"];
     
+    [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
+}
+
+/**
+ * Answer call for given session
+ * @param arguments[0] sessionId
+ */
+- (void) answerCall:(CDVInvokedUrlCommand *)command {
+    CDVPluginResult* res = nil;
+    NSString* sessionId = command.arguments[0];
+    SessionManager* sessionManager = [SessionManager sharedSessionManager];
+    
+    //TODO: handle/pass back any errors
+    [sessionManager answerCallForSession:[sessionManager getSessionForSessionId:sessionId]];
+    
+    res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"success"];
     [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
 }
 

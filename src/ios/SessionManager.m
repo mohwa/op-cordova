@@ -476,9 +476,10 @@
     if ([sessionId length] > 0)
     {
         Session* session = [[[SessionManager sharedSessionManager] sessionsDictionary] objectForKey:sessionId];
+        NSString* peerURI = call.getCaller.getPeerURI;
         if (session)
         {
-            NSString* eventData = [NSString stringWithFormat:@"{'callState':'call-ringing','sessionId':'%@'}", sessionId];
+            NSString* eventData = [NSString stringWithFormat:@"{'callState':'call-ringing','peerURI':'%@', 'sessionId':'%@'}", peerURI, sessionId];
             [[CDVOP sharedObject] onCallStateChange:eventData];
             //[[[OpenPeer sharedOpenPeer] mainViewController] showIncominCallForSession:session];
             //[[SoundManager sharedSoundsManager] playRingingSound];
