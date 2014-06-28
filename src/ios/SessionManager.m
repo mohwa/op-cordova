@@ -481,25 +481,48 @@
         {
             NSString* eventData = [NSString stringWithFormat:@"{'callState':'call-ringing','peerURI':'%@', 'sessionId':'%@'}", peerURI, sessionId];
             [[CDVOP sharedObject] onCallStateChange:eventData];
-            //[[[OpenPeer sharedOpenPeer] mainViewController] showIncominCallForSession:session];
             //[[SoundManager sharedSoundsManager] playRingingSound];
         }
     }
 }
 
 /**
- Handle case when call is esablished and active.
- @param call HOPCall Incomin call
- @param inSession Session session.
+ * Handle case when call is esablished and active.
+ * @param call HOPCall Incomin call
+ * @param inSession Session session.
  */
 - (void) onCallOpened:(HOPCall*) call
 {
-    // TODO
-    //[sessionViewController showIncomingCall:NO];
-    //[sessionViewController showCallViewControllerWithVideo:[call hasVideo]];
-    //[sessionViewController prepareForCall:YES withVideo:[call hasVideo]];
+    // tell client that call is now open
+    NSString* sessionId = [[call getConversationThread] getThreadId];
+    if ([sessionId length] > 0)
+    {
+        Session* session = [[[SessionManager sharedSessionManager] sessionsDictionary] objectForKey:sessionId];
+        NSString* peerURI = call.getCaller.getPeerURI;
+        if (session)
+        {
+            NSString* eventData = [NSString stringWithFormat:@"{'callState':'call-open','peerURI':'%@', 'sessionId':'%@'}", peerURI, sessionId];
+            [[CDVOP sharedObject] onCallStateChange:eventData];
+            //[[[OpenPeer sharedOpenPeer] mainViewController] showIncominCallForSession:session];
+            //[[SoundManager sharedSoundsManager] playRingingSound];
+        }
+    }
     
-    //At this moment it is possible to do recording, so show the recording button
+    [[CDVOP sharedObject] connectVideoViews];
+    /*
+    //Set UIImageViews where will be shown camera preview and video
+    UIImageView *selfImageView = [[[CDVOP sharedObject] videoViews] objectAtIndex:0];
+    UIImageView *peerImageView = [[[CDVOP sharedObject] videoViews] objectAtIndex:1];
+    // TODO: fix this when we support group video chat
+
+    [[HOPMediaEngine sharedInstance] setCaptureRenderView:selfImageView];
+    [[HOPMediaEngine sharedInstance] setChannelRenderView:peerImageView];
+     */
+    
+    //Set default video orientation to be portrait
+    //[[HOPMediaEngine sharedInstance] setDefaultVideoOrientation:HOPMediaEngineVideoOrientationPortrait];
+    
+    //TODO: Is recording working?
     //[sessionViewController stopVideoRecording:YES hideRecordButton:![call hasVideo]];
 }
 

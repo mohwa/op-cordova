@@ -122,12 +122,11 @@
                 break;
                 
             case HOPCallStateOpen:                  // Received by both parties. Call is established
-                /* TODO
                 [[SessionManager sharedSessionManager] onCallOpened:call];
+                /*
                 [[SoundManager sharedSoundsManager] stopCallingSound];
                  [[SoundManager sharedSoundsManager] stopRingingSound];
-                 */
-                [[SessionManager sharedSessionManager] onCallOpened:call];
+                */
                 // TODO start Timer
                 break;
                 

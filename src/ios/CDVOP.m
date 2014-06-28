@@ -63,13 +63,13 @@ static CDVOP *shared;
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     CGRect selfRect = CGRectMake(120, screenRect.size.height - 200, 180, 160);
     UIImageView *selfImageView = [[UIImageView alloc] initWithFrame:selfRect];
-    selfImageView.layer.zPosition = 20;
+    selfImageView.layer.zPosition = 1000;
     selfImageView.layer.masksToBounds = YES;
     [self.webView.superview addSubview:selfImageView];
-    [videoViews addObject:selfImageView];
+    [videoViews addObject:selfImageView]; // index 0 will be self video
     
     UIImageView *peerImageView = [[UIImageView alloc] initWithFrame:screenRect];
-    peerImageView.layer.zPosition = 10;
+    peerImageView.layer.zPosition = 900;
     peerImageView.layer.masksToBounds = YES;
     [self.webView.superview addSubview:peerImageView];
     [videoViews addObject:peerImageView];
@@ -223,6 +223,34 @@ static CDVOP *shared;
 }
 
 /**
+ *  Toggle mute
+ *
+ *  passes mute state as bool back to JS land
+ */
+- (void) toggleMute:(CDVInvokedUrlCommand*)command
+{
+    CDVPluginResult* res = nil;
+    BOOL muteCall = ![[HOPMediaEngine sharedInstance] getMuteEnabled];
+    [[HOPMediaEngine sharedInstance] setMuteEnabled:muteCall];
+    res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:muteCall];
+    [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
+}
+
+/**
+ *  Toggle speaker
+ *
+ *  passes speaker state as bool back to JS land
+ */
+- (void) toggleSpeaker:(CDVInvokedUrlCommand*)command
+{
+    CDVPluginResult* res = nil;
+    BOOL speakersOn = ![[HOPMediaEngine sharedInstance] getLoudspeakerEnabled];
+    [[HOPMediaEngine sharedInstance] setLoudspeakerEnabled:speakersOn];
+    res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:speakersOn];
+    [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
+}
+
+/**
  * Echo back an event to the JS side (for testing)
  *
  * @param command.arguments[0] event
@@ -349,7 +377,7 @@ static CDVOP *shared;
 }
 
 /**
- *  Fire and event on JS side and pass along the data
+ *  Fire an event on JS side and pass along the JSON data
  *
  *  @param event NSString* name of event to fire on JS side
  *  @param data  NSString* JSON data to pass along with event
@@ -625,7 +653,7 @@ static CDVOP *shared;
 - (void) onFaceDetected
 {
     // TODO
-    NSLog(@"face detected");
+    // NSLog(@"face detected");
 }
 
 - (void) updateLoggingSettingsObjectFromJS

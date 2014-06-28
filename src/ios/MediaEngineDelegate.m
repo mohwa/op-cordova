@@ -42,10 +42,10 @@
 
 - (void) onMediaEngineFaceDetected
 {
+    //[[CDVOP sharedObject] onFaceDetected];
     dispatch_async(dispatch_get_main_queue(), ^
-   {
-       [[CDVOP sharedObject] onFaceDetected];
-   });
+    {
+    });
 }
 
 - (void) onMediaEngineVideoCaptureRecordStopped

@@ -71,6 +71,7 @@
 - (void) makeViewTransparent;
 - (void) initVideoViews;
 - (void) onFaceDetected;
+- (void) connectVideoViews;
 
 // helpers and other internal functions
 - (NSString*) getSetting:(NSString*)setting;
