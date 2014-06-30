@@ -46,7 +46,25 @@ static CDVOP *shared;
  *  Shutdown the SDK
  */
 - (void) shutdown:(CDVInvokedUrlCommand*)command {
+    NSLog(@"Received shutdown command, attempting to shutdown and unload the SDK");
+    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"SDK is shutting down");
     [[OpenPeer sharedOpenPeer] shutdown];
+    
+    // eveyone needs to know about shutdown, so fire an event
+    [self fireEventWithData:@"shutdown" data:@"{}"];
+}
+
+/**
+ *  shutdown cleanup
+ */
+- (void) onStackShutdown {
+    NSArray *viewsToRemove = [self.webView.superview subviews];
+    for (UIView *view in viewsToRemove) {
+        if (![view isEqual:self.webView]) {
+            [view removeFromSuperview];
+        }
+    }
+    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"onStackShutdown delegate fired");
 }
 
 // make the main webview transparent
@@ -423,10 +441,10 @@ static CDVOP *shared;
 {
     self.loginCallbackId = command.callbackId;
     [self updateLoggingSettingsObjectFromJS];
-    [self.commandDelegate runInBackground:^{
+//    [self.commandDelegate runInBackground:^{
         NSLog(@"Starting the login process");
         [[LoginManager sharedLoginManager] login];
-    }];
+//    }];
 }
 
 /**
@@ -533,7 +551,7 @@ static CDVOP *shared;
     {
         CGRect screenRect = [[UIScreen mainScreen] bounds];
         //testing, TODO: remove or extract out the padding
-        CGRect rect = CGRectMake(50, 50, screenRect.size.width - 100, screenRect.size.height - 100);
+        CGRect rect = CGRectMake(50, 250, screenRect.size.width - 100, screenRect.size.height - 300);
         
         OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Show WebLoginViewController <%p>",webLoginViewController);
         webLoginViewController.view.frame = rect;

@@ -31,12 +31,14 @@
 
 #import "StackDelegate.h"
 #import "OpenPeer.h"
+#import "CDVOP.h"
 @implementation StackDelegate
 
 - (void) onStackShutdown
 {
     dispatch_async(dispatch_get_main_queue(), ^
     {
+        [[CDVOP sharedObject] onStackShutdown];
         OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelBasic, @"SDK is shutdown");
     });
 }

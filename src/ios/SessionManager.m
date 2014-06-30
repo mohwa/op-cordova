@@ -43,8 +43,8 @@
 @implementation SessionManager
 
 /**
- Retrieves singleton object of the Login Manager.
- @return Singleton object of the Login Manager.
+ Retrieves singleton object of the Session Manager.
+ @return Singleton object of the Session Manager.
  */
 + (id) sharedSessionManager
 {
@@ -57,8 +57,8 @@
 }
 
 /**
- Initialize singleton object of the Login Manager.
- @return Singleton object of the Login Manager.
+ Initialize singleton object of the Session Manager.
+ @return Singleton object of the Session Manager.
  */
 - (id) initSingleton
 {
