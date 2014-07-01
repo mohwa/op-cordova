@@ -105,8 +105,8 @@
 
 - (void) clearIdentities
 {
-    if ([[HOPAccount sharedAccount] getState].state == HOPAccountStateReady) {
-        NSArray* associatedIdentities = [[HOPAccount sharedAccount] getAssociatedIdentities];
+    NSArray* associatedIdentities = [[HOPAccount sharedAccount] getAssociatedIdentities];
+    @try {
         for (HOPIdentity* identity in associatedIdentities)
         {
             [identity cancel];
@@ -116,12 +116,17 @@
         {
             [identity cancel];
         }
+    }
+    @catch (NSException *exception) {
+        OPLog(HOPLoggerSeverityWarning, HOPLoggerLevelTrace, @"there was an exception while canceling identities during logout");
+    }
+    @finally {
         [self.associatingIdentitiesDictionary removeAllObjects];
     }
 }
 
 /**
- Logout from the current account. Will also shutdown the SDK
+ Logout from the current account
  */
 - (void) logout:(NSString*) identityURI
 {
@@ -135,7 +140,6 @@
     [[SessionManager sharedSessionManager] clearAllSessions];
     [self clearIdentities];
     
-    // Call to the SDK in order to shutdown Open Peer engine.
     [[HOPAccount sharedAccount] shutdown];
     
     HOPHomeUser* homeUser = [[HOPModelManager sharedModelManager] getLastLoggedInHomeUser];
@@ -183,8 +187,7 @@
     {
         //OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelDebug, @"Identity login started for uri: %@",identityURI);
         NSLog(@"Identity login started for uri: %@", identityURI);
-        
-        [[CDVOP sharedObject] onStartLoginWithidentityURI];
+
         NSString* redirectAfterLoginCompleteURL = [[Settings sharedSettings] redirectAfterLoginCompleteURL];
         NSString* identityProviderDomain = [[Settings sharedSettings] identityProviderDomain];
 
@@ -338,8 +341,7 @@
                     [[HOPModelManager sharedModelManager] saveContext];
                 }
             }
-            
-            [[Settings sharedSettings] onLoginFinished];
+
             //TODO Start loading contacts.
             // TESTING
             for (HOPIdentity* identity in associatedIdentites)

@@ -45,9 +45,6 @@
 
 @protocol LoginEventsDelegate <NSObject>
 
-
-
-- (void) onStartLoginWithidentityURI;
 - (void) onOpeningLoginPage;
 - (void) onLoginWebViewVisible:(WebLoginViewController*) webLoginViewController;
 

@@ -121,6 +121,7 @@
         [[SessionManager sharedSessionManager] stopAnyActiveCall];
         [[LoginManager sharedLoginManager] clearIdentities];
         [[HOPAccount sharedAccount] shutdown];
+        [[HOPStack sharedStack] doLogoutCleanup];
         [[HOPStack sharedStack] shutdown];
     }
     @catch (NSException *exception) {

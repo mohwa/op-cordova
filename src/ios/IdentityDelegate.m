@@ -60,7 +60,6 @@
  @param identity HOPIdentity Login user identity.
  @returns WebLoginViewController web login view
  */
-
 - (WebLoginViewController*) getLoginWebViewForIdentity:(HOPIdentity*) identity create:(BOOL)create
 {
     WebLoginViewController* ret = nil;

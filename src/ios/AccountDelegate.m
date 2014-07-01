@@ -135,7 +135,8 @@
                 {
                     [[LoginManager sharedLoginManager] onUserLogOut];
                 }
-
+                [[CDVOP sharedObject] closeWebLoginView:self.webLoginViewController];
+                [[[OpenPeer sharedOpenPeer] identityDelegate] removeAllWebViewControllers];
             }
                 break;
                 

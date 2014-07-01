@@ -49,6 +49,7 @@
 }
 
 @property (nonatomic, retain) NSMutableArray* videoViews;
+@property (nonatomic, retain) WebLoginViewController* visibleWebloginViewController;
 
 + (id) sharedObject;
 

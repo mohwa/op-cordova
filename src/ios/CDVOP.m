@@ -50,6 +50,7 @@ static CDVOP *shared;
     OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"SDK is shutting down");
     [[OpenPeer sharedOpenPeer] shutdown];
     
+    
     // eveyone needs to know about shutdown, so fire an event
     [self fireEventWithData:@"shutdown" data:@"{}"];
 }
@@ -58,12 +59,19 @@ static CDVOP *shared;
  *  shutdown cleanup
  */
 - (void) onStackShutdown {
+    //[self.visibleWebloginViewController.view removeFromSuperview];
+    if (self.visibleWebloginViewController) {
+        self.visibleWebloginViewController.view.hidden = YES;
+    }
+    //[[[OpenPeer sharedOpenPeer] identityDelegate] removeAllWebViewControllers];
+    // TODO: see if any other cleanup needed before shutdown
+    /*
     NSArray *viewsToRemove = [self.webView.superview subviews];
     for (UIView *view in viewsToRemove) {
         if (![view isEqual:self.webView]) {
             [view removeFromSuperview];
         }
-    }
+    }*/
     OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"onStackShutdown delegate fired");
 }
 
@@ -441,10 +449,10 @@ static CDVOP *shared;
 {
     self.loginCallbackId = command.callbackId;
     [self updateLoggingSettingsObjectFromJS];
-//    [self.commandDelegate runInBackground:^{
+    [self.commandDelegate runInBackground:^{
         NSLog(@"Starting the login process");
         [[LoginManager sharedLoginManager] login];
-//    }];
+    }];
 }
 
 /**
@@ -490,10 +498,14 @@ static CDVOP *shared;
     
     // TODO: use this to decide if we want to logout of only one identity or all of them
     NSString *identityUri = command.arguments[0];
-    
     LoginManager *loginManager = [LoginManager sharedLoginManager];
     
     @try {
+        // XXX TODO: remove this hack when we can shutdown identities properly and close any open pending webviews
+        if (self.visibleWebloginViewController) {
+            self.visibleWebloginViewController.view.hidden = YES;
+        }
+
         [loginManager logout:identityUri];
         res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"success"];
     }
@@ -549,6 +561,7 @@ static CDVOP *shared;
 {
     if (webLoginViewController)
     {
+        self.visibleWebloginViewController = webLoginViewController;
         CGRect screenRect = [[UIScreen mainScreen] bounds];
         //testing, TODO: remove or extract out the padding
         CGRect rect = CGRectMake(50, 250, screenRect.size.width - 100, screenRect.size.height - 300);
@@ -604,10 +617,6 @@ static CDVOP *shared;
     
     if (!webLoginViewController.view.superview)
         [self showWebLoginView:webLoginViewController];
-}
-
-- (void) onStartLoginWithidentityURI {
-    //TODO update client
 }
 
 - (void) onOpeningLoginPage {
