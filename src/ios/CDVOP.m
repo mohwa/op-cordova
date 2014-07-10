@@ -344,16 +344,17 @@ static CDVOP *shared;
 
 /**
  * place a call to a contact
- * @param command.arguments[0] identityURI of the contact to call
- * @param command.arguments[1] conversation thread id/session id
+ * @param command.arguments[0] conversation thread id/session id
+ * @param command.arguments[1] includeVideo boolean
+ * @param command.arguments[2] identityURI of the contact to call
  */
 - (void) placeCall:(CDVInvokedUrlCommand *)command {
     CDVPluginResult* res = nil;
     
     //TODO: see if we need sessionId
     //NSString* sessionId = command.arguments[0];
-    
-    NSString* identityURI = command.arguments[1];
+    BOOL showVideo = [command.arguments[1] boolValue];
+    NSString* identityURI = command.arguments[2];
     
     HOPRolodexContact* contact = [[HOPModelManager sharedModelManager] getRolodexContactByIdentityURI:identityURI];
     Session* session = [[SessionManager sharedSessionManager] getSessionForContact:contact];
@@ -361,8 +362,7 @@ static CDVOP *shared;
         session = [[SessionManager sharedSessionManager] createSessionForContact:contact];
     }
 
-    //TODO get parameters from client
-    [[SessionManager sharedSessionManager] makeCallForSession:session includeVideo:YES isRedial:NO];
+    [[SessionManager sharedSessionManager] makeCallForSession:session includeVideo:showVideo isRedial:NO];
     
     res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"success"];
     
@@ -590,6 +590,11 @@ static CDVOP *shared;
     [self closeWebLoginView:webLoginViewController];
 }
 
+- (void) onStartLoginWithidentityURI
+{
+    [self fireEventWithData:@"loginStateChange" data:@"{state: 'login-start'}"];
+}
+
 - (void) onAccountLoginWebViewClose:(WebLoginViewController *)webLoginViewController {
     [self closeWebLoginView:webLoginViewController];
 }
@@ -598,8 +603,7 @@ static CDVOP *shared;
 {
     if (webLoginViewController)
     {
-        OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Close WebLoginViewController <%p>",webLoginViewController);
-        NSLog(@"Close WebLoginViewController <%p>",webLoginViewController);
+        [self fireEventWithData:@"loginStateChange" data:@"{state: 'login-webview-close'}"];
         
         [UIView animateWithDuration:1 animations:^
          {
@@ -613,18 +617,17 @@ static CDVOP *shared;
 }
 
 - (void) onLoginWebViewVisible:(WebLoginViewController*) webLoginViewController {
-    //TODO: tell client login webview is about to show
-    
+    [self fireEventWithData:@"loginStateChange" data:@"{state: 'login-webview-visible'}"];
     if (!webLoginViewController.view.superview)
         [self showWebLoginView:webLoginViewController];
 }
 
 - (void) onOpeningLoginPage {
-    //TODO
+    //TODO: is this needed?
 }
 
 - (void) onRelogin {
-    //TODO update client
+    [self fireEventWithData:@"loginStateChange" data:@"{state: 'login-relogin'}"];
 }
 
 // send an object to JS containing identity info
@@ -651,23 +654,21 @@ static CDVOP *shared;
 }
 
 - (void) onLoginFinished {
-    //TODO
-    NSLog(@"*********** Login finished ************");
+    [self fireEventWithData:@"loginStateChange" data:@"{state: 'login-finished'}"];
 }
 
 - (void) onIdentityLoginShutdown {
-    //TODO
-    NSLog(@"Login shutdown");
+    [self fireEventWithData:@"loginStateChange" data:@"{state: 'login-shutdown'}"];
 }
 
 - (void) onIdentityLoginError:(NSString *)error {
-    //TODO
-    NSLog(@"Account login error: %@",error);
+    NSString* eventData = [NSString stringWithFormat:@"{state: 'login-error', error: '%@'}", error];
+    [self fireEventWithData:@"loginStateChange" data:eventData];
 }
 
 - (void) onAccountLoginError:(NSString*) error {
-    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Account login error: %@",error);
-    //TODO: send error to client
+    NSString* eventData = [NSString stringWithFormat:@"{state: 'login-error', error: '%@'}", error];
+    [self fireEventWithData:@"loginStateChange" data:eventData];
 }
 
 - (void) updateSessionViewControllerId:(NSString*) oldSessionId newSesionId:(NSString*) newSesionId {

@@ -57,7 +57,6 @@
 - (void) authorizeApp:(CDVInvokedUrlCommand*)command;
 - (void) initialize:(CDVInvokedUrlCommand*)command;
 - (void) shutdown:(CDVInvokedUrlCommand*)command;
-- (void) onStackShutdown;
 - (void) showCatPictures:(CDVInvokedUrlCommand*)command;
 - (void) stopCatPictures:(CDVInvokedUrlCommand*)command;
 - (void) switchCamera:(CDVInvokedUrlCommand*)command;
@@ -67,6 +66,8 @@
 - (void) placeCall:(CDVInvokedUrlCommand *)command;
 - (void) hangupCall:(CDVInvokedUrlCommand *)command;
 - (void) answerCall:(CDVInvokedUrlCommand *)command;
+- (void) toggleSpeaker:(CDVInvokedUrlCommand*)command;
+- (void) toggleMute:(CDVInvokedUrlCommand*)command;
 
 - (void) onMessageReceived:(HOPMessageRecord*)msg forSession:(Session*)forSession;
 - (void) onCallStateChange:(NSString*)eventData;
@@ -74,6 +75,7 @@
 - (void) initVideoViews;
 - (void) onFaceDetected;
 - (void) connectVideoViews;
+- (void) onStackShutdown;
 
 // helpers and other internal functions
 - (NSString*) getSetting:(NSString*)setting;
