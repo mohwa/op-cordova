@@ -352,18 +352,21 @@ static CDVOP *shared;
     CDVPluginResult* res = nil;
     
     //TODO: see if we need sessionId
-    //NSString* sessionId = command.arguments[0];
+    NSString* sessionId = command.arguments[0];
     BOOL showVideo = [command.arguments[1] boolValue];
     NSString* identityURI = command.arguments[2];
     
     HOPRolodexContact* contact = [[HOPModelManager sharedModelManager] getRolodexContactByIdentityURI:identityURI];
+    [[SessionManager sharedSessionManager] placeCall:contact includeVideo:showVideo includeAudio:YES];
+    
+    /*
     Session* session = [[SessionManager sharedSessionManager] getSessionForContact:contact];
     if (session == nil) {
         session = [[SessionManager sharedSessionManager] createSessionForContact:contact];
     }
 
     [[SessionManager sharedSessionManager] makeCallForSession:session includeVideo:showVideo isRedial:NO];
-    
+    */
     res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"success"];
     
     [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
@@ -411,7 +414,14 @@ static CDVOP *shared;
 - (void) fireEventWithData:(NSString *)event data:(NSString *)data
 {
     NSString *jsCall = [NSString stringWithFormat:@"__CDVOP_MESSAGE_HANDLER('%@', %@);", event, data];
-    [self writeJavascript:jsCall];
+    @try {
+        //[self writeJavascript:jsCall];
+        [self performSelectorOnMainThread:@selector(writeJavascript:) withObject:jsCall waitUntilDone:NO];
+    }
+    @catch (NSException *exception) {
+        NSString *error = [NSString stringWithFormat:@"Error sending %@ event to JS. %@ ", event, exception.description];
+        OPLog(HOPLoggerSeverityError, HOPLoggerLevelTrace, error);
+    }
 }
 
 /**

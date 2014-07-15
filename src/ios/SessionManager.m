@@ -70,6 +70,14 @@
     return self;
 }
 
+- (void) placeCall:(HOPRolodexContact *)contact includeVideo:(BOOL)includeVideo includeAudio:(BOOL)includeAudio
+{
+    //Create a conversation thread
+    HOPConversationThread* conversationThread = [HOPConversationThread conversationThreadWithIdentities:[[HOPAccount sharedAccount] getAssociatedIdentities]];
+    HOPContact* coreContact = [contact getCoreContact];
+    [conversationThread addContacts:[NSArray arrayWithObject:coreContact]];
+    [HOPCall placeCall:conversationThread includeAudio:includeAudio includeVideo:includeVideo];
+}
 
 /**
  Creates a session for the selected contacts
@@ -341,7 +349,7 @@
         
         [[MessageManager sharedMessageManager]sendSystemMessageToCheckAvailability:inSession];
         //Currently we are not supporting group conferences, so only one participant is possible
-        HOPContact* contact = [[[inSession participantsArray] objectAtIndex:0] getCoreContact];
+        //HOPContact* contact = [[[inSession participantsArray] objectAtIndex:0] getCoreContact];
         
         //Place a audio or video call for chosen contact
         inSession.isRedial = isRedial;

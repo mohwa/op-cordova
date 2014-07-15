@@ -98,6 +98,7 @@
 - (BOOL) isCallInProgress;
 - (void) recreateExistingSessions;
 
+- (void) placeCall:(HOPRolodexContact*) contact includeVideo:(BOOL)includeVideo includeAudio:(BOOL)includeAudio;
 - (void) stopAnyActiveCall;
 - (void) clearAllSessions;
 
