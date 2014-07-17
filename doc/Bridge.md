@@ -28,7 +28,6 @@ Place an audio or video call to a contact
  * `arguments[1]` includeVideo, boolean
  * `arguments[2]` identityURI of the contact to call
 
-
 ## hangupCall
 Hang up the current call
 
@@ -36,7 +35,12 @@ Hang up the current call
 
 
 ## startLoginProcess
-Initiate the login process. When login state changes, `loginStateChange` event is fired on `OpenPeer`.
+Initiate the login process. When login state changes, `loginStateChange` event is fired on `OpenPeer`. The rectangle bounds for the login web view are defined using the first four arguments to this method:
+
+ * `arguments[0]` padding top
+ * `arguments[1]` padding right
+ * `arguments[2]` padding bottom
+ * `arguments[2]` padding left
 
 ## logout
 Currently logout of all identities
