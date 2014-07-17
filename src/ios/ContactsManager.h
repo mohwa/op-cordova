@@ -81,7 +81,7 @@
 - (BOOL) checkIsContactValid:(HOPContact*) contact;
 - (NSArray*) getBaseURIsForStableId:(NSString*) stableID;
 - (NSString*) createProfileBundleForCommunicationWithContact:(HOPRolodexContact*) targetContact;
-- (HOPRolodexContact*) getRolodexContactByProfileBundle:(NSString*) profileBundle coreContact:(HOPContact*) coreContact;
+//- (HOPRolodexContact*) getRolodexContactByProfileBundle:(NSString*) profileBundle coreContact:(HOPContact*) coreContact;
 - (NSArray*) getIdentityContactsForHomeUser;
 - (void) removeAllContacts;
 @end

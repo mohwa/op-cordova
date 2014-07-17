@@ -453,11 +453,20 @@ static CDVOP *shared;
 }
 
 /**
- * Starts user login for specific identity URI.
+ * Starts user login
+ * @param command.arguments[0] padding top, [1] padding right, [2] padding bottom, [3] padding left
  */
 - (void) startLoginProcess:(CDVInvokedUrlCommand*)command
 {
+    int paddingTop = [command.arguments[0] intValue];
+    int paddingRight = [command.arguments[1] intValue];
+    int paddingBottom = [command.arguments[2] intValue];
+    int paddingLeft = [command.arguments[3] intValue];
     self.loginCallbackId = command.callbackId;
+    Settings* settings = [Settings sharedSettings];
+    CGRect screenRect = [[UIScreen mainScreen] bounds];
+    
+    settings.loginRect = CGRectMake(paddingLeft, paddingTop, screenRect.size.width - (paddingLeft + paddingRight), screenRect.size.height - (paddingTop + paddingBottom));
     [self updateLoggingSettingsObjectFromJS];
     [self.commandDelegate runInBackground:^{
         NSLog(@"Starting the login process");
@@ -572,12 +581,8 @@ static CDVOP *shared;
     if (webLoginViewController)
     {
         self.visibleWebloginViewController = webLoginViewController;
-        CGRect screenRect = [[UIScreen mainScreen] bounds];
-        //testing, TODO: remove or extract out the padding
-        CGRect rect = CGRectMake(50, 250, screenRect.size.width - 100, screenRect.size.height - 300);
-        
         OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Show WebLoginViewController <%p>",webLoginViewController);
-        webLoginViewController.view.frame = rect;
+        webLoginViewController.view.frame = [[Settings sharedSettings] loginRect];
         webLoginViewController.view.hidden = NO;
         webLoginViewController.view.layer.zPosition = 500;
         webLoginViewController.view.backgroundColor = [UIColor clearColor];

@@ -296,16 +296,16 @@
             refreshContacts = [identityContacts count] > 0 ? YES : NO;
         }
     }
-    
-    /*
+
     dispatch_async(dispatch_get_main_queue(), ^
     {
         if (refreshContacts)
         {
-            [[CDVOP sharedObject] onContactsLoaded:[self getContactsList:self.avatarWidth onlyOPContacts:self.onlyOPContacts]];
+            [[CDVOP sharedObject] fireEventWithData:@"onIdentityLookupComplete" data:@"{}"];
+            //[[CDVOP sharedObject] onContactsLoaded:[self getContactsList:self.avatarWidth onlyOPContacts:self.onlyOPContacts]];
         }
      });
-    */
+
     [self.identityLookupsArray removeObject:identityLookup];
 }
 

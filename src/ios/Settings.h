@@ -60,6 +60,7 @@
 @property (strong, nonatomic) NSString* lockBoxServiceDomain;
 @property (strong, nonatomic) NSString* defaultOutgoingTelnetServer;
 @property (strong, nonatomic) NSString* redirectAfterLoginCompleteURL;
+@property CGRect loginRect;
 
 + (id) sharedSettings;
 - (id) init __attribute__((unavailable("HOPAccount is singleton class.")));
