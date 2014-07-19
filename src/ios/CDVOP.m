@@ -219,7 +219,6 @@ static CDVOP *shared;
     //Hook up UI images for self video preview and peer video
     [mediaEngine setCaptureRenderView:[videoViews objectAtIndex:0]];
     [mediaEngine setChannelRenderView:[videoViews objectAtIndex:1]];
-    [mediaEngine startVideoCapture];
 }
 
 /*
