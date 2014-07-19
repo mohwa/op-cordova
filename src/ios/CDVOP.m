@@ -87,17 +87,17 @@ static CDVOP *shared;
 - (void) initVideoViews {
     videoViews = [NSMutableArray array];
     CGRect screenRect = [[UIScreen mainScreen] bounds];
-    CGRect selfRect = CGRectMake(120, screenRect.size.height - 200, 180, 160);
+    CGRect selfRect = CGRectMake(120, screenRect.size.height - 200, 240, 160);
     UIImageView *selfImageView = [[UIImageView alloc] initWithFrame:selfRect];
-    selfImageView.layer.zPosition = 1000;
+    selfImageView.layer.zPosition = 200;
     selfImageView.layer.masksToBounds = YES;
     [self.webView.superview addSubview:selfImageView];
     [videoViews addObject:selfImageView]; // index 0 will be self video
     
     UIImageView *peerImageView = [[UIImageView alloc] initWithFrame:screenRect];
-    peerImageView.layer.zPosition = 900;
+    peerImageView.layer.zPosition = 50;
     peerImageView.layer.masksToBounds = YES;
-    [self.webView.superview addSubview:peerImageView];
+    [self.webView.superview addSubview:peerImageView ];
     [videoViews addObject:peerImageView];
 }
 
@@ -151,8 +151,42 @@ static CDVOP *shared;
 
     @try {
         UIImageView *videoView = [videoViews objectAtIndex:[arguments[0] floatValue]];
-        CGRect rect = CGRectMake([arguments[1] floatValue], [arguments[2] floatValue],
-                                 [arguments[3] floatValue], [arguments[4] floatValue]);
+        
+        /*** The following checks for '%' and applies x,y,width and height values accordingly ***/
+        CGRect screenRect = [[UIScreen mainScreen] bounds];
+        float x = 0;
+        float y = 0;
+        float w = 100;
+        float h = 100;
+        NSString *left = [arguments[1] stringByReplacingOccurrencesOfString:@"%" withString:@""];
+        NSString *top = [arguments[2] stringByReplacingOccurrencesOfString:@"%" withString:@""];
+        NSString *width = [arguments[3] stringByReplacingOccurrencesOfString:@"%" withString:@""];
+        NSString *height = [arguments[4] stringByReplacingOccurrencesOfString:@"%" withString:@""];
+        if (![arguments[1] isEqualToString:left]) {
+            // this is a % left (x)
+            x = ([left floatValue] / 100) * screenRect.size.width;
+        } else {
+            x = [left floatValue];
+        }
+        if (![arguments[2] isEqualToString:top]) {
+            // this is a % height
+            y = ([top floatValue] / 100) * screenRect.size.height;
+        } else {
+            y = [top floatValue];
+        }
+        if (![arguments[3] isEqualToString:width]) {
+            // this is a % width
+            w = ([width floatValue] / 100) * screenRect.size.width;
+        } else {
+            w = [width floatValue];
+        }
+        if (![arguments[4] isEqualToString:height]) {
+            // this is a % height
+            h = ([height floatValue] / 100) * screenRect.size.height;
+        } else {
+            h = [height floatValue];
+        }
+        CGRect rect = CGRectMake(x, y, w, h);
         videoView.frame = rect;
         
         videoView.layer.zPosition = [arguments[5] floatValue];
@@ -173,6 +207,26 @@ static CDVOP *shared;
         res = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error];
     }
     
+    [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
+}
+
+/**
+ * Toggle visibility of self or any of peer videos
+ * index 0 is self, 1 or higher are for peer videos
+ */
+- (void) toggleVideoVisibility:(CDVInvokedUrlCommand *)command
+{
+    CDVPluginResult* res = nil;
+    float index = [command.arguments[0] floatValue];
+    @try {
+        UIImageView *videoView = [videoViews objectAtIndex: index];
+        videoView.layer.hidden = !videoView.layer.hidden;
+        res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"success"];
+    }
+    @catch (NSException *exception) {
+        NSString *error = [NSString stringWithFormat:@"Error toggling video: %@", exception];
+        res = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error];
+    }
     [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
 }
 
@@ -212,6 +266,7 @@ static CDVOP *shared;
  */
 - (void) connectVideoViews
 {
+    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"connecting video views");
     HOPMediaEngine *mediaEngine = [HOPMediaEngine sharedInstance];
     //Set default video orientation to be portrait
     [mediaEngine setDefaultVideoOrientation:HOPMediaEngineVideoOrientationPortrait];

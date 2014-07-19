@@ -68,6 +68,7 @@
 - (void) answerCall:(CDVInvokedUrlCommand *)command;
 - (void) toggleSpeaker:(CDVInvokedUrlCommand*)command;
 - (void) toggleMute:(CDVInvokedUrlCommand*)command;
+- (void) toggleVideoVisibility:(CDVInvokedUrlCommand*)command;
 
 - (void) onMessageReceived:(HOPMessageRecord*)msg forSession:(Session*)forSession;
 - (void) onCallStateChange:(NSString*)eventData;
