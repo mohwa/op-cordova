@@ -87,7 +87,7 @@ static CDVOP *shared;
 - (void) initVideoViews {
     videoViews = [NSMutableArray array];
     CGRect screenRect = [[UIScreen mainScreen] bounds];
-    CGRect selfRect = CGRectMake(120, screenRect.size.height - 200, 240, 160);
+    CGRect selfRect = CGRectMake(120, screenRect.size.height - 200, 160, 240);
     UIImageView *selfImageView = [[UIImageView alloc] initWithFrame:selfRect];
     selfImageView.layer.zPosition = 200;
     selfImageView.layer.masksToBounds = YES;

@@ -489,7 +489,6 @@
         {
             NSString* eventData = [NSString stringWithFormat:@"{'callState':'call-ringing','peerURI':'%@', 'sessionId':'%@'}", peerURI, sessionId];
             [[CDVOP sharedObject] onCallStateChange:eventData];
-            //[[SoundManager sharedSoundsManager] playRingingSound];
         }
     }
 }
@@ -511,7 +510,6 @@
         {
             NSString* eventData = [NSString stringWithFormat:@"{'callState':'call-open','peerURI':'%@', 'sessionId':'%@'}", peerURI, sessionId];
             [[CDVOP sharedObject] onCallStateChange:eventData];
-            //[[[OpenPeer sharedOpenPeer] mainViewController] showIncominCallForSession:session];
             //[[SoundManager sharedSoundsManager] playRingingSound];
         }
     }
@@ -541,11 +539,21 @@
 - (void) onCallClosing:(HOPCall*) call
 {
     NSString* sessionId = [[call getConversationThread] getThreadId];
-    Session* session = [[[SessionManager sharedSessionManager] sessionsDictionary] objectForKey:sessionId];
-    [[HOPMediaEngine sharedInstance] stopVideoCapture];
-    [[session currentCall] hangup:HOPCallClosedReasonNone];
-    //Set flag that there is no active call
-    [self setActiveCallSession:session callActive:NO];
+    if ([sessionId length] > 0)
+    {
+        Session* session = [[[SessionManager sharedSessionManager] sessionsDictionary] objectForKey:sessionId];
+        //[[HOPMediaEngine sharedInstance] stopVideoCapture];
+        [[session currentCall] hangup:HOPCallClosedReasonNone];
+        //Set flag that there is no active call
+        [self setActiveCallSession:session callActive:NO];
+        
+        NSString* peerURI = call.getCaller.getPeerURI;
+        if (session)
+        {
+            NSString* eventData = [NSString stringWithFormat:@"{'callState':'call-closing','peerURI':'%@', 'sessionId':'%@'}", peerURI, sessionId];
+            [[CDVOP sharedObject] onCallStateChange:eventData];
+        }
+    }
 }
 
 /**
