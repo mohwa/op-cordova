@@ -51,7 +51,7 @@ typedef enum
 + (void) startStdLogger:(BOOL) start;
 + (void) startTelnetLogger:(BOOL) start;
 + (void) startOutgoingTelnetLogger:(BOOL) start;
-+ (void) startAllSelectedLoggers;
++ (void) setupAllSelectedLoggers;
 + (void) start:(BOOL) start logger:(LoggerTypes) type;
 
 @end

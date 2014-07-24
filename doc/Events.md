@@ -29,3 +29,32 @@ The `callStateChange` event is captured by `CallManager` which then fired one of
 ## Other OpenPeer Events
 
  * `shutdown`
+
+## Passing Events from Native to JavaScript
+All events are sent from native to the open peer JavaScript library using a direct call to `__CDVOP_MESSAGE_HANDLER('event-name', '{data}');`. In iOS we do the following:
+```
+ *  Fire an event on JS side and pass along the JSON data
+ *
+ *  @param event NSString* name of event to fire on JS side
+ *  @param data  NSString* JSON data to pass along with event
+ */
+- (void) fireEventWithData:(NSString *)event data:(NSString *)data
+{
+    - (void) fireEventWithData:(NSString *)event data:(NSString *)data
+{
+    NSString *jsCall = [NSString stringWithFormat:@"__CDVOP_MESSAGE_HANDLER('%@', %@);", event, data];
+    @try {
+        [self performSelectorOnMainThread:@selector(writeJavascript:) withObject:jsCall waitUntilDone:NO];
+    }
+    @catch (NSException *exception) {
+        // ...
+    }
+}
+```
+Event `data` can have any of the following attributes:
+```
+{
+  state: 'some-state',
+  error: 'error'
+}
+```

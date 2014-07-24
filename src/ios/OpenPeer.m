@@ -60,7 +60,7 @@
 
 - (void) preSetup {
     if ([[[CDVOP sharedObject] getSetting:@"isLoggerEnabled"] boolValue]) {
-        [OpenPeer startLogging];
+        [Logger setupAllSelectedLoggers];
     }
 
     //Create all delegates required for communication with core
@@ -275,10 +275,6 @@
     NSString* userAgent = [NSString stringWithFormat:@"%@/%@ (%@ %@;%@) HOPID/1.0 (%@)",appName,appVersion,appOs,appVersionOs,model,developerId];
     
     return userAgent;
-}
-
-+ (void) startLogging {
-    [Logger startAllSelectedLoggers];
 }
 
 @end

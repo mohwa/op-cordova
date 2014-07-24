@@ -36,30 +36,48 @@
 + (void) setLogLevels
 {
     //For each system you can choose log level from HOPClientLogLevelNone (turned off) to HOPClientLogLevelInsane (most detail).
-    [HOPLogger setLogLevelbyName:moduleApplication level:HOPLoggerLevelTrace];
-    [HOPLogger setLogLevelbyName:moduleServices level:HOPLoggerLevelTrace];
-    [HOPLogger setLogLevelbyName:moduleServicesWire level:HOPLoggerLevelDebug];
-    [HOPLogger setLogLevelbyName:moduleServicesIce level:HOPLoggerLevelTrace];
-    [HOPLogger setLogLevelbyName:moduleServicesTurn level:HOPLoggerLevelTrace];
-    [HOPLogger setLogLevelbyName:moduleServicesRudp level:HOPLoggerLevelDebug];
-    [HOPLogger setLogLevelbyName:moduleServicesHttp level:HOPLoggerLevelDebug];
-    [HOPLogger setLogLevelbyName:moduleServicesMls level:HOPLoggerLevelTrace];
-    [HOPLogger setLogLevelbyName:moduleServicesTcp level:HOPLoggerLevelTrace];
-    [HOPLogger setLogLevelbyName:moduleServicesTransport level:HOPLoggerLevelDebug];
-    [HOPLogger setLogLevelbyName:moduleCore level:HOPLoggerLevelTrace];
-    [HOPLogger setLogLevelbyName:moduleStackMessage level:HOPLoggerLevelTrace];
-    [HOPLogger setLogLevelbyName:moduleStack level:HOPLoggerLevelTrace];
-    [HOPLogger setLogLevelbyName:moduleWebRTC level:HOPLoggerLevelDetail];
-    [HOPLogger setLogLevelbyName:moduleZsLib level:HOPLoggerLevelTrace];
-    [HOPLogger setLogLevelbyName:moduleSDK level:HOPLoggerLevelTrace];
-    [HOPLogger setLogLevelbyName:moduleZsLibSocket level:HOPLoggerLevelDebug];
-    [HOPLogger setLogLevelbyName:moduleSDK level:HOPLoggerLevelTrace];
-    [HOPLogger setLogLevelbyName:moduleMedia level:HOPLoggerLevelDetail];
-    [HOPLogger setLogLevelbyName:moduleJavaScript level:HOPLoggerLevelTrace];
+    CDVOP* cop = [CDVOP sharedObject];
+    [HOPLogger setLogLevelbyName:moduleApplication          level:[self getLogLevelFromString:[cop getSetting:@"logLevelForApplication"]]];
+    [HOPLogger setLogLevelbyName:moduleServices             level:[self getLogLevelFromString:[cop getSetting:@"logLevelForServices"]]];
+    [HOPLogger setLogLevelbyName:moduleServicesWire         level:[self getLogLevelFromString:[cop getSetting:@"logLevelForServicesWire"]]];
+    [HOPLogger setLogLevelbyName:moduleServicesIce          level:[self getLogLevelFromString:[cop getSetting:@"logLevelForServicesIce"]]];
+    [HOPLogger setLogLevelbyName:moduleServicesTurn         level:[self getLogLevelFromString:[cop getSetting:@"logLevelForServicesTurn"]]];
+    [HOPLogger setLogLevelbyName:moduleServicesRudp         level:[self getLogLevelFromString:[cop getSetting:@"logLevelForServicesRudp"]]];
+    [HOPLogger setLogLevelbyName:moduleServicesHttp         level:[self getLogLevelFromString:[cop getSetting:@"logLevelForServicesHttp"]]];
+    [HOPLogger setLogLevelbyName:moduleServicesMls          level:[self getLogLevelFromString:[cop getSetting:@"logLevelForServicesMls"]]];
+    [HOPLogger setLogLevelbyName:moduleServicesTcp          level:[self getLogLevelFromString:[cop getSetting:@"logLevelForServicesTcp"]]];
+    [HOPLogger setLogLevelbyName:moduleServicesTransport    level:[self getLogLevelFromString:[cop getSetting:@"logLevelForServicesTransport"]]];
+    [HOPLogger setLogLevelbyName:moduleCore                 level:[self getLogLevelFromString:[cop getSetting:@"logLevelForCore"]]];
+    [HOPLogger setLogLevelbyName:moduleStackMessage         level:[self getLogLevelFromString:[cop getSetting:@"logLevelForStackMessage"]]];
+    [HOPLogger setLogLevelbyName:moduleStack                level:[self getLogLevelFromString:[cop getSetting:@"logLevelForStack"]]];
+    [HOPLogger setLogLevelbyName:moduleWebRTC               level:[self getLogLevelFromString:[cop getSetting:@"logLevelForWebRTC"]]];
+    [HOPLogger setLogLevelbyName:moduleZsLib                level:[self getLogLevelFromString:[cop getSetting:@"logLevelForZsLib"]]];
+    [HOPLogger setLogLevelbyName:moduleSDK                  level:[self getLogLevelFromString:[cop getSetting:@"logLevelForSDK"]]];
+    [HOPLogger setLogLevelbyName:moduleZsLibSocket          level:[self getLogLevelFromString:[cop getSetting:@"logLevelForZsLibSocket"]]];
+    [HOPLogger setLogLevelbyName:moduleSDK                  level:[self getLogLevelFromString:[cop getSetting:@"logLevelForSDK"]]];
+    [HOPLogger setLogLevelbyName:moduleMedia                level:[self getLogLevelFromString:[cop getSetting:@"logLevelForMedia"]]];
+    [HOPLogger setLogLevelbyName:moduleJavaScript           level:[self getLogLevelFromString:[cop getSetting:@"logLevelForJavaScript"]]];
     
-    applicationLogerLevel = HOPLoggerLevelTrace;
+    applicationLogerLevel = [self getLogLevelFromString:[cop getSetting:@"logLevelForApplication"]];
 }
 
++ (HOPLoggerLevel) getLogLevelFromString:(NSString*) level
+{
+    if ([level isEqualToString:@"basic"]) {
+        return HOPLoggerLevelBasic;
+    } else if ([level isEqualToString:@"detail"]) {
+        return HOPLoggerLevelDetail;
+    } else if ([level isEqualToString:@"debug"]) {
+        return HOPLoggerLevelDebug;
+    } else if ([level isEqualToString:@"trace"]) {
+        return HOPLoggerLevelTrace;
+    } else if ([level isEqualToString:@"insane"]) {
+        return HOPLoggerLevelInsane;
+    } else {
+        // by default set level to none
+        return HOPLoggerLevelNone;
+    }
+}
 
 + (void) startStdLogger:(BOOL) start
 {
@@ -115,7 +133,7 @@
     }
 }
 
-+ (void) startAllSelectedLoggers
++ (void) setupAllSelectedLoggers
 {
     [self setLogLevels];
     [self startStdLogger:[[[CDVOP sharedObject] getSetting:@"isStandardLoggerEnabled"] boolValue]];

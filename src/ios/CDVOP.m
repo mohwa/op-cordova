@@ -211,6 +211,15 @@ static CDVOP *shared;
 }
 
 /**
+ *  Update selected loggers and levels with settings from JS
+ */
+- (void) refreshLogger:(CDVInvokedUrlCommand *)command
+{
+    [Logger setupAllSelectedLoggers];
+    [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"success"] callbackId:command.callbackId];
+}
+
+/**
  * Toggle visibility of self or any of peer videos
  * index 0 is self, 1 or higher are for peer videos
  */
@@ -278,6 +287,7 @@ static CDVOP *shared;
 
 /*
  * argument[0] front or back. will toggle otherwise
+ * returns "front" or "back" depending on what camera type gets selected
  */
 - (void) switchCamera:(CDVInvokedUrlCommand*)command
 {
@@ -293,12 +303,18 @@ static CDVOP *shared;
         } else {
             // toggle to the other camera
             HOPMediaEngineCameraType currentCameraType = [mediaEngine getCameraType];
-            currentCameraType = currentCameraType == HOPMediaEngineCameraTypeFront ? HOPMediaEngineCameraTypeBack : HOPMediaEngineCameraTypeFront;
+            if (currentCameraType == HOPMediaEngineCameraTypeFront) {
+                currentCameraType = HOPMediaEngineCameraTypeBack;
+                whichCam = @"back";
+            } else {
+                currentCameraType = HOPMediaEngineCameraTypeFront;
+                whichCam = @"front";
+            }
             [mediaEngine setCameraType:currentCameraType];
         }
         [mediaEngine startVideoCapture];
     }
-    res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"success"];
+    res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:whichCam];
     [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
 }
 
@@ -406,7 +422,7 @@ static CDVOP *shared;
     CDVPluginResult* res = nil;
     
     //TODO: see if we need sessionId
-    NSString* sessionId = command.arguments[0];
+    //NSString* sessionId = command.arguments[0];
     BOOL showVideo = [command.arguments[1] boolValue];
     NSString* identityURI = command.arguments[2];
     

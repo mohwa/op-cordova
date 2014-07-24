@@ -410,6 +410,11 @@
     // the call state changes may already cover this case for us
     if (session)
     {
+        NSString* peerURI = call.getCaller.getPeerURI;
+        HOPRolodexContact* rolodexContact = [[HOPModelManager sharedModelManager] getRolodexContactsByPeerURI:peerURI][0];
+        NSString* eventData = [NSString stringWithFormat:@"{'callState':'call-preparing','peerURI':'%@', 'sessionId':'%@', 'identityURI':'%@'}", peerURI, sessionId, rolodexContact.identityURI];
+        [[CDVOP sharedObject] onCallStateChange:eventData];
+        
         // SessionViewController_iPhone* sessionViewController = [[[[OpenPeer sharedOpenPeer] mainViewController] sessionViewControllersDictionary] objectForKey:[session.conversationThread getThreadId]];
         
         //If it is an incomming call, get show session view controller
@@ -432,9 +437,11 @@
     {
         OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelBasic, @"Incomming call for unknown session id %@", sessionId);
     }
+    
     //Stop recording if it is placed and remove recording button
     //[sessionViewController stopVideoRecording:YES hideRecordButton:YES];
 }
+
 
 /**
  Handle incoming call.
@@ -443,13 +450,29 @@
  */
 - (void) onCallIncoming:(HOPCall*) call
 {
-    OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Handle incoming call <%p>", call);
     NSString* sessionId = [[call getConversationThread] getThreadId];
     Session* session = [[[SessionManager sharedSessionManager] sessionsDictionary] objectForKey:sessionId];
+
+    NSString* peerURI = call.getCaller.getPeerURI;
+    
+    // TODO: check that we have at least on rolodex contact, and handle the case with more?
+    HOPRolodexContact* rolodexContact = [[HOPModelManager sharedModelManager] getRolodexContactsByPeerURI:peerURI][0];
     
     OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelTrace, @"Incoming a call for the session <%p>", session);
     
-    //Set current call
+    if (session)
+    {
+        NSString* eventData = [NSString stringWithFormat:@"{'callState':'call-incoming','peerURI':'%@', 'sessionId':'%@', 'identityURI':'%@'}", peerURI, sessionId, rolodexContact.identityURI];
+        [[CDVOP sharedObject] onCallStateChange:eventData];
+        
+        //Set current call and start ringing
+        session.currentCall = call;
+        [call ring];
+    }
+    
+    /* TODO: handle the current call case when a call is already in progress
+             handle the redial case
+     
     //BOOL callFlagIsSet = [self setActiveCallSession:session callActive:YES];
     
     //If callFlagIsSet is YES, show incoming call view, and move call to ringing state
@@ -476,6 +499,7 @@
         [call hangup:HOPCallClosedReasonBusy];
          // TODO: do we need to tell client that we hunup?
     }
+     */
 }
 
 - (void) onCallRinging:(HOPCall*) call
@@ -485,9 +509,13 @@
     {
         Session* session = [[[SessionManager sharedSessionManager] sessionsDictionary] objectForKey:sessionId];
         NSString* peerURI = call.getCaller.getPeerURI;
+        
+        // TODO: check that we have at least on rolodex contact, and handle the case with more?
+        HOPRolodexContact* rolodexContact = [[HOPModelManager sharedModelManager] getRolodexContactsByPeerURI:peerURI][0];
+        
         if (session)
         {
-            NSString* eventData = [NSString stringWithFormat:@"{'callState':'call-ringing','peerURI':'%@', 'sessionId':'%@'}", peerURI, sessionId];
+            NSString* eventData = [NSString stringWithFormat:@"{'callState':'call-ringing','peerURI':'%@', 'sessionId':'%@', 'identityURI':'%@'}", peerURI, sessionId, rolodexContact.identityURI];
             [[CDVOP sharedObject] onCallStateChange:eventData];
         }
     }
@@ -506,29 +534,17 @@
     {
         Session* session = [[[SessionManager sharedSessionManager] sessionsDictionary] objectForKey:sessionId];
         NSString* peerURI = call.getCaller.getPeerURI;
+        HOPRolodexContact* rolodexContact = [[HOPModelManager sharedModelManager] getRolodexContactsByPeerURI:peerURI][0];
         if (session)
         {
-            NSString* eventData = [NSString stringWithFormat:@"{'callState':'call-open','peerURI':'%@', 'sessionId':'%@'}", peerURI, sessionId];
+            NSString* eventData = [NSString stringWithFormat:@"{'callState':'call-open','peerURI':'%@', 'sessionId':'%@', 'identityURI':'%@'}", peerURI, sessionId, rolodexContact.identityURI];
             [[CDVOP sharedObject] onCallStateChange:eventData];
-            //[[SoundManager sharedSoundsManager] playRingingSound];
         }
     }
     
     [[CDVOP sharedObject] connectVideoViews];
-    /*
-    //Set UIImageViews where will be shown camera preview and video
-    UIImageView *selfImageView = [[[CDVOP sharedObject] videoViews] objectAtIndex:0];
-    UIImageView *peerImageView = [[[CDVOP sharedObject] videoViews] objectAtIndex:1];
-    // TODO: fix this when we support group video chat
-
-    [[HOPMediaEngine sharedInstance] setCaptureRenderView:selfImageView];
-    [[HOPMediaEngine sharedInstance] setChannelRenderView:peerImageView];
-     */
     
-    //Set default video orientation to be portrait
-    //[[HOPMediaEngine sharedInstance] setDefaultVideoOrientation:HOPMediaEngineVideoOrientationPortrait];
-    
-    //TODO: Is recording working?
+    // TODO: Is recording working?
     //[sessionViewController stopVideoRecording:YES hideRecordButton:![call hasVideo]];
 }
 
@@ -542,15 +558,16 @@
     if ([sessionId length] > 0)
     {
         Session* session = [[[SessionManager sharedSessionManager] sessionsDictionary] objectForKey:sessionId];
-        //[[HOPMediaEngine sharedInstance] stopVideoCapture];
+        [[HOPMediaEngine sharedInstance] stopVideoCapture];
         [[session currentCall] hangup:HOPCallClosedReasonNone];
         //Set flag that there is no active call
         [self setActiveCallSession:session callActive:NO];
         
         NSString* peerURI = call.getCaller.getPeerURI;
+        HOPRolodexContact* rolodexContact = [[HOPModelManager sharedModelManager] getRolodexContactsByPeerURI:peerURI][0];
         if (session)
         {
-            NSString* eventData = [NSString stringWithFormat:@"{'callState':'call-closing','peerURI':'%@', 'sessionId':'%@'}", peerURI, sessionId];
+            NSString* eventData = [NSString stringWithFormat:@"{'callState':'call-closing','peerURI':'%@', 'sessionId':'%@', 'identityURI':'%@'}", peerURI, sessionId, rolodexContact.identityURI];
             [[CDVOP sharedObject] onCallStateChange:eventData];
         }
     }
@@ -610,6 +627,15 @@
     Session* session = [[[SessionManager sharedSessionManager] sessionsDictionary] objectForKey:sessionId];
     
     [[HOPMediaEngine sharedInstance] stopVideoCapture];
+    
+    NSString* peerURI = call.getCaller.getPeerURI;
+    HOPRolodexContact* rolodexContact = [[HOPModelManager sharedModelManager] getRolodexContactsByPeerURI:peerURI][0];
+    if (session)
+    {
+        NSString* eventData = [NSString stringWithFormat:@"{'callState':'call-closed','peerURI':'%@', 'sessionId':'%@', 'identityURI':'%@'}", peerURI, sessionId, rolodexContact.identityURI];
+        [[CDVOP sharedObject] onCallStateChange:eventData];
+    }
+
     //Get view controller for call session
     //SessionViewController_iPhone* sessionViewController = [[[[OpenPeer sharedOpenPeer] mainViewController] sessionViewControllersDictionary] objectForKey:[[session conversationThread] getThreadId]];
     /*

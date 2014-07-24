@@ -32,7 +32,9 @@ Place an audio or video call to a contact
 Hang up the current call
 
 ## answerCall
+Answer the call for the given session
 
+ * `arguments[0]` sessionId
 
 ## startLoginProcess
 Initiate the login process. When login state changes, `loginStateChange` event is fired on `OpenPeer`. The rectangle bounds for the login web view are defined using the first four arguments to this method:
