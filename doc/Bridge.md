@@ -6,20 +6,35 @@
 Lists of calls that can be made from JavaScript directly to the native interface, and their consequences.
 
 ## authorizeApp
+Authorize the app to securely connect to open peer network
 
+* `arguments[0]` application id
+* `arguments[1]` shared secret
 
 ## initialize
-
+Setup and initialize the open peer native SDK
 
 ## shutdown
 Cleanup and shutdown the SDK
 
 ## switchCamera
-If both front and rear camera are present, will toggle the camera that is used
+If both front and rear camera are present, this will toggle the camera that is used. You can specify what camera you want to switch to
+
+* `arguments[0]` Specify `front` or `back`. Otherwise will toggle camera
 
 ## sendMessageToPeer
+Send a message to a peer using their identityURI
+
+ * arguments[0] the message to send
+ * arguments[1] identityURI of peer
+
+Currently only one peer is expected
 
 ## sendMessageToSession
+Send message to peers is a session
+
+ * arguments[0] the message to send
+ * arguments[1] sessionId
 
 ## placeCall
 Place an audio or video call to a contact

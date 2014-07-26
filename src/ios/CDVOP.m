@@ -1,4 +1,4 @@
-#import "CDVOP.h"
+    #import "CDVOP.h"
 
 @interface CDVOP ()
 @property NSString* loginCallbackId;
@@ -364,7 +364,7 @@ static CDVOP *shared;
 
 /**
  * @param command.arguments[0] the message to send
- * @param command.arguments[1] peerURI
+ * @param command.arguments[1] identityURI of peer
  * Currently only one peer is expected, so first item will be used only
  */
 - (void) sendMessageToPeer:(CDVInvokedUrlCommand *)command
@@ -409,7 +409,15 @@ static CDVOP *shared;
  *  @param forSession Session that this message belongs to
  */
 - (void) onMessageReceived:(HOPMessageRecord*)msg forSession:(Session*)forSession {
-    // TODO: send message to client api to fire event
+    //Currently group chat is not supported, so we can have only one message recipients
+    HOPRolodexContact* contact = [[forSession participantsArray] objectAtIndex:0];
+    NSString *stringDate = [NSDateFormatter localizedStringFromDate:[NSDate date]
+                                                            dateStyle:NSDateFormatterShortStyle
+                                                          timeStyle:NSDateFormatterFullStyle];
+    
+    NSString* msgData = [NSString stringWithFormat:@"{text:'%@', senderIdentityURI:'%@', type:'%@', date:'%@'}",
+                         msg.text, contact.identityURI, msg.type, stringDate];
+    [self fireEventWithData:@"onMessageReceived" data:msgData];
 }
 
 /**

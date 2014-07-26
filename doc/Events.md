@@ -26,6 +26,10 @@ The `callStateChange` event is captured by `CallManager` which then fired one of
  * `call-closing`
  * `call-closed`
 
+## Message Events
+
+  * `message-received`
+
 ## Other OpenPeer Events
 
  * `shutdown`
@@ -51,10 +55,4 @@ All events are sent from native to the open peer JavaScript library using a dire
     }
 }
 ```
-Event `data` can have any of the following attributes:
-```
-{
-  state: 'some-state',
-  error: 'error'
-}
-```
+Event `data` are a JavaScript object and can have different attributes depending on event
