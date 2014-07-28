@@ -221,6 +221,7 @@
             if (![identity isDelegateAttached])
                 [[LoginManager sharedLoginManager] attachDelegateForIdentity:identity forceAttach:NO];
             
+            /*
             if ([[identity getBaseIdentityURI] isEqualToString:[[Settings sharedSettings] identityFederateBaseURI]])
             {
                 dispatch_queue_t taskQ = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
@@ -229,12 +230,12 @@
                 });
             }
             else if ([[identity getBaseIdentityURI] isEqualToString:identityFacebookBaseURI])
-            {
+            {*/
                 HOPHomeUser* homeUser = [[HOPModelManager sharedModelManager] getLastLoggedInHomeUser];
                 HOPAssociatedIdentity* associatedIdentity = [[HOPModelManager sharedModelManager] getAssociatedIdentityBaseIdentityURI:[identity getBaseIdentityURI] homeUserStableId:homeUser.stableId];
                 [identity startRolodexDownload:associatedIdentity.downloadedVersion];
                 OPLog(HOPLoggerSeverityInformational, HOPLoggerLevelDebug, @"Start rolodex contacts download - identity URI: - Version: %@",[identity getIdentityURI], associatedIdentity.downloadedVersion);
-            }
+            //}
         }
     }
     
