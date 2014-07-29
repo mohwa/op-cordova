@@ -12,8 +12,8 @@
   </engines>
 
   <!-- during development we will get op.js from server -->
-  <js-module src="www/eventemitter2.js" name="EventEmitter2">
-      <clobbers target="EventEmitter2" />
+  <js-module src="www/eventemitter2.js" name="EE2">
+      <clobbers target="EE2" />
   </js-module>
   <js-module src="www/qPromise.js" name="Q">
       <clobbers target="Q" />
@@ -40,8 +40,8 @@
       <framework src="libz.dylib" />
       <framework src="libstdc++.dylib" />
       <framework src="libxml2.dylib" />
-      <framework src="src/ios/OpenpeerSDK.framework/Libraries/boost.a" custom="true" arch="device" />
-      <framework src="src/ios/OpenpeerSDK.framework" custom="true" />
+      <framework src="src/ios/OpenpeerSDK.C.1.0.18.framework/Libraries/boost.a" custom="true" arch="device" />
+      <framework src="src/ios/OpenpeerSDK.C.1.0.18.framework" custom="true" />
 
       <config-file target="config.xml" parent="/*">
           <feature name="CDVOP">
@@ -97,8 +97,8 @@
       <header-file src="src/ios/WebLoginViewController.h" />
       <source-file src="src/ios/WebLoginViewController.m" />
 
-      <source-file src="src/ios/OpenpeerSDK.framework/Libraries/libcurl.a" />
-      <resource-file src="src/ios/OpenpeerSDK.framework/Resources/OpenpeerDataModel.bundle" />
+      <source-file src="src/ios/OpenpeerSDK.C.1.0.18.framework/Libraries/libcurl.a" />
+      <resource-file src="src/ios/OpenpeerSDK.C.1.0.18.framework/Resources/OpenpeerDataModel.bundle" />
       <resource-file src="src/ios/WebLoginViewController.xib" />
       <resource-file src="src/ios/DefaultSettings.plist" />
 

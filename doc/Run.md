@@ -25,12 +25,13 @@ you make a modification
 2) With the device connected and ready for development, prepare your ios project:
 `cordova prepare ios`
 This will prepare the native code by creating an xcode project, installing
-the plugin and copying your HTML5 application into it
+the plugin and copying your HTML5 application into it. This step is **optional**,
+and if you have not made any changes to your app, you can skip the `prepare` command
 
-3) Now run your app on the device
+2) Run your app on the device
 `cordova run ios`
 
-Thats it! this will compile your app, then install it on the device and
+3) Thats it! this will compile your app, then install it on the device and
 opens your app automatically when ready
 
 > If you run into any problems with this workflow, please feel free to

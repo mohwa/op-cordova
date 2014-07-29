@@ -5,6 +5,7 @@
  */
 
   const CORDOVA = cordova;
+  var EventEmitter2 = EventEmitter2 || EE2.EventEmitter2;
   var openPeerInstance = null;
   function addInstance(openpeer) {
     if (openPeerInstance) {
@@ -561,7 +562,7 @@
   OpenPeer.prototype.CallManager = CallManager;
 
   if (module) {
-    module.export = new OpenPeer();
+    module.exports = new OpenPeer();
   } else {
     return new OpenPeer();
   }
