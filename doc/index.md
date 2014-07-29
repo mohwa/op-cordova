@@ -4,8 +4,12 @@ This plugin allows you to add peer to peer video chat, using
 the plugin uses the [Open Peer iOS SDK](https://github.com/openpeer/opios).
 Android support has not been added yet.
 
-## Important Note
-> You need to **download the native SDK** after installing this plugin by
+![OP Cordova Block Diagram](https://s3.amazonaws.com/assets.hookflash.me/github.com-openpeer-opcordova/images/opcordova_block_diag.png)
+
+## Install
+`cordova plugin add org.openpeer.cordova`
+
+> **Note** You need to **download the native SDK** after installing this plugin by
 > running `sh plugins/org.openpeer.cordova/download_sdk.sh`
 > See [install page](https://github.com/openpeer/op-cordova/blob/master/doc/Install.md) for more info.
 
