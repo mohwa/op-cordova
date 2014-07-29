@@ -25,3 +25,11 @@ running in very little time.
 
 Now that you are ready to get started, [install this plugin](Install.md)
 into your Cordova app.
+
+## Index of Documentation
+
+* [Install the Plugin](Install.md)
+* [Run your App](Run.md)
+* [Learn the API](API.md) and the [events](Events.md)
+* [Debug](Debug.md)
+* [Contribute](Contributing.md)

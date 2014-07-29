@@ -18,7 +18,7 @@ static CDVOP *shared;
 }
 
 -(CDVPlugin*) initWithWebView:(UIWebView*)theWebView {
-    self = (CDVOP*)[super initWithWebView:theWebView];
+    self = (CDVOP*  )[super initWithWebView:theWebView];
     shared = self;
     return self;
 }

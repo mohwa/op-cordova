@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
-      id="org.openpeer.cordova" version="0.0.0">
+      id="org.openpeer.cordova" version="0.1.0">
   <name>Open Peer Cordova Plugin</name>
-  <description>Cordova Plugin that enables using native open peer SDK from Javascript</description>
+  <description>Access the native Open Peer SDK from Javascript</description>
   <license>Apache 2.0</license>
   <keywords>OP, openpeer, webrtc</keywords>
   <author>Hookflash Inc</author>
   <info>Welcome to OpenPeer Cordova Plugin!</info>
   <engines>
-    <engine name="cordova" version=">=3.3.0" />
+    <engine name="cordova" version=">=3.5.0" />
   </engines>
 
-  <!-- during testing we will get op.js from server
-  <js-module src="www/op.js" name="OP">
-      <clobbers target="OP" />
+  <!-- during development we will get op.js from server -->
+  <js-module src="www/eventemitter2.js" name="EventEmitter2">
+      <clobbers target="EventEmitter2" />
   </js-module>
--->
-
   <js-module src="www/qPromise.js" name="Q">
       <clobbers target="Q" />
   </js-module>
-
+  <js-module src="www/op.js" name="OP">
+      <clobbers target="OP" />
+  </js-module>
 
   <platform name="ios">
       <framework src="CoreAudio.framework" />
@@ -40,7 +40,7 @@
       <framework src="libz.dylib" />
       <framework src="libstdc++.dylib" />
       <framework src="libxml2.dylib" />
-      <framework src="src/ios/OpenpeerSDK.framework/Libraries/boost.a" custom="true" />
+      <framework src="src/ios/OpenpeerSDK.framework/Libraries/boost.a" custom="true" arch="device" />
       <framework src="src/ios/OpenpeerSDK.framework" custom="true" />
 
       <config-file target="config.xml" parent="/*">
