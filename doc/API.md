@@ -106,13 +106,13 @@ called `contactsList`, to load and display a list of contacts
 ```
 user.loadContacts().then(function() {
     contactsList.innerHTML = '';
-    for (var id in app.user.contacts) {
+    for (var id in user.contacts) {
       var li = document.createElement('li');
       var img = document.createElement('img');
-      img.src = app.user.contacts[id].avatarUrl;
-      li.innerText = app.user.contacts[id].name;
+      img.src = user.contacts[id].avatarUrl;
+      li.innerText = user.contacts[id].name;
       li.setAttribute('data-id', id);
-      if (app.user.contacts[id].isRegistered == 'YES') {
+      if (user.contacts[id].isRegistered == 'YES') {
         li.classList.add('op-user');
       }
       li.appendChild(img);
@@ -135,7 +135,7 @@ OP.placeCall({peerList: [contactId]});
 Handling call events and performing call related action is done using a `CallManager` object.
 ```
 // create a call manager for current local user
-app.callManager = new OP.CallManager(app.user);
+var callManager = new OP.CallManager(user);
 ```
 
 ### Call State Changes
@@ -146,42 +146,29 @@ You may want to listen to some of these events and update your application UI ac
 // Listen to any of the call events: 'call-preparing', 'call-incoming',
 // 'call-ringing', 'call-ringback' 'call-open', 'call-onhold',
 // 'call-closing', 'call-closed'
-app.callManager.on('call-preparing', function(call) {
-  app.callStateSpan.innerHTML = 'Preparing call ... ';
+callManager.on('call-preparing', function(call) {
+  console.log('Preparing call ... ');
 });
-app.callManager.on('call-incoming', function(call) {
-  app.callStateSpan.innerHTML = 'Incoming call from ' +
-    call.peer.name + ' ... ';
+callManager.on('call-incoming', function(call) {
+  console.log('Incoming call from ' + call.peer.name);
 });
-app.callManager.on('call-ringing', function(call) {
-  app.callStateSpan.innerHTML = 'Ringing ... ';
-  app.incomingSound.loop = true;
-  app.incomingSound.play();
-  app.answerCallBtn.classList.remove('hide');
-  app.hangupCallBtn.classList.remove('hide');
+callManager.on('call-ringing', function(call) {
+  // good time to play a ringing sound
 });
-app.callManager.on('call-ringback', function(call) {
-  app.callStateSpan.innerHTML = 'Calling ' + call.peer.name + ' ... ';
-  app.ringbackSound.loop = true;
-  app.ringbackSound.play();
-  app.answerCallBtn.classList.add('hide');
-  app.hangupCallBtn.classList.remove('hide');
+callManager.on('call-ringback', function(call) {
+  // the app on the peer side is ringing
+  // you may also want to play a sound to indicate that
 });
-app.callManager.on('call-open', function(call) {
-  app.callStateSpan.innerHTML = 'Talking with ' + call.peer.name;
-  app.answerCallBtn.classList.add('hide');
-  app.hangupCallBtn.classList.remove('hide');
-  app.incomingSound.pause();
-  app.ringbackSound.pause();
-  app.setupVideoViews();
+callManager.on('call-open', function(call) {
+  console.log('Talking with ' + call.peer.name);
 });
-app.callManager.on('call-onhold', function(call) {
-  app.callStateSpan.innerHTML = 'Call with ' + call.peer.name + ' on Hold';
+callManager.on('call-onhold', function(call) {
+  console.log('Call with ' + call.peer.name + ' is on Hold');
 });
-app.callManager.on('call-closing', function(call) {
+callManager.on('call-closing', function(call) {
   console.log('Closing call with ' + call.peer.name);
 });
-app.callManager.on('call-closed', function(call) {
+callManager.on('call-closed', function(call) {
   // call closed
 });
 ```
@@ -195,8 +182,8 @@ var contact = user.contacts[id];
 var msg = 'Pretty nice eh?!';
 
 // optionally, check that the contact is registered on open peer network
-if (app.user.contacts[id].isRegistered) {
-  app.user.contacts[id].sendMessage(msg);
+if (user.contacts[id].isRegistered) {
+  user.contacts[id].sendMessage(msg);
 }
 ```
 > note that if contact is not registered, the message can not be delivered
