@@ -2,9 +2,9 @@
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
       id="org.openpeer.cordova" version="0.1.0">
   <name>Open Peer Cordova Plugin</name>
-  <description>Access the native Open Peer SDK from Javascript</description>
+  <description>Use Javascript and HTML5 to add video chat to your applications via the new Open Peer iOS plugin for Cordova</description>
   <license>Apache 2.0</license>
-  <keywords>OP, openpeer, webrtc</keywords>
+  <keywords>OP, Open Peer, webrtc, RTC, video, messenger, openpeer</keywords>
   <author>Hookflash Inc</author>
   <info>Welcome to OpenPeer Cordova Plugin!</info>
   <engines>

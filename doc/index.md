@@ -6,11 +6,22 @@ Android support has not been added yet.
 
 ![OP Cordova Block Diagram](https://s3.amazonaws.com/assets.hookflash.me/github.com-openpeer-opcordova/images/opcordova_block_diag.png)
 
-## Install
-`cordova plugin add org.openpeer.cordova`
-
-> **Note** You need to **download the native SDK** after installing this plugin by
-> running `sh plugins/org.openpeer.cordova/download_sdk.sh`
+## Quick Start
+```
+$cordova plugin add org.openpeer.cordova
+```
+> **Note:** You need to **download the native SDK** after installing this plugin:
+```
+$sh plugins/org.openpeer.cordova/download_sdk.sh
+```
+Once download is complete, add the ios platform
+```
+$cordova platform add ios
+```
+Connect a device to run your app on it
+```
+$cordova run ios
+```
 > See [install page](https://github.com/openpeer/op-cordova/blob/master/doc/Install.md) for more info.
 
 ## How does it work?
@@ -25,7 +36,7 @@ Checkout the simple [API for this plugin](https://github.com/openpeer/op-cordova
 You will have your very own open peer powered video chat application up and
 running in very little time.
 
->The plugin is still in early stages of development. We have release it, so that
+>The plugin is still in early stages of development. We have released it, so that
 >we can get feedback from you and add the features that matters most to you.
 >If you use this plugin and notice that something is missing,
 >please feel free to [open an issue](https://github.com/openpeer/op-cordova/issues?state=open) to let us know.
